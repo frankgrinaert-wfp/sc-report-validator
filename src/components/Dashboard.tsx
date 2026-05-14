@@ -15,18 +15,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { AppHeader } from "@/components/AppHeader";
 import { ControlPanel } from "@/components/ControlPanel";
 import { StatCard } from "@/components/StatCard";
 import { SchoolRankingTable } from "@/components/SchoolRankingTable";
-import { useLanguage } from "@/contexts/LanguageContext";
 import { DASHBOARD_SCHOOLS } from "@/data/reportDashboard";
 
 export function Dashboard() {
   const [isPanelOpen, setIsPanelOpen] = useState(true);
   const [qualityFilter, setQualityFilter] = useState("all");
   const [orderBy, setOrderBy] = useState("score-asc");
-  const { t } = useLanguage();
 
   useEffect(() => {
     const handleToggle = () => setIsPanelOpen((prev) => !prev);
@@ -101,15 +98,15 @@ export function Dashboard() {
   const getQualityLabel = (filter: string) => {
     switch (filter) {
       case "all":
-        return t("dashboard.qualityAll");
+        return "Quality (all)";
       case "excellent":
-        return t("dashboard.qualityExcellent");
+        return "Quality (excellent)";
       case "good":
-        return t("dashboard.qualityGood");
+        return "Quality (good)";
       case "fair":
-        return t("dashboard.qualityFair");
+        return "Quality (fair)";
       case "critical":
-        return t("dashboard.qualityCritical");
+        return "Quality (critical)";
       default:
         return filter;
     }
@@ -117,8 +114,6 @@ export function Dashboard() {
 
   return (
     <div className="flex h-screen flex-col">
-      <AppHeader title={t("app.title")} />
-
       <div className="relative flex flex-1 overflow-hidden">
         {!isPanelOpen ? (
           <div className="absolute top-2 left-0 z-10 flex flex-col items-center gap-2 rounded-e-md border border-border bg-card p-2 shadow-sm">
@@ -127,13 +122,13 @@ export function Dashboard() {
               variant="ghost"
               size="icon-sm"
               onClick={() => setIsPanelOpen(true)}
-              aria-label={t("aria.showPanel")}
-              title={t("aria.showPanel")}
+              aria-label="Show control panel"
+              title="Show control panel"
             >
               <ChevronRight />
             </Button>
             <span className="max-w-16 text-center text-muted-foreground text-xs font-medium">
-              {t("panel.title")}
+              Control panel
             </span>
           </div>
         ) : null}
@@ -151,41 +146,33 @@ export function Dashboard() {
             <div className="mb-8">
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <div className="flex flex-col gap-2">
-                  <Label htmlFor="month-select">{t("dashboard.month")}</Label>
+                  <Label htmlFor="month-select">Month</Label>
                   <Select defaultValue="may">
                     <SelectTrigger id="month-select" className="w-full">
-                      <SelectValue placeholder={t("dashboard.selectMonth")} />
+                      <SelectValue placeholder="Select month" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="january">{t("month.january")}</SelectItem>
-                      <SelectItem value="february">
-                        {t("month.february")}
-                      </SelectItem>
-                      <SelectItem value="march">{t("month.march")}</SelectItem>
-                      <SelectItem value="april">{t("month.april")}</SelectItem>
-                      <SelectItem value="may">{t("month.may")}</SelectItem>
-                      <SelectItem value="june">{t("month.june")}</SelectItem>
-                      <SelectItem value="july">{t("month.july")}</SelectItem>
-                      <SelectItem value="august">{t("month.august")}</SelectItem>
-                      <SelectItem value="september">
-                        {t("month.september")}
-                      </SelectItem>
-                      <SelectItem value="october">{t("month.october")}</SelectItem>
-                      <SelectItem value="november">
-                        {t("month.november")}
-                      </SelectItem>
-                      <SelectItem value="december">
-                        {t("month.december")}
-                      </SelectItem>
+                      <SelectItem value="january">January</SelectItem>
+                      <SelectItem value="february">February</SelectItem>
+                      <SelectItem value="march">March</SelectItem>
+                      <SelectItem value="april">April</SelectItem>
+                      <SelectItem value="may">May</SelectItem>
+                      <SelectItem value="june">June</SelectItem>
+                      <SelectItem value="july">July</SelectItem>
+                      <SelectItem value="august">August</SelectItem>
+                      <SelectItem value="september">September</SelectItem>
+                      <SelectItem value="october">October</SelectItem>
+                      <SelectItem value="november">November</SelectItem>
+                      <SelectItem value="december">December</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <Label htmlFor="year-select">{t("dashboard.year")}</Label>
+                  <Label htmlFor="year-select">Year</Label>
                   <Select defaultValue="2025">
                     <SelectTrigger id="year-select" className="w-full">
-                      <SelectValue placeholder={t("dashboard.selectYear")} />
+                      <SelectValue placeholder="Select year" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="2025">2025</SelectItem>
@@ -197,42 +184,32 @@ export function Dashboard() {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <Label htmlFor="country-select">{t("dashboard.country")}</Label>
+                  <Label htmlFor="country-select">Country</Label>
                   <Select defaultValue="gambia">
                     <SelectTrigger id="country-select" className="w-full">
-                      <SelectValue placeholder={t("dashboard.selectCountry")} />
+                      <SelectValue placeholder="Select country" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="gambia">{t("country.gambia")}</SelectItem>
-                      <SelectItem value="senegal">{t("country.senegal")}</SelectItem>
-                      <SelectItem value="guinea">{t("country.guinea")}</SelectItem>
-                      <SelectItem value="mali">{t("country.mali")}</SelectItem>
-                      <SelectItem value="burkina-faso">
-                        {t("country.burkinaFaso")}
-                      </SelectItem>
+                      <SelectItem value="gambia">Gambia</SelectItem>
+                      <SelectItem value="senegal">Senegal</SelectItem>
+                      <SelectItem value="guinea">Guinea</SelectItem>
+                      <SelectItem value="mali">Mali</SelectItem>
+                      <SelectItem value="burkina-faso">Burkina Faso</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <Label htmlFor="region-select">{t("dashboard.adminRegion")}</Label>
+                  <Label htmlFor="region-select">Admin region</Label>
                   <Select defaultValue="region1">
                     <SelectTrigger id="region-select" className="w-full">
-                      <SelectValue placeholder={t("dashboard.selectRegion")} />
+                      <SelectValue placeholder="Select region" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="region1">
-                        {t("region.adminRegion1")}
-                      </SelectItem>
-                      <SelectItem value="region2">
-                        {t("region.adminRegion2")}
-                      </SelectItem>
-                      <SelectItem value="region3">
-                        {t("region.adminRegion3")}
-                      </SelectItem>
-                      <SelectItem value="region4">
-                        {t("region.adminRegion4")}
-                      </SelectItem>
+                      <SelectItem value="region1">Admin region 1</SelectItem>
+                      <SelectItem value="region2">Admin region 2</SelectItem>
+                      <SelectItem value="region3">Admin region 3</SelectItem>
+                      <SelectItem value="region4">Admin region 4</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -240,29 +217,21 @@ export function Dashboard() {
             </div>
 
             <div className="mb-2 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-              <StatCard label={t("stats.totalSchools")} value="50" />
-              <StatCard
-                label={t("stats.excellent")}
-                value="15"
-                indicator="excellent"
-              />
-              <StatCard label={t("stats.good")} value="17" indicator="good" />
-              <StatCard label={t("stats.fair")} value="18" indicator="fair" />
-              <StatCard
-                label={t("stats.critical")}
-                value="0"
-                indicator="critical"
-              />
+              <StatCard label="Total schools" value="50" />
+              <StatCard label="Excellent" value="15" indicator="excellent" />
+              <StatCard label="Good" value="17" indicator="good" />
+              <StatCard label="Fair" value="18" indicator="fair" />
+              <StatCard label="Critical" value="0" indicator="critical" />
             </div>
 
             <p className="mb-8 text-muted-foreground text-sm">
-              {t("dashboard.lastUpdated")}
+              Last updated: August 2025
             </p>
 
             <div>
               <div className="mb-4 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                 <h2 className="font-semibold text-lg">
-                  {t("dashboard.schoolReport")}
+                  School monthly report for May 2025
                 </h2>
 
                 <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
@@ -271,37 +240,29 @@ export function Dashboard() {
                       <SelectValue>{getQualityLabel(qualityFilter)}</SelectValue>
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">{t("quality.all")}</SelectItem>
-                      <SelectItem value="excellent">
-                        {t("quality.excellent")}
-                      </SelectItem>
-                      <SelectItem value="good">{t("quality.good")}</SelectItem>
-                      <SelectItem value="fair">{t("quality.fair")}</SelectItem>
-                      <SelectItem value="critical">
-                        {t("quality.critical")}
-                      </SelectItem>
+                      <SelectItem value="all">All</SelectItem>
+                      <SelectItem value="excellent">Excellent</SelectItem>
+                      <SelectItem value="good">Good</SelectItem>
+                      <SelectItem value="fair">Fair</SelectItem>
+                      <SelectItem value="critical">Critical</SelectItem>
                     </SelectContent>
                   </Select>
 
                   <Select value={orderBy} onValueChange={setOrderBy}>
                     <SelectTrigger className="w-full sm:w-48">
-                      <SelectValue placeholder={t("dashboard.orderBy")} />
+                      <SelectValue placeholder="Order by" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="score-asc">
-                        {t("dashboard.scoreAsc")}
-                      </SelectItem>
-                      <SelectItem value="score-desc">
-                        {t("dashboard.scoreDesc")}
-                      </SelectItem>
-                      <SelectItem value="quality">{t("dashboard.quality")}</SelectItem>
-                      <SelectItem value="status">{t("dashboard.status")}</SelectItem>
+                      <SelectItem value="score-asc">Score (ascending)</SelectItem>
+                      <SelectItem value="score-desc">Score (descending)</SelectItem>
+                      <SelectItem value="quality">Quality</SelectItem>
+                      <SelectItem value="status">Status</SelectItem>
                     </SelectContent>
                   </Select>
 
                   <Button type="button" variant="secondary" className="gap-2">
                     <Download />
-                    {t("dashboard.downloadAll")}
+                    Download all schools report
                   </Button>
                 </div>
               </div>
@@ -312,29 +273,23 @@ export function Dashboard() {
             <div className="mt-8 grid gap-6 md:grid-cols-2">
               <Card>
                 <CardHeader>
-                  <CardTitle>{t("dashboard.avgAttendance")}</CardTitle>
+                  <CardTitle>Average school attendance</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2 border-border border-t pt-4">
                   <div className="flex items-center justify-between py-1">
-                    <span className="text-muted-foreground text-sm">
-                      {t("dashboard.total")}
-                    </span>
+                    <span className="text-muted-foreground text-sm">Total</span>
                     <span className="font-semibold tabular-nums">
                       {avgAttendanceTotal}%
                     </span>
                   </div>
                   <div className="flex items-center justify-between py-1">
-                    <span className="text-muted-foreground text-sm">
-                      {t("dashboard.boys")}
-                    </span>
+                    <span className="text-muted-foreground text-sm">Boys</span>
                     <span className="font-semibold tabular-nums">
                       {avgAttendanceBoys}%
                     </span>
                   </div>
                   <div className="flex items-center justify-between py-1">
-                    <span className="text-muted-foreground text-sm">
-                      {t("dashboard.girls")}
-                    </span>
+                    <span className="text-muted-foreground text-sm">Girls</span>
                     <span className="font-semibold tabular-nums">
                       {avgAttendanceGirls}%
                     </span>
@@ -344,12 +299,12 @@ export function Dashboard() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>{t("dashboard.mealsDelivered")}</CardTitle>
+                  <CardTitle>Meals delivered</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2 border-border border-t pt-4">
                   <div className="flex items-center justify-between py-1">
                     <span className="text-muted-foreground text-sm">
-                      {t("dashboard.totalMealsDelivered")}
+                      Total meals delivered
                     </span>
                     <span className="font-semibold tabular-nums">
                       {aggregatedData.totalMeals.toLocaleString()}
@@ -357,7 +312,7 @@ export function Dashboard() {
                   </div>
                   <div className="flex items-center justify-between py-1">
                     <span className="text-muted-foreground text-sm">
-                      {t("dashboard.avgMealsPerDay")}
+                      Average meals per day
                     </span>
                     <span className="font-semibold tabular-nums">
                       {avgMealsPerDay.toLocaleString()}

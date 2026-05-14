@@ -18,7 +18,6 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { AppHeader } from "@/components/AppHeader";
 import { ControlPanel } from "@/components/ControlPanel";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -37,13 +36,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useLanguage } from "@/contexts/LanguageContext";
 import {
   generateHistoricalData,
   getSchoolDetail,
   type SchoolDetailRecord,
+  type SchoolQuality,
   type SchoolStatus,
 } from "@/data/reportDashboard";
+import { issueLabel, SEVERITY_LABELS } from "@/data/issueLabels";
+
+const QUALITY_LABELS: Record<SchoolQuality, string> = {
+  excellent: "Excellent",
+  good: "Good",
+  fair: "Fair",
+  critical: "Critical",
+};
 
 function statusBadgeVariant(status: SchoolStatus) {
   switch (status) {
@@ -85,43 +92,29 @@ function IssueSeverityIcon({ severity }: { severity: string }) {
 }
 
 function SchoolStatusSelect({ school }: { school: SchoolDetailRecord }) {
-  const { t } = useLanguage();
   const [status, setStatus] = useState<SchoolStatus>(school.status);
-
-  const getStatusText = (s: SchoolStatus) => {
-    switch (s) {
-      case "To be Reviewed":
-        return t("status.toBeReviewed");
-      case "Waiting for Corrections":
-        return t("status.waitingCorrections");
-      case "Accepted":
-        return t("status.accepted");
-    }
-  };
 
   return (
     <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-      <span className="text-sm">{t("detail.status")}</span>
+      <span className="text-sm">Status</span>
       <Select
         value={status}
         onValueChange={(v) => setStatus(v as SchoolStatus)}
       >
         <SelectTrigger className="w-full sm:w-56">
           <SelectValue>
-            <Badge variant={statusBadgeVariant(status)}>
-              {getStatusText(status)}
-            </Badge>
+            <Badge variant={statusBadgeVariant(status)}>{status}</Badge>
           </SelectValue>
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="To be Reviewed">
-            <Badge variant="default">{t("status.toBeReviewed")}</Badge>
+            <Badge variant="default">To be reviewed</Badge>
           </SelectItem>
           <SelectItem value="Waiting for Corrections">
-            <Badge variant="warning">{t("status.waitingCorrections")}</Badge>
+            <Badge variant="warning">Waiting for corrections</Badge>
           </SelectItem>
           <SelectItem value="Accepted">
-            <Badge variant="success">{t("status.accepted")}</Badge>
+            <Badge variant="success">Accepted</Badge>
           </SelectItem>
         </SelectContent>
       </Select>
@@ -132,7 +125,6 @@ function SchoolStatusSelect({ school }: { school: SchoolDetailRecord }) {
 export function SchoolDetail() {
   const { schoolId } = useParams();
   const navigate = useNavigate();
-  const { t } = useLanguage();
 
   const school = getSchoolDetail(schoolId);
   const [isPanelOpen, setIsPanelOpen] = useState(true);
@@ -155,7 +147,7 @@ export function SchoolDetail() {
           <AlertTitle>School not found</AlertTitle>
           <AlertDescription>
             <Button type="button" variant="outline" onClick={() => navigate("/")}>
-              {t("detail.backToList")}
+              Back to list
             </Button>
           </AlertDescription>
         </Alert>
@@ -163,20 +155,7 @@ export function SchoolDetail() {
     );
   }
 
-  const getQualityText = (quality: string) => {
-    switch (quality) {
-      case "excellent":
-        return t("quality.excellent");
-      case "good":
-        return t("quality.good");
-      case "fair":
-        return t("quality.fair");
-      case "critical":
-        return t("quality.critical");
-      default:
-        return quality;
-    }
-  };
+  const getQualityText = (quality: SchoolQuality) => QUALITY_LABELS[quality];
 
   const handlePrevious = () => {
     navigate(`/school/${Math.max(1, school.id - 1)}`);
@@ -198,8 +177,6 @@ export function SchoolDetail() {
 
   return (
     <div className="flex h-screen flex-col">
-      <AppHeader title={t("app.title")} onHome={() => navigate("/")} />
-
       <div className="relative flex flex-1 overflow-hidden">
         {!isPanelOpen ? (
           <div className="absolute top-2 left-0 z-10 flex flex-col items-center gap-2 rounded-e-md border border-border bg-card p-2 shadow-sm">
@@ -208,13 +185,13 @@ export function SchoolDetail() {
               variant="ghost"
               size="icon-sm"
               onClick={() => setIsPanelOpen(true)}
-              aria-label={t("aria.showPanel")}
-              title={t("aria.showPanel")}
+              aria-label="Show control panel"
+              title="Show control panel"
             >
               <ChevronRight />
             </Button>
             <span className="max-w-16 text-center text-muted-foreground text-xs font-medium">
-              {t("panel.title")}
+              Control panel
             </span>
           </div>
         ) : null}
@@ -229,17 +206,29 @@ export function SchoolDetail() {
 
         <div className="flex-1 overflow-y-auto bg-muted">
           <div className="mx-auto max-w-5xl p-8">
+            <div className="mb-4">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="gap-2"
+                onClick={() => navigate("/")}
+              >
+                <ChevronLeft />
+                Back
+              </Button>
+            </div>
             <Card className="mb-6">
               <CardHeader>
                 <CardTitle className="text-2xl">{school.name}</CardTitle>
-                <CardDescription>{t("detail.month")}</CardDescription>
+                <CardDescription>Month: 2025-05</CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col gap-4 border-border border-t pt-6 sm:flex-row sm:items-center sm:justify-between">
                 <SchoolStatusSelect key={school.id} school={school} />
                 <div className="flex flex-wrap gap-3">
                   <Button type="button" variant="secondary" className="gap-2">
                     <Download />
-                    {t("detail.downloadReport")}
+                    Download issues report
                   </Button>
                   <Button
                     type="button"
@@ -248,7 +237,7 @@ export function SchoolDetail() {
                     onClick={() => navigate("/")}
                   >
                     <List />
-                    {t("detail.backToList")}
+                    Back to list
                   </Button>
                 </div>
               </CardContent>
@@ -257,13 +246,11 @@ export function SchoolDetail() {
             <div className="mb-6 grid gap-6 md:grid-cols-2">
               <Card>
                 <CardHeader>
-                  <CardTitle>{t("dashboard.avgAttendance")}</CardTitle>
+                  <CardTitle>Average school attendance</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2 border-border border-t pt-4">
                   <div className="flex items-center justify-between py-1">
-                    <span className="text-muted-foreground text-sm">
-                      {t("dashboard.total")}
-                    </span>
+                    <span className="text-muted-foreground text-sm">Total</span>
                     <span className="font-semibold tabular-nums">
                       {(
                         (school.attendance.total / school.enrollment.total) *
@@ -273,9 +260,7 @@ export function SchoolDetail() {
                     </span>
                   </div>
                   <div className="flex items-center justify-between py-1">
-                    <span className="text-muted-foreground text-sm">
-                      {t("dashboard.boys")}
-                    </span>
+                    <span className="text-muted-foreground text-sm">Boys</span>
                     <span className="font-semibold tabular-nums">
                       {(
                         (school.attendance.boys / school.enrollment.boys) *
@@ -285,9 +270,7 @@ export function SchoolDetail() {
                     </span>
                   </div>
                   <div className="flex items-center justify-between py-1">
-                    <span className="text-muted-foreground text-sm">
-                      {t("dashboard.girls")}
-                    </span>
+                    <span className="text-muted-foreground text-sm">Girls</span>
                     <span className="font-semibold tabular-nums">
                       {(
                         (school.attendance.girls / school.enrollment.girls) *
@@ -301,12 +284,12 @@ export function SchoolDetail() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>{t("dashboard.mealsDelivered")}</CardTitle>
+                  <CardTitle>Meals delivered</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2 border-border border-t pt-4">
                   <div className="flex items-center justify-between py-1">
                     <span className="text-muted-foreground text-sm">
-                      {t("dashboard.totalMealsDelivered")}
+                      Total meals delivered
                     </span>
                     <span className="font-semibold tabular-nums">
                       {school.totalMeals.toLocaleString()}
@@ -314,7 +297,7 @@ export function SchoolDetail() {
                   </div>
                   <div className="flex items-center justify-between py-1">
                     <span className="text-muted-foreground text-sm">
-                      {t("dashboard.avgMealsPerDay")}
+                      Average meals per day
                     </span>
                     <span className="font-semibold tabular-nums">
                       {school.avgMealsPerDay}
@@ -329,14 +312,16 @@ export function SchoolDetail() {
                 <div className="flex gap-3">
                   <Info className="mt-1 size-5 shrink-0 text-primary" />
                   <div>
-                    <CardTitle>{t("detail.dataQuality")}</CardTitle>
-                    <CardDescription>{t("detail.dataQualityDesc")}</CardDescription>
+                    <CardTitle>Data quality score</CardTitle>
+                    <CardDescription>
+                      Overall assessment of data completeness and accuracy
+                    </CardDescription>
                   </div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-3 border-border border-t pt-6">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm">{t("detail.currentScore")}</span>
+                  <span className="text-sm">Current score</span>
                   <span className="font-bold text-2xl text-primary tabular-nums">
                     {school.score}%
                   </span>
@@ -350,7 +335,7 @@ export function SchoolDetail() {
                   {school.score}%
                 </meter>
                 <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                  <span>{t("detail.qualityLevel")}</span>
+                  <span>Quality level</span>
                   <Badge variant="warning" className="capitalize">
                     {getQualityText(school.quality)}
                   </Badge>
@@ -359,12 +344,10 @@ export function SchoolDetail() {
             </Card>
 
             <div className="mb-6">
-              <h2 className="mb-4 font-semibold text-lg">
-                {t("detail.flaggedIssues")}
-              </h2>
+              <h2 className="mb-4 font-semibold text-lg">Flagged issues</h2>
               <div className="flex flex-col gap-3">
                 {sortedIssues.map((issue, index) => {
-                  const translatedIssue = t(issue.issueKey);
+                  const translatedIssue = issueLabel(issue.issueKey);
                   const displayIssue = issue.commodity
                     ? translatedIssue.replace("{commodity}", String(issue.commodity))
                     : translatedIssue;
@@ -376,15 +359,15 @@ export function SchoolDetail() {
                           <div className="p-0">
                             <Alert variant={issueAlertVariant(issue.severity)}>
                               <IssueSeverityIcon severity={issue.severity} />
-                              <AlertTitle className="capitalize">
-                                {t(`severity.${issue.severity}`)}
+                              <AlertTitle>
+                                {SEVERITY_LABELS[issue.severity] ?? issue.severity}
                               </AlertTitle>
                               <AlertDescription>
                                 {displayIssue} (
                                 {issue.occurrences.length}{" "}
                                 {issue.occurrences.length !== 1
-                                  ? t("detail.occurrencesPlural")
-                                  : t("detail.occurrences")}
+                                  ? "occurrences"
+                                  : "occurrence"}
                                 )
                               </AlertDescription>
                             </Alert>
@@ -395,9 +378,7 @@ export function SchoolDetail() {
                             <table className="w-full text-sm">
                               <thead>
                                 <tr className="border-b border-border text-left">
-                                  <th className="px-3 py-2 font-semibold">
-                                    {t("issueTable.date")}
-                                  </th>
+                                  <th className="px-3 py-2 font-semibold">Date</th>
                                   <th className="px-3 py-2 font-semibold">
                                     {issue.metric}
                                   </th>
@@ -433,8 +414,10 @@ export function SchoolDetail() {
                 <div className="flex gap-3">
                   <Info className="mt-1 size-5 shrink-0 text-primary" />
                   <div>
-                    <CardTitle>{t("detail.historical")}</CardTitle>
-                    <CardDescription>{t("detail.historicalDesc")}</CardDescription>
+                    <CardTitle>Historical data quality score</CardTitle>
+                    <CardDescription>
+                      Trend of data quality scores over the last 12 months
+                    </CardDescription>
                   </div>
                 </div>
               </CardHeader>
@@ -453,10 +436,7 @@ export function SchoolDetail() {
                       />
                       <YAxis tick={{ fontSize: 11 }} className="text-muted-foreground" />
                       <Tooltip
-                        formatter={(value) => [
-                          value ?? "",
-                          t("detail.currentScore"),
-                        ]}
+                        formatter={(value) => [value ?? "", "Current score"]}
                       />
                       <Line
                         type="monotone"
@@ -480,7 +460,7 @@ export function SchoolDetail() {
                 className="gap-2"
               >
                 <ChevronLeft />
-                {t("detail.previous")}
+                Previous school
               </Button>
               <Button
                 type="button"
@@ -489,7 +469,7 @@ export function SchoolDetail() {
                 disabled={school.id === 20}
                 className="gap-2"
               >
-                {t("detail.next")}
+                Next school
                 <ChevronRight />
               </Button>
             </div>

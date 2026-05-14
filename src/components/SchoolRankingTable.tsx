@@ -3,7 +3,6 @@ import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { useLanguage } from "@/contexts/LanguageContext";
 import type {
   SchoolDashboardRow,
   SchoolQuality,
@@ -12,6 +11,13 @@ import type {
 
 type SchoolRankingTableProps = {
   schools: SchoolDashboardRow[];
+};
+
+const QUALITY_LABELS: Record<SchoolQuality, string> = {
+  excellent: "Excellent",
+  good: "Good",
+  fair: "Fair",
+  critical: "Critical",
 };
 
 function statusBadgeVariant(status: SchoolStatus) {
@@ -40,31 +46,6 @@ function qualityBadgeVariant(quality: SchoolQuality) {
 
 export function SchoolRankingTable({ schools }: SchoolRankingTableProps) {
   const navigate = useNavigate();
-  const { t } = useLanguage();
-
-  const getStatusText = (status: SchoolStatus) => {
-    switch (status) {
-      case "To be Reviewed":
-        return t("status.toBeReviewed");
-      case "Waiting for Corrections":
-        return t("status.waitingCorrections");
-      case "Accepted":
-        return t("status.accepted");
-    }
-  };
-
-  const getQualityText = (quality: SchoolQuality) => {
-    switch (quality) {
-      case "excellent":
-        return t("quality.excellent");
-      case "good":
-        return t("quality.good");
-      case "fair":
-        return t("quality.fair");
-      case "critical":
-        return t("quality.critical");
-    }
-  };
 
   const handleDownload = (school: SchoolDashboardRow) => {
     const report = {
@@ -107,16 +88,12 @@ export function SchoolRankingTable({ schools }: SchoolRankingTableProps) {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border bg-muted text-left">
-              <th className="px-4 py-3 font-semibold">{t("table.rank")}</th>
-              <th className="px-4 py-3 font-semibold">{t("table.schoolName")}</th>
-              <th className="px-4 py-3 font-semibold">{t("table.score")}</th>
-              <th className="px-4 py-3 font-semibold">
-                {t("table.qualityLevel")}
-              </th>
-              <th className="px-4 py-3 font-semibold">{t("table.status")}</th>
-              <th className="px-4 py-3 text-end font-semibold">
-                {t("table.actions")}
-              </th>
+              <th className="px-4 py-3 font-semibold">Rank</th>
+              <th className="px-4 py-3 font-semibold">School name</th>
+              <th className="px-4 py-3 font-semibold">Score</th>
+              <th className="px-4 py-3 font-semibold">Quality level</th>
+              <th className="px-4 py-3 font-semibold">Status</th>
+              <th className="px-4 py-3 text-end font-semibold">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -132,12 +109,12 @@ export function SchoolRankingTable({ schools }: SchoolRankingTableProps) {
                 </td>
                 <td className="px-4 py-3">
                   <Badge variant={qualityBadgeVariant(school.quality)}>
-                    {getQualityText(school.quality)}
+                    {QUALITY_LABELS[school.quality]}
                   </Badge>
                 </td>
                 <td className="px-4 py-3">
                   <Badge variant={statusBadgeVariant(school.status)}>
-                    {getStatusText(school.status)}
+                    {school.status}
                   </Badge>
                 </td>
                 <td className="px-4 py-3">
@@ -148,14 +125,14 @@ export function SchoolRankingTable({ schools }: SchoolRankingTableProps) {
                       size="sm"
                       onClick={() => navigate(`/school/${school.id}`)}
                     >
-                      {t("table.viewDetails")}
+                      View details
                     </Button>
                     <Button
                       type="button"
                       variant="outline"
                       size="icon-sm"
                       onClick={() => handleDownload(school)}
-                      aria-label={t("detail.downloadReport")}
+                      aria-label="Download issues report"
                     >
                       <Download />
                     </Button>

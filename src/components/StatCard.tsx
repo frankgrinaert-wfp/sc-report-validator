@@ -6,7 +6,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useLanguage } from "@/contexts/LanguageContext";
+
+const QUALITY_LABELS: Record<SchoolQuality, string> = {
+  excellent: "Excellent",
+  good: "Good",
+  fair: "Fair",
+  critical: "Critical",
+};
 
 type StatCardProps = {
   label: string;
@@ -28,9 +34,6 @@ function qualityBadgeVariant(quality: SchoolQuality) {
 }
 
 export function StatCard({ label, value, indicator }: StatCardProps) {
-  const { t } = useLanguage();
-  const indicatorText = indicator ? t(`quality.${indicator}`) : null;
-
   return (
     <Card className="gap-3 py-4">
       <CardHeader className="pb-0">
@@ -40,7 +43,7 @@ export function StatCard({ label, value, indicator }: StatCardProps) {
           </CardTitle>
           {indicator ? (
             <Badge variant={qualityBadgeVariant(indicator)} className="capitalize">
-              {indicatorText}
+              {QUALITY_LABELS[indicator]}
             </Badge>
           ) : null}
         </div>

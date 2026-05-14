@@ -4,36 +4,145 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { useLanguage } from "@/contexts/LanguageContext";
 
 const issueTypes = [
-  { id: "purchase-price-high", labelKey: "issue.purchasePriceHigh", categoryKey: "alert.purchasePrice" },
-  { id: "purchase-price-low", labelKey: "issue.purchasePriceLow", categoryKey: "alert.purchasePrice" },
-  { id: "batch-missing", labelKey: "issue.batchMissing", categoryKey: "alert.purchasePrice" },
-  { id: "batch-digits", labelKey: "issue.batchDigits", categoryKey: "alert.purchasePrice" },
-  { id: "batch-duplicate", labelKey: "issue.batchDuplicate", categoryKey: "alert.purchasePrice" },
-  { id: "vendor-missing", labelKey: "issue.vendorMissing", categoryKey: "alert.purchasePrice" },
-  { id: "attendance-high", labelKey: "issue.attendanceHigh", categoryKey: "alert.attendance" },
-  { id: "attendance-low", labelKey: "issue.attendanceLow", categoryKey: "alert.attendance" },
-  { id: "attendance-same", labelKey: "issue.attendanceSame", categoryKey: "alert.attendance" },
-  { id: "attendance-exceeds", labelKey: "issue.attendanceExceeds", categoryKey: "alert.attendance" },
-  { id: "enrolment-increase", labelKey: "issue.enrolmentIncrease", categoryKey: "alert.attendance" },
-  { id: "no-absences", labelKey: "issue.noAbsences", categoryKey: "alert.attendance" },
-  { id: "attendance-missing", labelKey: "issue.attendanceMissing", categoryKey: "alert.attendance" },
-  { id: "attendance-zero", labelKey: "issue.attendanceZero", categoryKey: "alert.attendance" },
-  { id: "cereals-exceeds", labelKey: "issue.cerealsExceeds", categoryKey: "alert.consumption" },
-  { id: "pulses-exceeds", labelKey: "issue.pulsesExceeds", categoryKey: "alert.consumption" },
-  { id: "consumption-high", labelKey: "issue.consumptionHigh", categoryKey: "alert.consumption" },
-  { id: "consumption-low", labelKey: "issue.consumptionLow", categoryKey: "alert.consumption" },
-  { id: "consumption-zero", labelKey: "issue.consumptionZero", categoryKey: "alert.consumption" },
-  { id: "consumption-missing", labelKey: "issue.consumptionMissing", categoryKey: "alert.consumption" },
-  { id: "food-stolen", labelKey: "issue.foodStolen", categoryKey: "alert.incident" },
-  { id: "loss-other", labelKey: "issue.lossOther", categoryKey: "alert.incident" },
-  { id: "loss-exceeds", labelKey: "issue.lossExceeds", categoryKey: "alert.incident" },
-  { id: "attendance-no-meal", labelKey: "issue.attendanceNoMeal", categoryKey: "alert.crossFile" },
-  { id: "stock-inconsistency", labelKey: "issue.stockInconsistency", categoryKey: "alert.crossFile" },
-  { id: "salt-not-used", labelKey: "issue.saltNotUsed", categoryKey: "alert.crossFile" },
-  { id: "oil-not-used", labelKey: "issue.oilNotUsed", categoryKey: "alert.crossFile" },
+  {
+    id: "purchase-price-high",
+    category: "Purchase & price",
+    label: "Purchase price is suspiciously high",
+  },
+  {
+    id: "purchase-price-low",
+    category: "Purchase & price",
+    label: "Purchase price is suspiciously low",
+  },
+  {
+    id: "batch-missing",
+    category: "Purchase & price",
+    label: "Batch number is missing",
+  },
+  {
+    id: "batch-digits",
+    category: "Purchase & price",
+    label: "Batch number is less than required digits",
+  },
+  {
+    id: "batch-duplicate",
+    category: "Purchase & price",
+    label: "Two or more commodities have the same batch number",
+  },
+  {
+    id: "vendor-missing",
+    category: "Purchase & price",
+    label: "Missing vendor information",
+  },
+  {
+    id: "attendance-high",
+    category: "Attendance & enrolment",
+    label: "Daily attendance is higher than the tolerance level",
+  },
+  {
+    id: "attendance-low",
+    category: "Attendance & enrolment",
+    label: "Daily attendance is lower than the tolerance level",
+  },
+  {
+    id: "attendance-same",
+    category: "Attendance & enrolment",
+    label:
+      "Daily attendance is the same for all school days within the month",
+  },
+  {
+    id: "attendance-exceeds",
+    category: "Attendance & enrolment",
+    label: "Daily attendance exceeds enrolment",
+  },
+  {
+    id: "enrolment-increase",
+    category: "Attendance & enrolment",
+    label: "Enrolment update exceeds previous enrolment by 50 percent",
+  },
+  {
+    id: "no-absences",
+    category: "Attendance & enrolment",
+    label: "No absences recorded for 10 consecutive days",
+  },
+  {
+    id: "attendance-missing",
+    category: "Attendance & enrolment",
+    label: "Attendance data is missing",
+  },
+  {
+    id: "attendance-zero",
+    category: "Attendance & enrolment",
+    label: "Attendance is recorded as zero",
+  },
+  {
+    id: "cereals-exceeds",
+    category: "Consumption",
+    label: "Cereals consumption per student exceeds maximum",
+  },
+  {
+    id: "pulses-exceeds",
+    category: "Consumption",
+    label: "Pulses consumption per student exceeds maximum",
+  },
+  {
+    id: "consumption-high",
+    category: "Consumption",
+    label: "Aggregated daily consumption per student exceeds maximum",
+  },
+  {
+    id: "consumption-low",
+    category: "Consumption",
+    label: "Aggregated daily consumption per student is lower than minimum",
+  },
+  {
+    id: "consumption-zero",
+    category: "Consumption",
+    label: "Aggregated daily consumption per student is zero",
+  },
+  {
+    id: "consumption-missing",
+    category: "Consumption",
+    label: "Aggregated daily consumption per student is missing",
+  },
+  {
+    id: "food-stolen",
+    category: "Incident",
+    label: 'A loss is recorded with the "Food was stolen" reason',
+  },
+  {
+    id: "loss-other",
+    category: "Incident",
+    label: 'A loss is recorded with "Other" and no comment is written',
+  },
+  {
+    id: "loss-exceeds",
+    category: "Incident",
+    label: "Incident quantity loss exceeds threshold",
+  },
+  {
+    id: "attendance-no-meal",
+    category: "Cross-file",
+    label:
+      "Attendance was recorded, but no meal consumption or reason for no meal was provided",
+  },
+  {
+    id: "stock-inconsistency",
+    category: "Cross-file",
+    label: 'Stock present on a day recorded as "No stock"',
+  },
+  {
+    id: "salt-not-used",
+    category: "Cross-file",
+    label: "Meal served without salt, but salt was in stock",
+  },
+  {
+    id: "oil-not-used",
+    category: "Cross-file",
+    label: "Meal served without oil, but oil was in stock",
+  },
 ] as const;
 
 type ThresholdItemProps = {
@@ -82,7 +191,12 @@ type PanelSectionProps = {
   children: ReactNode;
 };
 
-function PanelSection({ title, open, onOpenChange, children }: PanelSectionProps) {
+function PanelSection({
+  title,
+  open,
+  onOpenChange,
+  children,
+}: PanelSectionProps) {
   return (
     <details
       className="group rounded-md border border-border"
@@ -140,28 +254,26 @@ export function ControlPanel() {
 
   const groupedIssues = issueTypes.reduce(
     (acc, issue) => {
-      const list = acc[issue.categoryKey] ?? [];
+      const list = acc[issue.category] ?? [];
       list.push(issue);
-      acc[issue.categoryKey] = list;
+      acc[issue.category] = list;
       return acc;
     },
     {} as Record<string, (typeof issueTypes)[number][]>,
   );
 
-  const { t } = useLanguage();
-
   return (
     <div className="h-full overflow-y-auto border-border border-e bg-card">
       <div className="p-6">
         <div className="mb-6 flex items-center justify-between gap-2">
-          <h2 className="font-semibold text-base">{t("panel.title")}</h2>
+          <h2 className="font-semibold text-base">Control panel</h2>
           <Button
             type="button"
             variant="ghost"
             size="icon-sm"
             onClick={() => window.dispatchEvent(new Event("togglePanel"))}
-            aria-label={t("aria.hidePanel")}
-            title={t("aria.hidePanel")}
+            aria-label="Hide control panel"
+            title="Hide control panel"
           >
             <ChevronLeft />
           </Button>
@@ -170,13 +282,13 @@ export function ControlPanel() {
         <div className="mb-6">
           <Button type="button" variant="outline" className="w-full justify-start gap-2">
             <RotateCcw />
-            {t("panel.resetFilters")}
+            Reset filters
           </Button>
         </div>
 
         <div className="flex flex-col gap-2 border-border border-t pt-6">
           <PanelSection
-            title={t("panel.alertsFilter")}
+            title="Alerts filter"
             open={issueTypesOpen}
             onOpenChange={setIssueTypesOpen}
           >
@@ -188,7 +300,7 @@ export function ControlPanel() {
                 className="flex-1"
                 onClick={selectAll}
               >
-                {t("panel.selectAll")}
+                Select all
               </Button>
               <Button
                 type="button"
@@ -197,14 +309,14 @@ export function ControlPanel() {
                 className="flex-1"
                 onClick={deselectAll}
               >
-                {t("panel.deselectAll")}
+                Deselect all
               </Button>
             </div>
             <div className="max-h-96 space-y-4 overflow-y-auto">
               {Object.entries(groupedIssues).map(([category, issues]) => (
                 <div key={category}>
                   <p className="mb-2 font-semibold text-muted-foreground text-xs">
-                    {t(category)}
+                    {category}
                   </p>
                   <div className="space-y-2">
                     {issues.map((issue) => (
@@ -218,7 +330,7 @@ export function ControlPanel() {
                           htmlFor={issue.id}
                           className="font-normal text-muted-foreground text-xs leading-snug"
                         >
-                          {t(issue.labelKey)}
+                          {issue.label}
                         </Label>
                       </div>
                     ))}
@@ -229,70 +341,70 @@ export function ControlPanel() {
           </PanelSection>
 
           <PanelSection
-            title={t("panel.consumptionThresholds")}
+            title="Consumption thresholds"
             open={consumptionOpen}
             onOpenChange={setConsumptionOpen}
           >
             <ThresholdItem
-              label={t("threshold.cerealsMax")}
+              label="Cereals max (g)"
               value={cerealsMax}
               onChange={setCerealsMax}
             />
             <ThresholdItem
-              label={t("threshold.pulsesMax")}
+              label="Pulses max (g)"
               value={pulsesMax}
               onChange={setPulsesMax}
             />
             <ThresholdItem
-              label={t("threshold.aggregatedMin")}
+              label="Aggregated min (g)"
               value={aggregatedMin}
               onChange={setAggregatedMin}
             />
             <ThresholdItem
-              label={t("threshold.aggregatedMax")}
+              label="Aggregated max (g)"
               value={aggregatedMax}
               onChange={setAggregatedMax}
             />
           </PanelSection>
 
           <PanelSection
-            title={t("panel.expectedPrices")}
+            title="Expected commodity prices"
             open={commodityPricesOpen}
             onOpenChange={setCommodityPricesOpen}
           >
             <ThresholdItem
-              label={t("commodity.sorghum")}
+              label="Sorghum ($/kg)"
               value={sorghum}
               onChange={setSorghum}
             />
             <ThresholdItem
-              label={t("commodity.millet")}
+              label="Millet ($/kg)"
               value={millet}
               onChange={setMillet}
             />
-            <ThresholdItem label={t("commodity.salt")} value={salt} onChange={setSalt} />
+            <ThresholdItem label="Salt ($/kg)" value={salt} onChange={setSalt} />
             <ThresholdItem
-              label={t("commodity.palmOil")}
+              label="Palm oil — red ($/kg)"
               value={palmOil}
               onChange={setPalmOil}
             />
             <ThresholdItem
-              label={t("commodity.onion")}
+              label="Onion ($/kg)"
               value={onion}
               onChange={setOnion}
             />
             <ThresholdItem
-              label={t("commodity.sweetPotato")}
+              label="Sweet potato leaves ($/kg)"
               value={sweetPotato}
               onChange={setSweetPotato}
             />
             <ThresholdItem
-              label={t("commodity.driedFish")}
+              label="Dried fish ($/kg)"
               value={driedFish}
               onChange={setDriedFish}
             />
             <ThresholdItem
-              label={t("commodity.fishFresh")}
+              label="Fish — fresh ($/kg)"
               value={fishFresh}
               onChange={setFishFresh}
             />
