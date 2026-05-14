@@ -203,18 +203,6 @@ export function SchoolDetail() {
 
         <div className="flex-1 overflow-y-auto bg-muted">
           <div className="mx-auto max-w-5xl p-8">
-            <div className="mb-4">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="gap-2"
-                onClick={() => navigate("/")}
-              >
-                <ChevronLeft />
-                Back
-              </Button>
-            </div>
             <Card className="mb-6">
               <CardHeader>
                 <CardTitle className="text-2xl">{school.name}</CardTitle>
