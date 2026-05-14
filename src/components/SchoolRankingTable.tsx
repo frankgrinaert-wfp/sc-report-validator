@@ -3,21 +3,15 @@ import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import type {
-  SchoolDashboardRow,
-  SchoolQuality,
-  SchoolStatus,
+import {
+  dataQualityScoreTextClass,
+  type SchoolDashboardRow,
+  type SchoolStatus,
 } from "@/data/reportDashboard";
+import { cn } from "@/lib/utils";
 
 type SchoolRankingTableProps = {
   schools: SchoolDashboardRow[];
-};
-
-const QUALITY_LABELS: Record<SchoolQuality, string> = {
-  excellent: "Excellent",
-  good: "Good",
-  fair: "Fair",
-  critical: "Critical",
 };
 
 function statusBadgeVariant(status: SchoolStatus) {
@@ -31,19 +25,6 @@ function statusBadgeVariant(status: SchoolStatus) {
   }
 }
 
-function qualityBadgeVariant(quality: SchoolQuality) {
-  switch (quality) {
-    case "excellent":
-      return "success" as const;
-    case "good":
-      return "default" as const;
-    case "fair":
-      return "warning" as const;
-    case "critical":
-      return "destructive" as const;
-  }
-}
-
 export function SchoolRankingTable({ schools }: SchoolRankingTableProps) {
   const navigate = useNavigate();
 
@@ -52,7 +33,6 @@ export function SchoolRankingTable({ schools }: SchoolRankingTableProps) {
       schoolName: school.name,
       schoolCode: school.code,
       dataQualityScore: school.score,
-      qualityLevel: school.quality,
       reportDate: new Date().toISOString().split("T")[0],
       flaggedIssues: [
         {
@@ -91,7 +71,6 @@ export function SchoolRankingTable({ schools }: SchoolRankingTableProps) {
               <th className="px-4 py-3 font-semibold">Rank</th>
               <th className="px-4 py-3 font-semibold">School name</th>
               <th className="px-4 py-3 font-semibold">Score</th>
-              <th className="px-4 py-3 font-semibold">Quality level</th>
               <th className="px-4 py-3 font-semibold">Status</th>
               <th className="px-4 py-3 text-end font-semibold">Actions</th>
             </tr>
@@ -105,12 +84,14 @@ export function SchoolRankingTable({ schools }: SchoolRankingTableProps) {
                 <td className="px-4 py-3 text-muted-foreground">{index + 1}</td>
                 <td className="px-4 py-3 font-medium">{school.name}</td>
                 <td className="px-4 py-3 tabular-nums">
-                  <span className="font-semibold">{school.score}%</span>
-                </td>
-                <td className="px-4 py-3">
-                  <Badge variant={qualityBadgeVariant(school.quality)}>
-                    {QUALITY_LABELS[school.quality]}
-                  </Badge>
+                  <span
+                    className={cn(
+                      "font-semibold",
+                      dataQualityScoreTextClass(school.score),
+                    )}
+                  >
+                    {school.score}%
+                  </span>
                 </td>
                 <td className="px-4 py-3">
                   <Badge variant={statusBadgeVariant(school.status)}>

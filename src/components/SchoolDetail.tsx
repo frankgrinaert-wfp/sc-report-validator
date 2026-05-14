@@ -37,20 +37,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  dataQualityScoreAccentClass,
+  dataQualityScoreTextClass,
   generateHistoricalData,
   getSchoolDetail,
   type SchoolDetailRecord,
-  type SchoolQuality,
   type SchoolStatus,
 } from "@/data/reportDashboard";
 import { issueLabel, SEVERITY_LABELS } from "@/data/issueLabels";
-
-const QUALITY_LABELS: Record<SchoolQuality, string> = {
-  excellent: "Excellent",
-  good: "Good",
-  fair: "Fair",
-  critical: "Critical",
-};
+import { cn } from "@/lib/utils";
 
 function statusBadgeVariant(status: SchoolStatus) {
   switch (status) {
@@ -154,8 +149,6 @@ export function SchoolDetail() {
       </div>
     );
   }
-
-  const getQualityText = (quality: SchoolQuality) => QUALITY_LABELS[quality];
 
   const handlePrevious = () => {
     navigate(`/school/${Math.max(1, school.id - 1)}`);
@@ -322,24 +315,26 @@ export function SchoolDetail() {
               <CardContent className="space-y-3 border-border border-t pt-6">
                 <div className="flex items-center justify-between">
                   <span className="text-sm">Current score</span>
-                  <span className="font-bold text-2xl text-primary tabular-nums">
+                  <span
+                    className={cn(
+                      "font-bold text-2xl tabular-nums",
+                      dataQualityScoreTextClass(school.score),
+                    )}
+                  >
                     {school.score}%
                   </span>
                 </div>
                 <meter
-                  className="h-2 w-full accent-primary"
+                  className={cn(
+                    "h-2 w-full",
+                    dataQualityScoreAccentClass(school.score),
+                  )}
                   min={0}
                   max={100}
                   value={school.score}
                 >
                   {school.score}%
                 </meter>
-                <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                  <span>Quality level</span>
-                  <Badge variant="warning" className="capitalize">
-                    {getQualityText(school.quality)}
-                  </Badge>
-                </div>
               </CardContent>
             </Card>
 

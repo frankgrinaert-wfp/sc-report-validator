@@ -16,9 +16,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ControlPanel } from "@/components/ControlPanel";
-import { StatCard } from "@/components/StatCard";
 import { SchoolRankingTable } from "@/components/SchoolRankingTable";
-import { DASHBOARD_SCHOOLS } from "@/data/reportDashboard";
+import {
+  DASHBOARD_SCHOOLS,
+  schoolQualityFromScore,
+} from "@/data/reportDashboard";
 
 export function Dashboard() {
   const [isPanelOpen, setIsPanelOpen] = useState(true);
@@ -34,7 +36,9 @@ export function Dashboard() {
   const filteredSchools =
     qualityFilter === "all"
       ? DASHBOARD_SCHOOLS
-      : DASHBOARD_SCHOOLS.filter((school) => school.quality === qualityFilter);
+      : DASHBOARD_SCHOOLS.filter(
+          (school) => schoolQualityFromScore(school.score) === qualityFilter,
+        );
 
   const sortedSchools = [...filteredSchools].sort((a, b) => {
     switch (orderBy) {
@@ -44,7 +48,10 @@ export function Dashboard() {
         return b.score - a.score;
       case "quality": {
         const qualityOrder = { excellent: 1, good: 2, fair: 3, critical: 4 };
-        return qualityOrder[a.quality] - qualityOrder[b.quality];
+        return (
+          qualityOrder[schoolQualityFromScore(a.score)] -
+          qualityOrder[schoolQualityFromScore(b.score)]
+        );
       }
       case "status": {
         const statusOrder = {
@@ -214,14 +221,6 @@ export function Dashboard() {
                   </Select>
                 </div>
               </div>
-            </div>
-
-            <div className="mb-2 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-              <StatCard label="Total schools" value="50" />
-              <StatCard label="Excellent" value="15" indicator="excellent" />
-              <StatCard label="Good" value="17" indicator="good" />
-              <StatCard label="Fair" value="18" indicator="fair" />
-              <StatCard label="Critical" value="0" indicator="critical" />
             </div>
 
             <p className="mb-8 text-muted-foreground text-sm">
