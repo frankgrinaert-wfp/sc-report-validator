@@ -9,12 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ControlPanel } from "@/components/ControlPanel";
 import { SchoolRankingTable } from "@/components/SchoolRankingTable";
 import {
@@ -150,6 +145,7 @@ export function Dashboard() {
 
         <div className="flex-1 overflow-y-auto bg-muted">
           <div className="mx-auto max-w-7xl p-8">
+            <h1 className="mb-8 font-bold text-3xl">Monthly reports</h1>
             <div className="mb-8">
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <div className="flex flex-col gap-2">
@@ -228,42 +224,38 @@ export function Dashboard() {
             </p>
 
             <div>
-              <div className="mb-4 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-                <h2 className="font-semibold text-lg">
-                  School monthly report for May 2025
-                </h2>
+              <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
+                <Select value={qualityFilter} onValueChange={setQualityFilter}>
+                  <SelectTrigger className="w-full sm:w-48">
+                    <SelectValue>{getQualityLabel(qualityFilter)}</SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="excellent">Excellent</SelectItem>
+                    <SelectItem value="good">Good</SelectItem>
+                    <SelectItem value="fair">Fair</SelectItem>
+                    <SelectItem value="critical">Critical</SelectItem>
+                  </SelectContent>
+                </Select>
 
-                <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
-                  <Select value={qualityFilter} onValueChange={setQualityFilter}>
-                    <SelectTrigger className="w-full sm:w-48">
-                      <SelectValue>{getQualityLabel(qualityFilter)}</SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All</SelectItem>
-                      <SelectItem value="excellent">Excellent</SelectItem>
-                      <SelectItem value="good">Good</SelectItem>
-                      <SelectItem value="fair">Fair</SelectItem>
-                      <SelectItem value="critical">Critical</SelectItem>
-                    </SelectContent>
-                  </Select>
+                <Select value={orderBy} onValueChange={setOrderBy}>
+                  <SelectTrigger className="w-full sm:w-48">
+                    <SelectValue placeholder="Order by" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="score-asc">Score (ascending)</SelectItem>
+                    <SelectItem value="score-desc">
+                      Score (descending)
+                    </SelectItem>
+                    <SelectItem value="quality">Quality</SelectItem>
+                    <SelectItem value="status">Status</SelectItem>
+                  </SelectContent>
+                </Select>
 
-                  <Select value={orderBy} onValueChange={setOrderBy}>
-                    <SelectTrigger className="w-full sm:w-48">
-                      <SelectValue placeholder="Order by" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="score-asc">Score (ascending)</SelectItem>
-                      <SelectItem value="score-desc">Score (descending)</SelectItem>
-                      <SelectItem value="quality">Quality</SelectItem>
-                      <SelectItem value="status">Status</SelectItem>
-                    </SelectContent>
-                  </Select>
-
-                  <Button type="button" variant="secondary" className="gap-2">
-                    <Download />
-                    Download all schools report
-                  </Button>
-                </div>
+                <Button type="button" variant="secondary" className="gap-2">
+                  <Download />
+                  Download all schools report
+                </Button>
               </div>
 
               <SchoolRankingTable schools={sortedSchools} />

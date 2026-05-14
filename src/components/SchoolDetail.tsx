@@ -141,7 +141,11 @@ export function SchoolDetail() {
         <Alert variant="destructive">
           <AlertTitle>School not found</AlertTitle>
           <AlertDescription>
-            <Button type="button" variant="outline" onClick={() => navigate("/")}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => navigate("/")}
+            >
               Back to list
             </Button>
           </AlertDescription>
@@ -344,7 +348,10 @@ export function SchoolDetail() {
                 {sortedIssues.map((issue, index) => {
                   const translatedIssue = issueLabel(issue.issueKey);
                   const displayIssue = issue.commodity
-                    ? translatedIssue.replace("{commodity}", String(issue.commodity))
+                    ? translatedIssue.replace(
+                        "{commodity}",
+                        String(issue.commodity),
+                      )
                     : translatedIssue;
 
                   return (
@@ -355,11 +362,11 @@ export function SchoolDetail() {
                             <Alert variant={issueAlertVariant(issue.severity)}>
                               <IssueSeverityIcon severity={issue.severity} />
                               <AlertTitle>
-                                {SEVERITY_LABELS[issue.severity] ?? issue.severity}
+                                {SEVERITY_LABELS[issue.severity] ??
+                                  issue.severity}
                               </AlertTitle>
                               <AlertDescription>
-                                {displayIssue} (
-                                {issue.occurrences.length}{" "}
+                                {displayIssue} ({issue.occurrences.length}{" "}
                                 {issue.occurrences.length !== 1
                                   ? "occurrences"
                                   : "occurrence"}
@@ -373,7 +380,9 @@ export function SchoolDetail() {
                             <table className="w-full text-sm">
                               <thead>
                                 <tr className="border-b border-border text-left">
-                                  <th className="px-3 py-2 font-semibold">Date</th>
+                                  <th className="px-3 py-2 font-semibold">
+                                    Date
+                                  </th>
                                   <th className="px-3 py-2 font-semibold">
                                     {issue.metric}
                                   </th>
@@ -420,7 +429,10 @@ export function SchoolDetail() {
                 <div className="h-72 w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={historicalData}>
-                      <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                      <CartesianGrid
+                        strokeDasharray="3 3"
+                        className="stroke-border"
+                      />
                       <XAxis
                         dataKey="month"
                         tick={{ fontSize: 11 }}
@@ -429,7 +441,10 @@ export function SchoolDetail() {
                         textAnchor="end"
                         height={72}
                       />
-                      <YAxis tick={{ fontSize: 11 }} className="text-muted-foreground" />
+                      <YAxis
+                        tick={{ fontSize: 11 }}
+                        className="text-muted-foreground"
+                      />
                       <Tooltip
                         formatter={(value) => [value ?? "", "Current score"]}
                       />
