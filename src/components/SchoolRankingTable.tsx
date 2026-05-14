@@ -67,7 +67,7 @@ export function SchoolRankingTable({ schools }: SchoolRankingTableProps) {
       <CardContent className="overflow-x-auto px-0 py-0">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-border bg-muted text-left">
+            <tr className="border-b border-border text-left">
               <th className="px-4 py-3 font-semibold">Rank</th>
               <th className="px-4 py-3 font-semibold">School name</th>
               <th className="px-4 py-3 font-semibold">Score</th>

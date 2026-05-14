@@ -201,7 +201,7 @@ export function SchoolDetail() {
           <ControlPanel />
         </div>
 
-        <div className="flex-1 overflow-y-auto bg-muted">
+        <div className="flex-1 overflow-y-auto">
           <div className="mx-auto max-w-5xl p-8">
             <Card className="mb-6">
               <CardHeader>

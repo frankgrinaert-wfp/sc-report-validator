@@ -143,7 +143,7 @@ export function Dashboard() {
           <ControlPanel />
         </div>
 
-        <div className="flex-1 overflow-y-auto bg-muted">
+        <div className="flex-1 overflow-y-auto">
           <div className="mx-auto max-w-7xl p-8">
             <h1 className="mb-8 font-bold text-3xl">Monthly reports</h1>
             <div className="mb-8">
