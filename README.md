@@ -17,7 +17,6 @@ If you are developing a production application, we recommend updating the config
 
 ```js
 export default defineConfig([
-  globalIgnores(['dist']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -51,7 +50,6 @@ import reactX from 'eslint-plugin-react-x'
 import reactDom from 'eslint-plugin-react-dom'
 
 export default defineConfig([
-  globalIgnores(['dist']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
