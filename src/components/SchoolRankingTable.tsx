@@ -2,7 +2,14 @@ import { Download } from "lucide-react";
 import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   dataQualityScoreTextClass,
   type SchoolDashboardRow,
@@ -63,62 +70,57 @@ export function SchoolRankingTable({ schools }: SchoolRankingTableProps) {
   };
 
   return (
-    <Card className="gap-0 py-0">
-      <CardContent className="overflow-x-auto px-0 py-0">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-border text-left">
-              <th className="px-4 py-3 font-semibold">Rank</th>
-              <th className="px-4 py-3 font-semibold">School name</th>
-              <th className="px-4 py-3 font-semibold">Score</th>
-              <th className="px-4 py-3 font-semibold">Status</th>
-              <th className="px-4 py-3 text-end font-semibold">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {schools.map((school, index) => (
-              <tr
-                key={school.id}
-                className="border-b border-border last:border-0"
-              >
-                <td className="px-4 py-3 text-muted-foreground">{index + 1}</td>
-                <td className="px-4 py-3 font-medium">{school.name}</td>
-                <td className="px-4 py-3 tabular-nums">
-                  <span className={cn(dataQualityScoreTextClass(school.score))}>
-                    {school.score}%
-                  </span>
-                </td>
-                <td className="px-4 py-3">
-                  <Badge variant={statusBadgeVariant(school.status)}>
-                    {school.status}
-                  </Badge>
-                </td>
-                <td className="px-4 py-3">
-                  <div className="flex justify-end gap-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => navigate(`/school/${school.id}`)}
-                    >
-                      View details
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon-sm"
-                      onClick={() => handleDownload(school)}
-                      aria-label="Download issues report"
-                    >
-                      <Download />
-                    </Button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </CardContent>
-    </Card>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Rank</TableHead>
+          <TableHead>School</TableHead>
+          <TableHead>Score</TableHead>
+          <TableHead>Status</TableHead>
+          <TableHead>
+            <span className="sr-only">Actions</span>
+          </TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {schools.map((school, index) => (
+          <TableRow key={school.id}>
+            <TableCell>{index + 1}</TableCell>
+            <TableCell>{school.name}</TableCell>
+            <TableCell>
+              <span className={cn(dataQualityScoreTextClass(school.score))}>
+                {school.score}%
+              </span>
+            </TableCell>
+            <TableCell>
+              <Badge variant={statusBadgeVariant(school.status)}>
+                {school.status}
+              </Badge>
+            </TableCell>
+            <TableCell className="w-px text-right">
+              <div className="inline-flex items-center gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate(`/school/${school.id}`)}
+                >
+                  View details
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon-sm"
+                  onClick={() => handleDownload(school)}
+                  aria-label="Download issues report"
+                >
+                  <Download />
+                </Button>
+              </div>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 }
