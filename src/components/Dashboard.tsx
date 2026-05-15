@@ -144,7 +144,7 @@ export function Dashboard() {
         </div>
 
         <div className="flex-1 overflow-y-auto">
-          <div className="mx-auto max-w-7xl p-8">
+          <div className="p-8">
             <h1 className="mb-3 font-bold text-3xl">Monthly reports</h1>
             <p className="mb-8 text-muted-foreground text-sm">
               Last updated: August 2025
