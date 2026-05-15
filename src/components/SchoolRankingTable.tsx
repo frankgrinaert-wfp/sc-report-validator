@@ -23,9 +23,9 @@ type SchoolRankingTableProps = {
 
 function statusBadgeVariant(status: SchoolStatus) {
   switch (status) {
-    case "To be Reviewed":
+    case "To be reviewed":
       return "default" as const;
-    case "Waiting for Corrections":
+    case "Waiting for corrections":
       return "warning" as const;
     case "Accepted":
       return "success" as const;

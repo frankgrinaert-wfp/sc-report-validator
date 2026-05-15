@@ -37,8 +37,8 @@ export function dataQualityScoreAccentClass(score: number): string {
 }
 
 export type SchoolStatus =
-  | "To be Reviewed"
-  | "Waiting for Corrections"
+  | "To be reviewed"
+  | "Waiting for corrections"
   | "Accepted";
 
 export type Occurrence = { date: string; value: unknown };
@@ -74,7 +74,7 @@ const allValidationIssues = {
       categoryKey: "alert.purchasePrice",
       issueKey: "issue.purchasePriceHigh",
       severity: "warning",
-      metric: "Price per Kg",
+      metric: "Price per kg",
       generateData: () => {
         const commodities = ["Rice", "Beans", "Sorghum", "Maize", "Oil"];
         const commodity =
@@ -90,7 +90,7 @@ const allValidationIssues = {
       categoryKey: "alert.purchasePrice",
       issueKey: "issue.purchasePriceLow",
       severity: "warning",
-      metric: "Price per Kg",
+      metric: "Price per kg",
       generateData: () => {
         const commodities = ["Rice", "Beans", "Sorghum", "Maize", "Oil"];
         const commodity =
@@ -117,7 +117,7 @@ const allValidationIssues = {
       categoryKey: "alert.purchasePrice",
       issueKey: "issue.batchDigits",
       severity: "warning",
-      metric: "Batch Number",
+      metric: "Batch number",
       generateData: () =>
         generateRandomOccurrences(
           ["2025-05-06", "2025-05-13"],
@@ -128,7 +128,7 @@ const allValidationIssues = {
       categoryKey: "alert.purchasePrice",
       issueKey: "issue.batchDuplicate",
       severity: "error",
-      metric: "Batch Number",
+      metric: "Batch number",
       generateData: () =>
         generateRandomOccurrences(
           ["2025-05-09", "2025-05-16"],
@@ -191,7 +191,7 @@ const allValidationIssues = {
       categoryKey: "alert.attendance",
       issueKey: "issue.attendanceExceeds",
       severity: "error",
-      metric: "Attendance / Enrolment",
+      metric: "Attendance / enrolment",
       generateData: () =>
         generateRandomOccurrences(
           ["2025-05-08", "2025-05-15"],
@@ -202,7 +202,7 @@ const allValidationIssues = {
       categoryKey: "alert.attendance",
       issueKey: "issue.enrolmentIncrease",
       severity: "warning",
-      metric: "Enrolment Change",
+      metric: "Enrolment change",
       generateData: () =>
         generateRandomOccurrences(
           ["2025-05-10"],
@@ -259,7 +259,7 @@ const allValidationIssues = {
       categoryKey: "alert.consumption",
       issueKey: "issue.cerealsExceeds",
       severity: "warning",
-      metric: "Grams/Student",
+      metric: "Grams/student",
       generateData: () =>
         generateRandomOccurrences(
           ["2025-05-05", "2025-05-12", "2025-05-19"],
@@ -270,7 +270,7 @@ const allValidationIssues = {
       categoryKey: "alert.consumption",
       issueKey: "issue.pulsesExceeds",
       severity: "warning",
-      metric: "Grams/Student",
+      metric: "Grams/student",
       generateData: () =>
         generateRandomOccurrences(
           ["2025-05-07", "2025-05-14"],
@@ -281,7 +281,7 @@ const allValidationIssues = {
       categoryKey: "alert.consumption",
       issueKey: "issue.consumptionHigh",
       severity: "warning",
-      metric: "Total Grams/Student",
+      metric: "Total grams/student",
       generateData: () =>
         generateRandomOccurrences(
           ["2025-05-03", "2025-05-10", "2025-05-17"],
@@ -292,7 +292,7 @@ const allValidationIssues = {
       categoryKey: "alert.consumption",
       issueKey: "issue.consumptionLow",
       severity: "warning",
-      metric: "Total Grams/Student",
+      metric: "Total grams/student",
       generateData: () =>
         generateRandomOccurrences(
           ["2025-05-06", "2025-05-13", "2025-05-20", "2025-05-27"],
@@ -303,7 +303,7 @@ const allValidationIssues = {
       categoryKey: "alert.consumption",
       issueKey: "issue.consumptionZero",
       severity: "error",
-      metric: "Total Grams/Student",
+      metric: "Total grams/student",
       generateData: () =>
         generateRandomOccurrences(
           ["2025-05-08", "2025-05-15", "2025-05-22"],
@@ -327,7 +327,7 @@ const allValidationIssues = {
       categoryKey: "alert.incident",
       issueKey: "issue.foodStolen",
       severity: "critical",
-      metric: "Quantity Lost (kg)",
+      metric: "Quantity lost (kg)",
       generateData: () =>
         generateRandomOccurrences(
           ["2025-05-11"],
@@ -338,7 +338,7 @@ const allValidationIssues = {
       categoryKey: "alert.incident",
       issueKey: "issue.lossOther",
       severity: "warning",
-      metric: "Quantity Lost (kg)",
+      metric: "Quantity lost (kg)",
       generateData: () =>
         generateRandomOccurrences(
           ["2025-05-14", "2025-05-21"],
@@ -349,7 +349,7 @@ const allValidationIssues = {
       categoryKey: "alert.incident",
       issueKey: "issue.lossExceeds",
       severity: "error",
-      metric: "Quantity Lost (kg)",
+      metric: "Quantity lost (kg)",
       generateData: () =>
         generateRandomOccurrences(
           ["2025-05-18"],
@@ -384,7 +384,7 @@ const allValidationIssues = {
       categoryKey: "alert.crossFile",
       issueKey: "issue.saltNotUsed",
       severity: "warning",
-      metric: "Salt Stock (kg)",
+      metric: "Salt stock (kg)",
       generateData: () =>
         generateRandomOccurrences(
           ["2025-05-09", "2025-05-16", "2025-05-23"],
@@ -395,7 +395,7 @@ const allValidationIssues = {
       categoryKey: "alert.crossFile",
       issueKey: "issue.oilNotUsed",
       severity: "warning",
-      metric: "Oil Stock (L)",
+      metric: "Oil stock (L)",
       generateData: () =>
         generateRandomOccurrences(
           ["2025-05-10", "2025-05-17", "2025-05-24"],
@@ -468,7 +468,7 @@ const SCHOOL_DETAIL_BY_ID: Record<string, SchoolDetailRecord> = {
     name: "School 45",
     code: "1045",
     score: 71.8,
-    status: "To be Reviewed",
+    status: "To be reviewed",
     enrollment: { total: 220, boys: 112, girls: 108 },
     attendance: { total: 187, boys: 95, girls: 92 },
     totalMeals: 3740,
@@ -480,7 +480,7 @@ const SCHOOL_DETAIL_BY_ID: Record<string, SchoolDetailRecord> = {
     name: "School 2",
     code: "1002",
     score: 73.1,
-    status: "To be Reviewed",
+    status: "To be reviewed",
     enrollment: { total: 280, boys: 145, girls: 135 },
     attendance: { total: 245, boys: 128, girls: 117 },
     totalMeals: 4900,
@@ -492,7 +492,7 @@ const SCHOOL_DETAIL_BY_ID: Record<string, SchoolDetailRecord> = {
     name: "School 38",
     code: "1038",
     score: 75.0,
-    status: "To be Reviewed",
+    status: "To be reviewed",
     enrollment: { total: 350, boys: 180, girls: 170 },
     attendance: { total: 312, boys: 164, girls: 148 },
     totalMeals: 6240,
@@ -504,7 +504,7 @@ const SCHOOL_DETAIL_BY_ID: Record<string, SchoolDetailRecord> = {
     name: "School 37",
     code: "1037",
     score: 75.1,
-    status: "To be Reviewed",
+    status: "To be reviewed",
     enrollment: { total: 230, boys: 118, girls: 112 },
     attendance: { total: 198, boys: 102, girls: 96 },
     totalMeals: 3960,
@@ -516,7 +516,7 @@ const SCHOOL_DETAIL_BY_ID: Record<string, SchoolDetailRecord> = {
     name: "School 23",
     code: "1023",
     score: 75.6,
-    status: "Waiting for Corrections",
+    status: "Waiting for corrections",
     enrollment: { total: 315, boys: 163, girls: 152 },
     attendance: { total: 276, boys: 143, girls: 133 },
     totalMeals: 5520,
@@ -528,7 +528,7 @@ const SCHOOL_DETAIL_BY_ID: Record<string, SchoolDetailRecord> = {
     name: "School 39",
     code: "1039",
     score: 76.3,
-    status: "To be Reviewed",
+    status: "To be reviewed",
     enrollment: { total: 255, boys: 132, girls: 123 },
     attendance: { total: 223, boys: 115, girls: 108 },
     totalMeals: 4460,
@@ -540,7 +540,7 @@ const SCHOOL_DETAIL_BY_ID: Record<string, SchoolDetailRecord> = {
     name: "School 3",
     code: "1003",
     score: 76.6,
-    status: "Waiting for Corrections",
+    status: "Waiting for corrections",
     enrollment: { total: 215, boys: 110, girls: 105 },
     attendance: { total: 189, boys: 97, girls: 92 },
     totalMeals: 3780,
@@ -552,7 +552,7 @@ const SCHOOL_DETAIL_BY_ID: Record<string, SchoolDetailRecord> = {
     name: "School 36",
     code: "1036",
     score: 77.4,
-    status: "To be Reviewed",
+    status: "To be reviewed",
     enrollment: { total: 300, boys: 155, girls: 145 },
     attendance: { total: 264, boys: 138, girls: 126 },
     totalMeals: 5280,
@@ -564,7 +564,7 @@ const SCHOOL_DETAIL_BY_ID: Record<string, SchoolDetailRecord> = {
     name: "School 14",
     code: "1014",
     score: 79.2,
-    status: "To be Reviewed",
+    status: "To be reviewed",
     enrollment: { total: 235, boys: 122, girls: 113 },
     attendance: { total: 201, boys: 104, girls: 97 },
     totalMeals: 4020,
@@ -576,7 +576,7 @@ const SCHOOL_DETAIL_BY_ID: Record<string, SchoolDetailRecord> = {
     name: "School 8",
     code: "1008",
     score: 81.5,
-    status: "Waiting for Corrections",
+    status: "Waiting for corrections",
     enrollment: { total: 325, boys: 168, girls: 157 },
     attendance: { total: 287, boys: 149, girls: 138 },
     totalMeals: 5740,
@@ -588,7 +588,7 @@ const SCHOOL_DETAIL_BY_ID: Record<string, SchoolDetailRecord> = {
     name: "School 29",
     code: "1029",
     score: 82.8,
-    status: "To be Reviewed",
+    status: "To be reviewed",
     enrollment: { total: 270, boys: 140, girls: 130 },
     attendance: { total: 234, boys: 121, girls: 113 },
     totalMeals: 4680,
@@ -600,7 +600,7 @@ const SCHOOL_DETAIL_BY_ID: Record<string, SchoolDetailRecord> = {
     name: "School 17",
     code: "1017",
     score: 84.3,
-    status: "Waiting for Corrections",
+    status: "Waiting for corrections",
     enrollment: { total: 360, boys: 186, girls: 174 },
     attendance: { total: 318, boys: 166, girls: 152 },
     totalMeals: 6360,
@@ -612,7 +612,7 @@ const SCHOOL_DETAIL_BY_ID: Record<string, SchoolDetailRecord> = {
     name: "School 41",
     code: "1041",
     score: 85.6,
-    status: "To be Reviewed",
+    status: "To be reviewed",
     enrollment: { total: 290, boys: 150, girls: 140 },
     attendance: { total: 256, boys: 133, girls: 123 },
     totalMeals: 5120,
@@ -624,7 +624,7 @@ const SCHOOL_DETAIL_BY_ID: Record<string, SchoolDetailRecord> = {
     name: "School 12",
     code: "1012",
     score: 87.1,
-    status: "To be Reviewed",
+    status: "To be reviewed",
     enrollment: { total: 240, boys: 124, girls: 116 },
     attendance: { total: 209, boys: 108, girls: 101 },
     totalMeals: 4180,
@@ -636,7 +636,7 @@ const SCHOOL_DETAIL_BY_ID: Record<string, SchoolDetailRecord> = {
     name: "School 26",
     code: "1026",
     score: 88.9,
-    status: "Waiting for Corrections",
+    status: "Waiting for corrections",
     enrollment: { total: 335, boys: 174, girls: 161 },
     attendance: { total: 295, boys: 154, girls: 141 },
     totalMeals: 5900,
@@ -648,7 +648,7 @@ const SCHOOL_DETAIL_BY_ID: Record<string, SchoolDetailRecord> = {
     name: "School 5",
     code: "1005",
     score: 90.2,
-    status: "To be Reviewed",
+    status: "To be reviewed",
     enrollment: { total: 305, boys: 158, girls: 147 },
     attendance: { total: 267, boys: 139, girls: 128 },
     totalMeals: 5340,
@@ -660,7 +660,7 @@ const SCHOOL_DETAIL_BY_ID: Record<string, SchoolDetailRecord> = {
     name: "School 33",
     code: "1033",
     score: 91.4,
-    status: "Waiting for Corrections",
+    status: "Waiting for corrections",
     enrollment: { total: 275, boys: 143, girls: 132 },
     attendance: { total: 241, boys: 125, girls: 116 },
     totalMeals: 4820,
@@ -672,7 +672,7 @@ const SCHOOL_DETAIL_BY_ID: Record<string, SchoolDetailRecord> = {
     name: "School 19",
     code: "1019",
     score: 93.7,
-    status: "To be Reviewed",
+    status: "To be reviewed",
     enrollment: { total: 320, boys: 166, girls: 154 },
     attendance: { total: 278, boys: 145, girls: 133 },
     totalMeals: 5560,

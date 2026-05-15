@@ -51,8 +51,8 @@ export function Dashboard() {
       case "status": {
         const statusOrder = {
           Accepted: 1,
-          "To be Reviewed": 2,
-          "Waiting for Corrections": 3,
+          "To be reviewed": 2,
+          "Waiting for corrections": 3,
         };
         return statusOrder[a.status] - statusOrder[b.status];
       }

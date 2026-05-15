@@ -49,9 +49,9 @@ import { cn } from "@/lib/utils";
 
 function statusBadgeVariant(status: SchoolStatus) {
   switch (status) {
-    case "To be Reviewed":
+    case "To be reviewed":
       return "default" as const;
-    case "Waiting for Corrections":
+    case "Waiting for corrections":
       return "warning" as const;
     case "Accepted":
       return "success" as const;
@@ -102,10 +102,10 @@ function SchoolStatusSelect({ school }: { school: SchoolDetailRecord }) {
           </SelectValue>
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="To be Reviewed">
+          <SelectItem value="To be reviewed">
             <Badge variant="default">To be reviewed</Badge>
           </SelectItem>
-          <SelectItem value="Waiting for Corrections">
+          <SelectItem value="Waiting for corrections">
             <Badge variant="warning">Waiting for corrections</Badge>
           </SelectItem>
           <SelectItem value="Accepted">
