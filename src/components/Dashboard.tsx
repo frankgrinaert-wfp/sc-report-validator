@@ -191,31 +191,33 @@ export function Dashboard() {
             <SettingsSheet />
           </div>
 
-          <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
-            <Select value={qualityFilter} onValueChange={setQualityFilter}>
-              <SelectTrigger className="w-full sm:w-48">
-                <SelectValue>{getQualityLabel(qualityFilter)}</SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="excellent">Excellent</SelectItem>
-                <SelectItem value="good">Good</SelectItem>
-                <SelectItem value="fair">Fair</SelectItem>
-                <SelectItem value="critical">Critical</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+              <Select value={qualityFilter} onValueChange={setQualityFilter}>
+                <SelectTrigger className="w-full sm:w-48">
+                  <SelectValue>{getQualityLabel(qualityFilter)}</SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="excellent">Excellent</SelectItem>
+                  <SelectItem value="good">Good</SelectItem>
+                  <SelectItem value="fair">Fair</SelectItem>
+                  <SelectItem value="critical">Critical</SelectItem>
+                </SelectContent>
+              </Select>
 
-            <Select value={orderBy} onValueChange={setOrderBy}>
-              <SelectTrigger className="w-full sm:w-48">
-                <SelectValue placeholder="Order by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="score-asc">Score (ascending)</SelectItem>
-                <SelectItem value="score-desc">Score (descending)</SelectItem>
-                <SelectItem value="quality">Quality</SelectItem>
-                <SelectItem value="status">Status</SelectItem>
-              </SelectContent>
-            </Select>
+              <Select value={orderBy} onValueChange={setOrderBy}>
+                <SelectTrigger className="w-full sm:w-48">
+                  <SelectValue placeholder="Order by" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="score-asc">Score (ascending)</SelectItem>
+                  <SelectItem value="score-desc">Score (descending)</SelectItem>
+                  <SelectItem value="quality">Quality</SelectItem>
+                  <SelectItem value="status">Status</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
             <Button variant="outline">
               <Download />
