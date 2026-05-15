@@ -145,7 +145,10 @@ export function Dashboard() {
 
         <div className="flex-1 overflow-y-auto">
           <div className="mx-auto max-w-7xl p-8">
-            <h1 className="mb-8 font-bold text-3xl">Monthly reports</h1>
+            <h1 className="mb-3 font-bold text-3xl">Monthly reports</h1>
+            <p className="mb-8 text-muted-foreground text-sm">
+              Last updated: August 2025
+            </p>
             <div className="mb-8">
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <div className="flex flex-col gap-2">
@@ -218,10 +221,6 @@ export function Dashboard() {
                 </div>
               </div>
             </div>
-
-            <p className="mb-8 text-muted-foreground text-sm">
-              Last updated: August 2025
-            </p>
 
             <div>
               <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">

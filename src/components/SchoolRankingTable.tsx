@@ -84,12 +84,7 @@ export function SchoolRankingTable({ schools }: SchoolRankingTableProps) {
                 <td className="px-4 py-3 text-muted-foreground">{index + 1}</td>
                 <td className="px-4 py-3 font-medium">{school.name}</td>
                 <td className="px-4 py-3 tabular-nums">
-                  <span
-                    className={cn(
-                      "font-semibold",
-                      dataQualityScoreTextClass(school.score),
-                    )}
-                  >
+                  <span className={cn(dataQualityScoreTextClass(school.score))}>
                     {school.score}%
                   </span>
                 </td>
