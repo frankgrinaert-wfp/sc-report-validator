@@ -13,7 +13,7 @@ export function SettingsSheet() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button type="button" variant="outline" className="gap-2">
+        <Button type="button" variant="outline">
           <Settings2 />
           Settings
         </Button>

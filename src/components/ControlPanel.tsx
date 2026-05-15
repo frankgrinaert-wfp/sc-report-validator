@@ -266,7 +266,7 @@ export function ControlPanel() {
     <div className="overflow-y-auto">
       <div className="p-6">
         <div className="mb-6">
-          <Button type="button" variant="outline" className="w-full justify-start gap-2">
+          <Button type="button" variant="outline">
             <RotateCcw />
             Reset filters
           </Button>
@@ -283,7 +283,6 @@ export function ControlPanel() {
                 type="button"
                 variant="outline"
                 size="xs"
-                className="flex-1"
                 onClick={selectAll}
               >
                 Select all
@@ -292,7 +291,6 @@ export function ControlPanel() {
                 type="button"
                 variant="outline"
                 size="xs"
-                className="flex-1"
                 onClick={deselectAll}
               >
                 Deselect all

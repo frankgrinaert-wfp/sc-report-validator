@@ -178,14 +178,13 @@ export function SchoolDetail() {
                 <SchoolStatusSelect key={school.id} school={school} />
                 <div className="flex flex-wrap items-center gap-3">
                   <SettingsSheet />
-                  <Button type="button" variant="secondary" className="gap-2">
+                  <Button type="button" variant="secondary">
                     <Download />
                     Download issues report
                   </Button>
                   <Button
                     type="button"
                     variant="outline"
-                    className="gap-2"
                     onClick={() => navigate("/")}
                   >
                     <List />
@@ -422,7 +421,6 @@ export function SchoolDetail() {
                 variant="outline"
                 onClick={handlePrevious}
                 disabled={school.id === 1}
-                className="gap-2"
               >
                 <ChevronLeft />
                 Previous school
@@ -432,7 +430,6 @@ export function SchoolDetail() {
                 variant="outline"
                 onClick={handleNext}
                 disabled={school.id === 20}
-                className="gap-2"
               >
                 Next school
                 <ChevronRight />
