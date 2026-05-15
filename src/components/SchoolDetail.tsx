@@ -7,7 +7,7 @@ import {
   Info,
   List,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import {
   CartesianGrid,
@@ -18,7 +18,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { ControlPanel } from "@/components/ControlPanel";
+import { SettingsSheet } from "@/components/SettingsSheet";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -122,13 +122,6 @@ export function SchoolDetail() {
   const navigate = useNavigate();
 
   const school = getSchoolDetail(schoolId);
-  const [isPanelOpen, setIsPanelOpen] = useState(true);
-
-  useEffect(() => {
-    const handleToggle = () => setIsPanelOpen((prev) => !prev);
-    window.addEventListener("togglePanel", handleToggle);
-    return () => window.removeEventListener("togglePanel", handleToggle);
-  }, []);
 
   const historicalData = useMemo(() => {
     if (!school) return [];
@@ -174,35 +167,8 @@ export function SchoolDetail() {
 
   return (
     <div className="flex h-screen flex-col">
-      <div className="relative flex flex-1 overflow-hidden">
-        {!isPanelOpen ? (
-          <div className="absolute top-2 left-0 z-10 flex flex-col items-center gap-2 rounded-e-md border border-border bg-card p-2 shadow-sm">
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon-sm"
-              onClick={() => setIsPanelOpen(true)}
-              aria-label="Show control panel"
-              title="Show control panel"
-            >
-              <ChevronRight />
-            </Button>
-            <span className="max-w-16 text-center text-muted-foreground text-xs font-medium">
-              Control panel
-            </span>
-          </div>
-        ) : null}
-
-        <div
-          className={`shrink-0 overflow-hidden border-e border-border transition-[width] duration-300 ease-in-out ${
-            isPanelOpen ? "w-72" : "w-0"
-          }`}
-        >
-          <ControlPanel />
-        </div>
-
-        <div className="flex-1 overflow-y-auto">
-          <div className="mx-auto max-w-5xl p-8">
+      <div className="flex-1 overflow-y-auto">
+        <div className="mx-auto max-w-5xl p-8">
             <Card className="mb-6">
               <CardHeader>
                 <CardTitle className="text-2xl">{school.name}</CardTitle>
@@ -210,7 +176,8 @@ export function SchoolDetail() {
               </CardHeader>
               <CardContent className="flex flex-col gap-4 border-border border-t pt-6 sm:flex-row sm:items-center sm:justify-between">
                 <SchoolStatusSelect key={school.id} school={school} />
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap items-center gap-3">
+                  <SettingsSheet />
                   <Button type="button" variant="secondary" className="gap-2">
                     <Download />
                     Download issues report
@@ -474,6 +441,5 @@ export function SchoolDetail() {
           </div>
         </div>
       </div>
-    </div>
   );
 }

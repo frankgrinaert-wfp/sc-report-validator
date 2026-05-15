@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronLeft, Minus, Plus, RotateCcw } from "lucide-react";
+import { ChevronDown, Minus, Plus, RotateCcw } from "lucide-react";
 import type { ReactNode } from "react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -263,22 +263,8 @@ export function ControlPanel() {
   );
 
   return (
-    <div className="h-full overflow-y-auto border-border border-e bg-card">
+    <div className="overflow-y-auto">
       <div className="p-6">
-        <div className="mb-6 flex items-center justify-between gap-2">
-          <h2 className="font-semibold text-base">Control panel</h2>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            onClick={() => window.dispatchEvent(new Event("togglePanel"))}
-            aria-label="Hide control panel"
-            title="Hide control panel"
-          >
-            <ChevronLeft />
-          </Button>
-        </div>
-
         <div className="mb-6">
           <Button type="button" variant="outline" className="w-full justify-start gap-2">
             <RotateCcw />
@@ -286,7 +272,7 @@ export function ControlPanel() {
           </Button>
         </div>
 
-        <div className="flex flex-col gap-2 border-border border-t pt-6">
+        <div className="flex flex-col gap-2">
           <PanelSection
             title="Alerts filter"
             open={issueTypesOpen}
