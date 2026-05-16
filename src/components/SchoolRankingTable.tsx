@@ -75,7 +75,7 @@ export function SchoolRankingTable({ schools }: SchoolRankingTableProps) {
         <TableRow>
           <TableHead>Rank</TableHead>
           <TableHead>School</TableHead>
-          <TableHead>Score</TableHead>
+          <TableHead>Data quality</TableHead>
           <TableHead>Status</TableHead>
           <TableHead>
             <span className="sr-only">Actions</span>

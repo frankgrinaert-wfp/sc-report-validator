@@ -211,9 +211,12 @@ export function Dashboard() {
                   <SelectValue placeholder="Order by" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="score-asc">Score (ascending)</SelectItem>
-                  <SelectItem value="score-desc">Score (descending)</SelectItem>
-                  <SelectItem value="quality">Quality</SelectItem>
+                  <SelectItem value="score-asc">
+                    Data quality (ascending)
+                  </SelectItem>
+                  <SelectItem value="score-desc">
+                    Data quality (descending)
+                  </SelectItem>
                   <SelectItem value="status">Status</SelectItem>
                 </SelectContent>
               </Select>
