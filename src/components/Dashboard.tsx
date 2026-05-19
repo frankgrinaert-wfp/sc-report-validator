@@ -125,31 +125,31 @@ export function Dashboard() {
 
   return (
     <div className="flex h-screen flex-col">
-      <div className="fixed top-6 right-6 z-50">
-        <Select value={country} onValueChange={setCountry}>
-          <SelectTrigger
-            id="country-select"
-            className="w-40"
-            aria-label="Country"
-          >
-            <SelectValue placeholder="Select country" />
-          </SelectTrigger>
-          <SelectContent>
-            {COUNTRIES.map(({ value, label, flag }) => (
-              <SelectItem key={value} value={value}>
-                {flag} {label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
       <div className="flex-1 overflow-y-auto">
         <div className="p-8 flex flex-col gap-7">
-          <div className="flex flex-col gap-4">
-            <h1 className="font-bold text-3xl">Monthly reports</h1>
-            <p className="text-muted-foreground text-sm">
-              Review and validate monthly reports. Last updated: August 2025
-            </p>
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col gap-4">
+              <h1 className="font-bold text-3xl">Monthly reports</h1>
+              <p className="text-muted-foreground text-sm">
+                Review and validate monthly reports. Last updated: August 2025
+              </p>
+            </div>
+            <Select value={country} onValueChange={setCountry}>
+              <SelectTrigger
+                id="country-select"
+                className="w-40 shrink-0"
+                aria-label="Country"
+              >
+                <SelectValue placeholder="Select country" />
+              </SelectTrigger>
+              <SelectContent>
+                {COUNTRIES.map(({ value, label, flag }) => (
+                  <SelectItem key={value} value={value}>
+                    {flag} {label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="flex flex-wrap items-end gap-3">
             <div className="flex min-w-0 flex-1 items-end gap-3">
