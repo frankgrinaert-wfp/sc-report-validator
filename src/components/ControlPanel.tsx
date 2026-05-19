@@ -1,8 +1,7 @@
-import { Minus, Plus } from "lucide-react";
 import type { ReactNode } from "react";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { Field, FieldLabel } from "./ui/field";
 
 const issueTypes = [
@@ -144,42 +143,29 @@ const issueTypes = [
   },
 ] as const;
 
-type ThresholdItemProps = {
+type NumberFieldProps = {
+  id: string;
   label: string;
   value: number;
   onChange: (value: number) => void;
+  step?: string;
 };
 
-function ThresholdItem({ label, value, onChange }: ThresholdItemProps) {
+function NumberField({ id, label, value, onChange, step }: NumberFieldProps) {
   return (
-    <div className="mb-4 last:mb-0">
-      <p className="mb-2 text-muted-foreground text-xs">{label}</p>
-      <div className="flex items-center justify-between rounded-md border border-border bg-card px-3 py-2">
-        <span className="font-medium text-primary-600 text-xs tabular-nums">
-          {value.toFixed(2).replace(".", ",")}
-        </span>
-        <div className="flex items-center gap-2">
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-xs"
-            aria-label="Decrease"
-            onClick={() => onChange(value - 1)}
-          >
-            <Minus />
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-xs"
-            aria-label="Increase"
-            onClick={() => onChange(value + 1)}
-          >
-            <Plus />
-          </Button>
-        </div>
-      </div>
-    </div>
+    <Field>
+      <FieldLabel htmlFor={id}>{label}</FieldLabel>
+      <Input
+        id={id}
+        type="number"
+        step={step}
+        value={value}
+        onChange={(e) => {
+          const next = e.target.valueAsNumber;
+          if (!Number.isNaN(next)) onChange(next);
+        }}
+      />
+    </Field>
   );
 }
 
@@ -190,7 +176,7 @@ type SettingsGroupProps = {
 
 function SettingsGroup({ title, children }: SettingsGroupProps) {
   return (
-    <section className="space-y-4">
+    <section className="space-y-5 p-5 border rounded-lg">
       <h3 className="font-semibold text-xs text-muted-foreground uppercase">
         {title}
       </h3>
@@ -239,10 +225,10 @@ export function ControlPanel() {
 
   return (
     <div>
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-4">
         {Object.entries(groupedIssues).map(([category, issues]) => (
           <SettingsGroup key={category} title={category}>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {issues.map((issue) => (
                 <Field key={issue.id} orientation="horizontal">
                   <Checkbox
@@ -260,65 +246,93 @@ export function ControlPanel() {
         ))}
 
         <SettingsGroup title="Consumption thresholds">
-          <ThresholdItem
-            label="Cereals max (g)"
-            value={cerealsMax}
-            onChange={setCerealsMax}
-          />
-          <ThresholdItem
-            label="Pulses max (g)"
-            value={pulsesMax}
-            onChange={setPulsesMax}
-          />
-          <ThresholdItem
-            label="Aggregated min (g)"
-            value={aggregatedMin}
-            onChange={setAggregatedMin}
-          />
-          <ThresholdItem
-            label="Aggregated max (g)"
-            value={aggregatedMax}
-            onChange={setAggregatedMax}
-          />
+          <div className="space-y-5">
+            <NumberField
+              id="cereals-max"
+              label="Cereals max (g)"
+              value={cerealsMax}
+              onChange={setCerealsMax}
+            />
+            <NumberField
+              id="pulses-max"
+              label="Pulses max (g)"
+              value={pulsesMax}
+              onChange={setPulsesMax}
+            />
+            <NumberField
+              id="aggregated-min"
+              label="Aggregated min (g)"
+              value={aggregatedMin}
+              onChange={setAggregatedMin}
+            />
+            <NumberField
+              id="aggregated-max"
+              label="Aggregated max (g)"
+              value={aggregatedMax}
+              onChange={setAggregatedMax}
+            />
+          </div>
         </SettingsGroup>
 
         <SettingsGroup title="Expected commodity prices">
-          <ThresholdItem
-            label="Sorghum ($/kg)"
-            value={sorghum}
-            onChange={setSorghum}
-          />
-          <ThresholdItem
-            label="Millet ($/kg)"
-            value={millet}
-            onChange={setMillet}
-          />
-          <ThresholdItem label="Salt ($/kg)" value={salt} onChange={setSalt} />
-          <ThresholdItem
-            label="Palm oil — red ($/kg)"
-            value={palmOil}
-            onChange={setPalmOil}
-          />
-          <ThresholdItem
-            label="Onion ($/kg)"
-            value={onion}
-            onChange={setOnion}
-          />
-          <ThresholdItem
-            label="Sweet potato leaves ($/kg)"
-            value={sweetPotato}
-            onChange={setSweetPotato}
-          />
-          <ThresholdItem
-            label="Dried fish ($/kg)"
-            value={driedFish}
-            onChange={setDriedFish}
-          />
-          <ThresholdItem
-            label="Fish — fresh ($/kg)"
-            value={fishFresh}
-            onChange={setFishFresh}
-          />
+          <div className="space-y-5">
+            <NumberField
+              id="sorghum"
+              label="Sorghum ($/kg)"
+              value={sorghum}
+              onChange={setSorghum}
+              step="0.01"
+            />
+            <NumberField
+              id="millet"
+              label="Millet ($/kg)"
+              value={millet}
+              onChange={setMillet}
+              step="0.01"
+            />
+            <NumberField
+              id="salt"
+              label="Salt ($/kg)"
+              value={salt}
+              onChange={setSalt}
+              step="0.01"
+            />
+            <NumberField
+              id="palm-oil"
+              label="Palm oil — red ($/kg)"
+              value={palmOil}
+              onChange={setPalmOil}
+              step="0.01"
+            />
+            <NumberField
+              id="onion"
+              label="Onion ($/kg)"
+              value={onion}
+              onChange={setOnion}
+              step="0.01"
+            />
+            <NumberField
+              id="sweet-potato"
+              label="Sweet potato leaves ($/kg)"
+              value={sweetPotato}
+              onChange={setSweetPotato}
+              step="0.01"
+            />
+            <NumberField
+              id="dried-fish"
+              label="Dried fish ($/kg)"
+              value={driedFish}
+              onChange={setDriedFish}
+              step="0.01"
+            />
+            <NumberField
+              id="fish-fresh"
+              label="Fish — fresh ($/kg)"
+              value={fishFresh}
+              onChange={setFishFresh}
+              step="0.01"
+            />
+          </div>
         </SettingsGroup>
       </div>
     </div>

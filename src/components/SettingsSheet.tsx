@@ -24,7 +24,7 @@ export function SettingsSheet() {
         <SheetHeader>
           <SheetTitle>Settings</SheetTitle>
         </SheetHeader>
-        <div className="overflow-y-auto px-5">
+        <div className="overflow-y-auto px-4">
           <ControlPanel />
         </div>
         <SheetFooter className="shrink-0 flex-row justify-between gap-2">
