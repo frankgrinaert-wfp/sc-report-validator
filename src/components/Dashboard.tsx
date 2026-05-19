@@ -1,7 +1,13 @@
-import { Download } from "lucide-react";
+import { ArrowUpDown, Download } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Select,
   SelectContent,
@@ -9,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import type { SchoolStatus } from "@/data/reportDashboard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SettingsSheet } from "@/components/SettingsSheet";
 import { SchoolRankingTable } from "@/components/SchoolRankingTable";
@@ -25,17 +32,34 @@ const COUNTRIES = [
   { value: "senegal", label: "Senegal", flag: "🇸🇳" },
 ] as const;
 
+const STATUS_FILTERS: { value: "all" | SchoolStatus; label: string }[] = [
+  { value: "all", label: "Status: All" },
+  { value: "To be reviewed", label: "Status: To be reviewed" },
+  {
+    value: "Waiting for corrections",
+    label: "Status: Waiting for corrections",
+  },
+  { value: "Accepted", label: "Status: Accepted" },
+];
+
 export function Dashboard() {
   const [country, setCountry] = useState("gambia");
   const [qualityFilter, setQualityFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState<"all" | SchoolStatus>("all");
   const [orderBy, setOrderBy] = useState("score-asc");
 
-  const filteredSchools =
-    qualityFilter === "all"
-      ? DASHBOARD_SCHOOLS
-      : DASHBOARD_SCHOOLS.filter(
-          (school) => schoolQualityFromScore(school.score) === qualityFilter,
-        );
+  const filteredSchools = DASHBOARD_SCHOOLS.filter((school) => {
+    if (
+      qualityFilter !== "all" &&
+      schoolQualityFromScore(school.score) !== qualityFilter
+    ) {
+      return false;
+    }
+    if (statusFilter !== "all" && school.status !== statusFilter) {
+      return false;
+    }
+    return true;
+  });
 
   const sortedSchools = [...filteredSchools].sort((a, b) => {
     switch (orderBy) {
@@ -99,23 +123,6 @@ export function Dashboard() {
   ).toFixed(1);
   const avgMealsPerDay = Math.round(aggregatedData.totalAttendance / 20);
 
-  const getQualityLabel = (filter: string) => {
-    switch (filter) {
-      case "all":
-        return "Quality (all)";
-      case "excellent":
-        return "Quality (excellent)";
-      case "good":
-        return "Quality (good)";
-      case "fair":
-        return "Quality (fair)";
-      case "critical":
-        return "Quality (critical)";
-      default:
-        return filter;
-    }
-  };
-
   return (
     <div className="flex h-screen flex-col">
       <div className="fixed top-6 right-6 z-50">
@@ -144,12 +151,15 @@ export function Dashboard() {
               Review and validate monthly reports. Last updated: August 2025
             </p>
           </div>
-          <div className="flex flex-wrap items-end gap-4">
-            <div className="grid min-w-0 flex-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="month-select">Month</Label>
+          <div className="flex flex-wrap items-end gap-3">
+            <div className="flex min-w-0 flex-1 items-end gap-3">
+              <div className="grid min-w-0 flex-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
                 <Select defaultValue="may">
-                  <SelectTrigger id="month-select" className="w-full">
+                  <SelectTrigger
+                    id="month-select"
+                    className="w-full"
+                    aria-label="Month"
+                  >
                     <SelectValue placeholder="Select month" />
                   </SelectTrigger>
                   <SelectContent>
@@ -167,12 +177,13 @@ export function Dashboard() {
                     <SelectItem value="december">December</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
 
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="year-select">Year</Label>
                 <Select defaultValue="2025">
-                  <SelectTrigger id="year-select" className="w-full">
+                  <SelectTrigger
+                    id="year-select"
+                    className="w-full"
+                    aria-label="Year"
+                  >
                     <SelectValue placeholder="Select year" />
                   </SelectTrigger>
                   <SelectContent>
@@ -182,12 +193,13 @@ export function Dashboard() {
                     <SelectItem value="2022">2022</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
 
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="region-select">Admin region</Label>
                 <Select defaultValue="region1">
-                  <SelectTrigger id="region-select" className="w-full">
+                  <SelectTrigger
+                    id="region-select"
+                    className="w-full"
+                    aria-label="Admin region"
+                  >
                     <SelectValue placeholder="Select region" />
                   </SelectTrigger>
                   <SelectContent>
@@ -197,42 +209,82 @@ export function Dashboard() {
                     <SelectItem value="region4">Admin region 4</SelectItem>
                   </SelectContent>
                 </Select>
+
+                <Select value={qualityFilter} onValueChange={setQualityFilter}>
+                  <SelectTrigger
+                    id="quality-select"
+                    className="w-full"
+                    aria-label="Quality"
+                  >
+                    <SelectValue placeholder="Quality: All" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Quality: All</SelectItem>
+                    <SelectItem value="excellent">
+                      Quality: Excellent
+                    </SelectItem>
+                    <SelectItem value="good">Quality: Good</SelectItem>
+                    <SelectItem value="fair">Quality: Fair</SelectItem>
+                    <SelectItem value="critical">Quality: Critical</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Select
+                  value={statusFilter}
+                  onValueChange={(value) =>
+                    setStatusFilter(value as "all" | SchoolStatus)
+                  }
+                >
+                  <SelectTrigger
+                    id="status-select"
+                    className="w-full"
+                    aria-label="Status"
+                  >
+                    <SelectValue placeholder="Status: All" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {STATUS_FILTERS.map(({ value, label }) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    aria-label="Sorting"
+                  >
+                    <ArrowUpDown />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuRadioGroup
+                    value={orderBy}
+                    onValueChange={setOrderBy}
+                  >
+                    <DropdownMenuRadioItem value="score-asc">
+                      Data quality (ascending)
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="score-desc">
+                      Data quality (descending)
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="status">
+                      Status
+                    </DropdownMenuRadioItem>
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
             <SettingsSheet />
           </div>
 
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-              <Select value={qualityFilter} onValueChange={setQualityFilter}>
-                <SelectTrigger className="w-full sm:w-48">
-                  <SelectValue>{getQualityLabel(qualityFilter)}</SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="excellent">Excellent</SelectItem>
-                  <SelectItem value="good">Good</SelectItem>
-                  <SelectItem value="fair">Fair</SelectItem>
-                  <SelectItem value="critical">Critical</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Select value={orderBy} onValueChange={setOrderBy}>
-                <SelectTrigger className="w-full sm:w-48">
-                  <SelectValue placeholder="Order by" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="score-asc">
-                    Data quality (ascending)
-                  </SelectItem>
-                  <SelectItem value="score-desc">
-                    Data quality (descending)
-                  </SelectItem>
-                  <SelectItem value="status">Status</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
+          <div className="flex justify-end">
             <Button variant="outline">
               <Download />
               Download all reports
