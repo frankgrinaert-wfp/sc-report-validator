@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Field, FieldLabel } from "./ui/field";
 
 const issueTypes = [
   {
@@ -191,7 +192,7 @@ type SettingsGroupProps = {
 function SettingsGroup({ title, children }: SettingsGroupProps) {
   return (
     <section className="space-y-3">
-      <h3 className="font-medium text-sm">{title}</h3>
+      <h3 className="font-semibold text-base">{title}</h3>
       {children}
     </section>
   );
@@ -225,14 +226,6 @@ export function ControlPanel() {
     });
   };
 
-  const selectAll = () => {
-    setSelectedIssues(new Set(issueTypes.map((issue) => issue.id)));
-  };
-
-  const deselectAll = () => {
-    setSelectedIssues(new Set());
-  };
-
   const groupedIssues = issueTypes.reduce(
     (acc, issue) => {
       const list = acc[issue.category] ?? [];
@@ -255,19 +248,16 @@ export function ControlPanel() {
                 </p>
                 <div className="space-y-2">
                   {issues.map((issue) => (
-                    <div key={issue.id} className="flex items-start gap-2">
+                    <Field orientation="horizontal">
                       <Checkbox
                         id={issue.id}
                         checked={selectedIssues.has(issue.id)}
                         onCheckedChange={() => toggleIssue(issue.id)}
                       />
-                      <Label
-                        htmlFor={issue.id}
-                        className="font-normal text-muted-foreground text-xs leading-snug"
-                      >
+                      <FieldLabel htmlFor={issue.id} className="font-normal">
                         {issue.label}
-                      </Label>
-                    </div>
+                      </FieldLabel>
+                    </Field>
                   ))}
                 </div>
               </div>
