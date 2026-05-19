@@ -70,6 +70,7 @@ export function SchoolRankingTable({ schools }: SchoolRankingTableProps) {
   };
 
   return (
+    <div className="overflow-hidden rounded-lg bg-background shadow-sm">
     <Table>
       <TableHeader>
         <TableRow>
@@ -122,5 +123,6 @@ export function SchoolRankingTable({ schools }: SchoolRankingTableProps) {
         ))}
       </TableBody>
     </Table>
+    </div>
   );
 }
