@@ -273,10 +273,8 @@ export function Dashboard() {
             </DropdownMenu>
 
             <SettingsSheet />
-          </div>
 
-          <div className="flex justify-end">
-            <Button variant="outline">
+            <Button variant="outline" className="ml-auto">
               <Download />
               Download all reports
             </Button>
