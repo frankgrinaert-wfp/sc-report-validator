@@ -74,7 +74,6 @@ export function SchoolRankingTable({ schools }: SchoolRankingTableProps) {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Rank</TableHead>
           <TableHead>School</TableHead>
           <TableHead>Data quality</TableHead>
           <TableHead>Status</TableHead>
@@ -84,9 +83,8 @@ export function SchoolRankingTable({ schools }: SchoolRankingTableProps) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {schools.map((school, index) => (
+        {schools.map((school) => (
           <TableRow key={school.id}>
-            <TableCell>{index + 1}</TableCell>
             <TableCell>{school.name}</TableCell>
             <TableCell>
               <span className={cn(dataQualityScoreTextClass(school.score))}>
