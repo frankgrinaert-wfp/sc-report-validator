@@ -3,7 +3,6 @@ import type { ReactNode } from "react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 import { Field, FieldLabel } from "./ui/field";
 
 const issueTypes = [
@@ -191,8 +190,10 @@ type SettingsGroupProps = {
 
 function SettingsGroup({ title, children }: SettingsGroupProps) {
   return (
-    <section className="space-y-3">
-      <h3 className="font-semibold text-base">{title}</h3>
+    <section className="space-y-4">
+      <h3 className="font-semibold text-xs text-muted-foreground uppercase">
+        {title}
+      </h3>
       {children}
     </section>
   );
@@ -239,31 +240,24 @@ export function ControlPanel() {
   return (
     <div>
       <div className="flex flex-col gap-8">
-        <SettingsGroup title="Alerts filter">
-          <div className="space-y-4">
-            {Object.entries(groupedIssues).map(([category, issues]) => (
-              <div key={category}>
-                <p className="mb-2 font-semibold text-muted-foreground text-xs">
-                  {category}
-                </p>
-                <div className="space-y-2">
-                  {issues.map((issue) => (
-                    <Field orientation="horizontal">
-                      <Checkbox
-                        id={issue.id}
-                        checked={selectedIssues.has(issue.id)}
-                        onCheckedChange={() => toggleIssue(issue.id)}
-                      />
-                      <FieldLabel htmlFor={issue.id} className="font-normal">
-                        {issue.label}
-                      </FieldLabel>
-                    </Field>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </SettingsGroup>
+        {Object.entries(groupedIssues).map(([category, issues]) => (
+          <SettingsGroup key={category} title={category}>
+            <div className="space-y-3">
+              {issues.map((issue) => (
+                <Field key={issue.id} orientation="horizontal">
+                  <Checkbox
+                    id={issue.id}
+                    checked={selectedIssues.has(issue.id)}
+                    onCheckedChange={() => toggleIssue(issue.id)}
+                  />
+                  <FieldLabel htmlFor={issue.id} className="font-normal">
+                    {issue.label}
+                  </FieldLabel>
+                </Field>
+              ))}
+            </div>
+          </SettingsGroup>
+        ))}
 
         <SettingsGroup title="Consumption thresholds">
           <ThresholdItem

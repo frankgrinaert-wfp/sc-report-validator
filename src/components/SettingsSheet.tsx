@@ -20,7 +20,7 @@ export function SettingsSheet() {
           Settings
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="sm:max-w-lg gap-0">
+      <SheetContent side="right" className="sm:max-w-2xl gap-0">
         <SheetHeader>
           <SheetTitle>Settings</SheetTitle>
         </SheetHeader>
