@@ -1,4 +1,4 @@
-import { ChevronDown, Minus, Plus, RotateCcw } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 import type { ReactNode } from "react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -49,8 +49,7 @@ const issueTypes = [
   {
     id: "attendance-same",
     category: "Attendance & enrolment",
-    label:
-      "Daily attendance is the same for all school days within the month",
+    label: "Daily attendance is the same for all school days within the month",
   },
   {
     id: "attendance-exceeds",
@@ -153,7 +152,7 @@ type ThresholdItemProps = {
 
 function ThresholdItem({ label, value, onChange }: ThresholdItemProps) {
   return (
-    <div className="mb-4">
+    <div className="mb-4 last:mb-0">
       <p className="mb-2 text-muted-foreground text-xs">{label}</p>
       <div className="flex items-center justify-between rounded-md border border-border bg-card px-3 py-2">
         <span className="font-medium text-primary-600 text-xs tabular-nums">
@@ -184,39 +183,21 @@ function ThresholdItem({ label, value, onChange }: ThresholdItemProps) {
   );
 }
 
-type PanelSectionProps = {
+type SettingsGroupProps = {
   title: string;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
   children: ReactNode;
 };
 
-function PanelSection({
-  title,
-  open,
-  onOpenChange,
-  children,
-}: PanelSectionProps) {
+function SettingsGroup({ title, children }: SettingsGroupProps) {
   return (
-    <details
-      className="group rounded-md border border-border"
-      open={open}
-      onToggle={(event) => onOpenChange(event.currentTarget.open)}
-    >
-      <summary className="flex cursor-pointer list-none items-center justify-between gap-2 bg-secondary px-3 py-2 font-medium text-sm [&::-webkit-details-marker]:hidden">
-        <span>{title}</span>
-        <ChevronDown className="size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
-      </summary>
-      <div className="border-border border-t px-3 py-2">{children}</div>
-    </details>
+    <section className="space-y-3">
+      <h3 className="font-medium text-sm">{title}</h3>
+      {children}
+    </section>
   );
 }
 
 export function ControlPanel() {
-  const [consumptionOpen, setConsumptionOpen] = useState(false);
-  const [commodityPricesOpen, setCommodityPricesOpen] = useState(false);
-  const [issueTypesOpen, setIssueTypesOpen] = useState(false);
-
   const [cerealsMax, setCerealsMax] = useState(250.0);
   const [pulsesMax, setPulsesMax] = useState(90.0);
   const [aggregatedMin, setAggregatedMin] = useState(150.0);
@@ -263,137 +244,98 @@ export function ControlPanel() {
   );
 
   return (
-    <div className="overflow-y-auto">
-      <div className="p-6">
-        <div className="mb-6">
-          <Button type="button" variant="outline">
-            <RotateCcw />
-            Reset filters
-          </Button>
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <PanelSection
-            title="Alerts filter"
-            open={issueTypesOpen}
-            onOpenChange={setIssueTypesOpen}
-          >
-            <div className="mb-3 flex gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                size="xs"
-                onClick={selectAll}
-              >
-                Select all
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="xs"
-                onClick={deselectAll}
-              >
-                Deselect all
-              </Button>
-            </div>
-            <div className="max-h-96 space-y-4 overflow-y-auto">
-              {Object.entries(groupedIssues).map(([category, issues]) => (
-                <div key={category}>
-                  <p className="mb-2 font-semibold text-muted-foreground text-xs">
-                    {category}
-                  </p>
-                  <div className="space-y-2">
-                    {issues.map((issue) => (
-                      <div key={issue.id} className="flex items-start gap-2">
-                        <Checkbox
-                          id={issue.id}
-                          checked={selectedIssues.has(issue.id)}
-                          onCheckedChange={() => toggleIssue(issue.id)}
-                        />
-                        <Label
-                          htmlFor={issue.id}
-                          className="font-normal text-muted-foreground text-xs leading-snug"
-                        >
-                          {issue.label}
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
+    <div>
+      <div className="flex flex-col gap-8">
+        <SettingsGroup title="Alerts filter">
+          <div className="space-y-4">
+            {Object.entries(groupedIssues).map(([category, issues]) => (
+              <div key={category}>
+                <p className="mb-2 font-semibold text-muted-foreground text-xs">
+                  {category}
+                </p>
+                <div className="space-y-2">
+                  {issues.map((issue) => (
+                    <div key={issue.id} className="flex items-start gap-2">
+                      <Checkbox
+                        id={issue.id}
+                        checked={selectedIssues.has(issue.id)}
+                        onCheckedChange={() => toggleIssue(issue.id)}
+                      />
+                      <Label
+                        htmlFor={issue.id}
+                        className="font-normal text-muted-foreground text-xs leading-snug"
+                      >
+                        {issue.label}
+                      </Label>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </PanelSection>
+              </div>
+            ))}
+          </div>
+        </SettingsGroup>
 
-          <PanelSection
-            title="Consumption thresholds"
-            open={consumptionOpen}
-            onOpenChange={setConsumptionOpen}
-          >
-            <ThresholdItem
-              label="Cereals max (g)"
-              value={cerealsMax}
-              onChange={setCerealsMax}
-            />
-            <ThresholdItem
-              label="Pulses max (g)"
-              value={pulsesMax}
-              onChange={setPulsesMax}
-            />
-            <ThresholdItem
-              label="Aggregated min (g)"
-              value={aggregatedMin}
-              onChange={setAggregatedMin}
-            />
-            <ThresholdItem
-              label="Aggregated max (g)"
-              value={aggregatedMax}
-              onChange={setAggregatedMax}
-            />
-          </PanelSection>
+        <SettingsGroup title="Consumption thresholds">
+          <ThresholdItem
+            label="Cereals max (g)"
+            value={cerealsMax}
+            onChange={setCerealsMax}
+          />
+          <ThresholdItem
+            label="Pulses max (g)"
+            value={pulsesMax}
+            onChange={setPulsesMax}
+          />
+          <ThresholdItem
+            label="Aggregated min (g)"
+            value={aggregatedMin}
+            onChange={setAggregatedMin}
+          />
+          <ThresholdItem
+            label="Aggregated max (g)"
+            value={aggregatedMax}
+            onChange={setAggregatedMax}
+          />
+        </SettingsGroup>
 
-          <PanelSection
-            title="Expected commodity prices"
-            open={commodityPricesOpen}
-            onOpenChange={setCommodityPricesOpen}
-          >
-            <ThresholdItem
-              label="Sorghum ($/kg)"
-              value={sorghum}
-              onChange={setSorghum}
-            />
-            <ThresholdItem
-              label="Millet ($/kg)"
-              value={millet}
-              onChange={setMillet}
-            />
-            <ThresholdItem label="Salt ($/kg)" value={salt} onChange={setSalt} />
-            <ThresholdItem
-              label="Palm oil — red ($/kg)"
-              value={palmOil}
-              onChange={setPalmOil}
-            />
-            <ThresholdItem
-              label="Onion ($/kg)"
-              value={onion}
-              onChange={setOnion}
-            />
-            <ThresholdItem
-              label="Sweet potato leaves ($/kg)"
-              value={sweetPotato}
-              onChange={setSweetPotato}
-            />
-            <ThresholdItem
-              label="Dried fish ($/kg)"
-              value={driedFish}
-              onChange={setDriedFish}
-            />
-            <ThresholdItem
-              label="Fish — fresh ($/kg)"
-              value={fishFresh}
-              onChange={setFishFresh}
-            />
-          </PanelSection>
-        </div>
+        <SettingsGroup title="Expected commodity prices">
+          <ThresholdItem
+            label="Sorghum ($/kg)"
+            value={sorghum}
+            onChange={setSorghum}
+          />
+          <ThresholdItem
+            label="Millet ($/kg)"
+            value={millet}
+            onChange={setMillet}
+          />
+          <ThresholdItem label="Salt ($/kg)" value={salt} onChange={setSalt} />
+          <ThresholdItem
+            label="Palm oil — red ($/kg)"
+            value={palmOil}
+            onChange={setPalmOil}
+          />
+          <ThresholdItem
+            label="Onion ($/kg)"
+            value={onion}
+            onChange={setOnion}
+          />
+          <ThresholdItem
+            label="Sweet potato leaves ($/kg)"
+            value={sweetPotato}
+            onChange={setSweetPotato}
+          />
+          <ThresholdItem
+            label="Dried fish ($/kg)"
+            value={driedFish}
+            onChange={setDriedFish}
+          />
+          <ThresholdItem
+            label="Fish — fresh ($/kg)"
+            value={fishFresh}
+            onChange={setFishFresh}
+          />
+        </SettingsGroup>
       </div>
     </div>
   );

@@ -1,9 +1,11 @@
-import { Settings2 } from "lucide-react";
+import { RotateCcw, Settings2 } from "lucide-react";
 import { ControlPanel } from "@/components/ControlPanel";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
+  SheetClose,
   SheetContent,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -18,16 +20,29 @@ export function SettingsSheet() {
           Settings
         </Button>
       </SheetTrigger>
-      <SheetContent
-        side="right"
-        className="flex w-full flex-col gap-0 p-0 sm:max-w-lg"
-      >
-        <SheetHeader className="shrink-0 border-border border-b px-6 py-4">
+      <SheetContent side="right" className="sm:max-w-lg gap-0">
+        <SheetHeader>
           <SheetTitle>Settings</SheetTitle>
         </SheetHeader>
-        <div className="min-h-0 flex-1 overflow-hidden">
+        <div className="overflow-y-auto px-5">
           <ControlPanel />
         </div>
+        <SheetFooter className="shrink-0 flex-row justify-between gap-2">
+          <Button type="button" variant="ghost">
+            <RotateCcw />
+            Reset
+          </Button>
+          <div className="flex gap-2">
+            <SheetClose asChild>
+              <Button type="button" variant="outline">
+                Cancel
+              </Button>
+            </SheetClose>
+            <SheetClose asChild>
+              <Button type="button">Apply</Button>
+            </SheetClose>
+          </div>
+        </SheetFooter>
       </SheetContent>
     </Sheet>
   );
