@@ -17,7 +17,16 @@ import {
   schoolQualityFromScore,
 } from "@/data/reportDashboard";
 
+const COUNTRIES = [
+  { value: "burkina-faso", label: "Burkina Faso", flag: "🇧🇫" },
+  { value: "gambia", label: "Gambia", flag: "🇬🇲" },
+  { value: "guinea", label: "Guinea", flag: "🇬🇳" },
+  { value: "mali", label: "Mali", flag: "🇲🇱" },
+  { value: "senegal", label: "Senegal", flag: "🇸🇳" },
+] as const;
+
 export function Dashboard() {
+  const [country, setCountry] = useState("gambia");
   const [qualityFilter, setQualityFilter] = useState("all");
   const [orderBy, setOrderBy] = useState("score-asc");
 
@@ -109,6 +118,24 @@ export function Dashboard() {
 
   return (
     <div className="flex h-screen flex-col">
+      <div className="fixed top-6 right-6 z-50">
+        <Select value={country} onValueChange={setCountry}>
+          <SelectTrigger
+            id="country-select"
+            className="w-40"
+            aria-label="Country"
+          >
+            <SelectValue placeholder="Select country" />
+          </SelectTrigger>
+          <SelectContent>
+            {COUNTRIES.map(({ value, label, flag }) => (
+              <SelectItem key={value} value={value}>
+                {flag} {label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
       <div className="flex-1 overflow-y-auto">
         <div className="p-8 flex flex-col gap-7">
           <div className="flex flex-col gap-4">
@@ -118,7 +145,7 @@ export function Dashboard() {
             </p>
           </div>
           <div className="flex flex-wrap items-end gap-4">
-            <div className="grid min-w-0 flex-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid min-w-0 flex-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               <div className="flex flex-col gap-2">
                 <Label htmlFor="month-select">Month</Label>
                 <Select defaultValue="may">
@@ -153,22 +180,6 @@ export function Dashboard() {
                     <SelectItem value="2024">2024</SelectItem>
                     <SelectItem value="2023">2023</SelectItem>
                     <SelectItem value="2022">2022</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="country-select">Country</Label>
-                <Select defaultValue="gambia">
-                  <SelectTrigger id="country-select" className="w-full">
-                    <SelectValue placeholder="Select country" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="gambia">Gambia</SelectItem>
-                    <SelectItem value="senegal">Senegal</SelectItem>
-                    <SelectItem value="guinea">Guinea</SelectItem>
-                    <SelectItem value="mali">Mali</SelectItem>
-                    <SelectItem value="burkina-faso">Burkina Faso</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
