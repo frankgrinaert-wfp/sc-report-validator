@@ -249,13 +249,9 @@ export function Dashboard() {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  aria-label="Sorting"
-                >
+                <Button type="button" variant="outline" aria-label="Sort">
                   <ArrowUpDown />
+                  Sort
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
