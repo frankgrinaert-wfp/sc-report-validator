@@ -1,9 +1,8 @@
-import { ChevronDown, ChevronLeft, Minus, Plus, RotateCcw } from "lucide-react";
 import type { ReactNode } from "react";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Field, FieldLabel } from "./ui/field";
 
 const issueTypes = [
   {
@@ -49,8 +48,7 @@ const issueTypes = [
   {
     id: "attendance-same",
     category: "Attendance & enrolment",
-    label:
-      "Daily attendance is the same for all school days within the month",
+    label: "Daily attendance is the same for all school days within the month",
   },
   {
     id: "attendance-exceeds",
@@ -145,78 +143,49 @@ const issueTypes = [
   },
 ] as const;
 
-type ThresholdItemProps = {
+type NumberFieldProps = {
+  id: string;
   label: string;
   value: number;
   onChange: (value: number) => void;
+  step?: string;
 };
 
-function ThresholdItem({ label, value, onChange }: ThresholdItemProps) {
+function NumberField({ id, label, value, onChange, step }: NumberFieldProps) {
   return (
-    <div className="mb-4">
-      <p className="mb-2 text-muted-foreground text-xs">{label}</p>
-      <div className="flex items-center justify-between rounded-md border border-border bg-card px-3 py-2">
-        <span className="font-medium text-primary-600 text-xs tabular-nums">
-          {value.toFixed(2).replace(".", ",")}
-        </span>
-        <div className="flex items-center gap-2">
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-xs"
-            aria-label="Decrease"
-            onClick={() => onChange(value - 1)}
-          >
-            <Minus />
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-xs"
-            aria-label="Increase"
-            onClick={() => onChange(value + 1)}
-          >
-            <Plus />
-          </Button>
-        </div>
-      </div>
-    </div>
+    <Field>
+      <FieldLabel htmlFor={id}>{label}</FieldLabel>
+      <Input
+        id={id}
+        type="number"
+        step={step}
+        value={value}
+        onChange={(e) => {
+          const next = e.target.valueAsNumber;
+          if (!Number.isNaN(next)) onChange(next);
+        }}
+      />
+    </Field>
   );
 }
 
-type PanelSectionProps = {
+type SettingsGroupProps = {
   title: string;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
   children: ReactNode;
 };
 
-function PanelSection({
-  title,
-  open,
-  onOpenChange,
-  children,
-}: PanelSectionProps) {
+function SettingsGroup({ title, children }: SettingsGroupProps) {
   return (
-    <details
-      className="group rounded-md border border-border"
-      open={open}
-      onToggle={(event) => onOpenChange(event.currentTarget.open)}
-    >
-      <summary className="flex cursor-pointer list-none items-center justify-between gap-2 bg-secondary px-3 py-2 font-medium text-sm [&::-webkit-details-marker]:hidden">
-        <span>{title}</span>
-        <ChevronDown className="size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
-      </summary>
-      <div className="border-border border-t px-3 py-2">{children}</div>
-    </details>
+    <section className="space-y-5 p-5 border rounded-lg">
+      <h3 className="font-semibold text-xs text-muted-foreground uppercase">
+        {title}
+      </h3>
+      {children}
+    </section>
   );
 }
 
 export function ControlPanel() {
-  const [consumptionOpen, setConsumptionOpen] = useState(false);
-  const [commodityPricesOpen, setCommodityPricesOpen] = useState(false);
-  const [issueTypesOpen, setIssueTypesOpen] = useState(false);
-
   const [cerealsMax, setCerealsMax] = useState(250.0);
   const [pulsesMax, setPulsesMax] = useState(90.0);
   const [aggregatedMin, setAggregatedMin] = useState(150.0);
@@ -244,14 +213,6 @@ export function ControlPanel() {
     });
   };
 
-  const selectAll = () => {
-    setSelectedIssues(new Set(issueTypes.map((issue) => issue.id)));
-  };
-
-  const deselectAll = () => {
-    setSelectedIssues(new Set());
-  };
-
   const groupedIssues = issueTypes.reduce(
     (acc, issue) => {
       const list = acc[issue.category] ?? [];
@@ -263,153 +224,116 @@ export function ControlPanel() {
   );
 
   return (
-    <div className="h-full overflow-y-auto border-border border-e bg-card">
-      <div className="p-6">
-        <div className="mb-6 flex items-center justify-between gap-2">
-          <h2 className="font-semibold text-base">Control panel</h2>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            onClick={() => window.dispatchEvent(new Event("togglePanel"))}
-            aria-label="Hide control panel"
-            title="Hide control panel"
-          >
-            <ChevronLeft />
-          </Button>
-        </div>
-
-        <div className="mb-6">
-          <Button type="button" variant="outline" className="w-full justify-start gap-2">
-            <RotateCcw />
-            Reset filters
-          </Button>
-        </div>
-
-        <div className="flex flex-col gap-2 border-border border-t pt-6">
-          <PanelSection
-            title="Alerts filter"
-            open={issueTypesOpen}
-            onOpenChange={setIssueTypesOpen}
-          >
-            <div className="mb-3 flex gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                size="xs"
-                className="flex-1"
-                onClick={selectAll}
-              >
-                Select all
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="xs"
-                className="flex-1"
-                onClick={deselectAll}
-              >
-                Deselect all
-              </Button>
-            </div>
-            <div className="max-h-96 space-y-4 overflow-y-auto">
-              {Object.entries(groupedIssues).map(([category, issues]) => (
-                <div key={category}>
-                  <p className="mb-2 font-semibold text-muted-foreground text-xs">
-                    {category}
-                  </p>
-                  <div className="space-y-2">
-                    {issues.map((issue) => (
-                      <div key={issue.id} className="flex items-start gap-2">
-                        <Checkbox
-                          id={issue.id}
-                          checked={selectedIssues.has(issue.id)}
-                          onCheckedChange={() => toggleIssue(issue.id)}
-                        />
-                        <Label
-                          htmlFor={issue.id}
-                          className="font-normal text-muted-foreground text-xs leading-snug"
-                        >
-                          {issue.label}
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+    <div>
+      <div className="flex flex-col gap-4">
+        {Object.entries(groupedIssues).map(([category, issues]) => (
+          <SettingsGroup key={category} title={category}>
+            <div className="space-y-4">
+              {issues.map((issue) => (
+                <Field key={issue.id} orientation="horizontal">
+                  <Checkbox
+                    id={issue.id}
+                    checked={selectedIssues.has(issue.id)}
+                    onCheckedChange={() => toggleIssue(issue.id)}
+                  />
+                  <FieldLabel htmlFor={issue.id} className="font-normal">
+                    {issue.label}
+                  </FieldLabel>
+                </Field>
               ))}
             </div>
-          </PanelSection>
+          </SettingsGroup>
+        ))}
 
-          <PanelSection
-            title="Consumption thresholds"
-            open={consumptionOpen}
-            onOpenChange={setConsumptionOpen}
-          >
-            <ThresholdItem
+        <SettingsGroup title="Consumption thresholds">
+          <div className="space-y-5">
+            <NumberField
+              id="cereals-max"
               label="Cereals max (g)"
               value={cerealsMax}
               onChange={setCerealsMax}
             />
-            <ThresholdItem
+            <NumberField
+              id="pulses-max"
               label="Pulses max (g)"
               value={pulsesMax}
               onChange={setPulsesMax}
             />
-            <ThresholdItem
+            <NumberField
+              id="aggregated-min"
               label="Aggregated min (g)"
               value={aggregatedMin}
               onChange={setAggregatedMin}
             />
-            <ThresholdItem
+            <NumberField
+              id="aggregated-max"
               label="Aggregated max (g)"
               value={aggregatedMax}
               onChange={setAggregatedMax}
             />
-          </PanelSection>
+          </div>
+        </SettingsGroup>
 
-          <PanelSection
-            title="Expected commodity prices"
-            open={commodityPricesOpen}
-            onOpenChange={setCommodityPricesOpen}
-          >
-            <ThresholdItem
+        <SettingsGroup title="Expected commodity prices">
+          <div className="space-y-5">
+            <NumberField
+              id="sorghum"
               label="Sorghum ($/kg)"
               value={sorghum}
               onChange={setSorghum}
+              step="0.01"
             />
-            <ThresholdItem
+            <NumberField
+              id="millet"
               label="Millet ($/kg)"
               value={millet}
               onChange={setMillet}
+              step="0.01"
             />
-            <ThresholdItem label="Salt ($/kg)" value={salt} onChange={setSalt} />
-            <ThresholdItem
+            <NumberField
+              id="salt"
+              label="Salt ($/kg)"
+              value={salt}
+              onChange={setSalt}
+              step="0.01"
+            />
+            <NumberField
+              id="palm-oil"
               label="Palm oil — red ($/kg)"
               value={palmOil}
               onChange={setPalmOil}
+              step="0.01"
             />
-            <ThresholdItem
+            <NumberField
+              id="onion"
               label="Onion ($/kg)"
               value={onion}
               onChange={setOnion}
+              step="0.01"
             />
-            <ThresholdItem
+            <NumberField
+              id="sweet-potato"
               label="Sweet potato leaves ($/kg)"
               value={sweetPotato}
               onChange={setSweetPotato}
+              step="0.01"
             />
-            <ThresholdItem
+            <NumberField
+              id="dried-fish"
               label="Dried fish ($/kg)"
               value={driedFish}
               onChange={setDriedFish}
+              step="0.01"
             />
-            <ThresholdItem
+            <NumberField
+              id="fish-fresh"
               label="Fish — fresh ($/kg)"
               value={fishFresh}
               onChange={setFishFresh}
+              step="0.01"
             />
-          </PanelSection>
-        </div>
+          </div>
+        </SettingsGroup>
       </div>
     </div>
   );

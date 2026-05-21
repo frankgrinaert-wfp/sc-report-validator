@@ -1,7 +1,13 @@
-import { ChevronRight, Download } from "lucide-react";
-import { useEffect, useState } from "react";
+import { ArrowUpDown, Download } from "lucide-react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Select,
   SelectContent,
@@ -9,32 +15,51 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { ControlPanel } from "@/components/ControlPanel";
-import { StatCard } from "@/components/StatCard";
+import type { SchoolStatus } from "@/data/reportDashboard";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SettingsSheet } from "@/components/SettingsSheet";
 import { SchoolRankingTable } from "@/components/SchoolRankingTable";
-import { DASHBOARD_SCHOOLS } from "@/data/reportDashboard";
+import {
+  DASHBOARD_SCHOOLS,
+  schoolQualityFromScore,
+} from "@/data/reportDashboard";
+
+const COUNTRIES = [
+  { value: "burkina-faso", label: "Burkina Faso", flag: "🇧🇫" },
+  { value: "gambia", label: "Gambia", flag: "🇬🇲" },
+  { value: "guinea", label: "Guinea", flag: "🇬🇳" },
+  { value: "mali", label: "Mali", flag: "🇲🇱" },
+  { value: "senegal", label: "Senegal", flag: "🇸🇳" },
+] as const;
+
+const STATUS_FILTERS: { value: "all" | SchoolStatus; label: string }[] = [
+  { value: "all", label: "Status: All" },
+  { value: "To be reviewed", label: "Status: To be reviewed" },
+  {
+    value: "Waiting for corrections",
+    label: "Status: Waiting for corrections",
+  },
+  { value: "Accepted", label: "Status: Accepted" },
+];
 
 export function Dashboard() {
-  const [isPanelOpen, setIsPanelOpen] = useState(true);
+  const [country, setCountry] = useState("gambia");
   const [qualityFilter, setQualityFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState<"all" | SchoolStatus>("all");
   const [orderBy, setOrderBy] = useState("score-asc");
 
-  useEffect(() => {
-    const handleToggle = () => setIsPanelOpen((prev) => !prev);
-    window.addEventListener("togglePanel", handleToggle);
-    return () => window.removeEventListener("togglePanel", handleToggle);
-  }, []);
-
-  const filteredSchools =
-    qualityFilter === "all"
-      ? DASHBOARD_SCHOOLS
-      : DASHBOARD_SCHOOLS.filter((school) => school.quality === qualityFilter);
+  const filteredSchools = DASHBOARD_SCHOOLS.filter((school) => {
+    if (
+      qualityFilter !== "all" &&
+      schoolQualityFromScore(school.score) !== qualityFilter
+    ) {
+      return false;
+    }
+    if (statusFilter !== "all" && school.status !== statusFilter) {
+      return false;
+    }
+    return true;
+  });
 
   const sortedSchools = [...filteredSchools].sort((a, b) => {
     switch (orderBy) {
@@ -44,13 +69,16 @@ export function Dashboard() {
         return b.score - a.score;
       case "quality": {
         const qualityOrder = { excellent: 1, good: 2, fair: 3, critical: 4 };
-        return qualityOrder[a.quality] - qualityOrder[b.quality];
+        return (
+          qualityOrder[schoolQualityFromScore(a.score)] -
+          qualityOrder[schoolQualityFromScore(b.score)]
+        );
       }
       case "status": {
         const statusOrder = {
           Accepted: 1,
-          "To be Reviewed": 2,
-          "Waiting for Corrections": 3,
+          "To be reviewed": 2,
+          "Waiting for corrections": 3,
         };
         return statusOrder[a.status] - statusOrder[b.status];
       }
@@ -95,232 +123,215 @@ export function Dashboard() {
   ).toFixed(1);
   const avgMealsPerDay = Math.round(aggregatedData.totalAttendance / 20);
 
-  const getQualityLabel = (filter: string) => {
-    switch (filter) {
-      case "all":
-        return "Quality (all)";
-      case "excellent":
-        return "Quality (excellent)";
-      case "good":
-        return "Quality (good)";
-      case "fair":
-        return "Quality (fair)";
-      case "critical":
-        return "Quality (critical)";
-      default:
-        return filter;
-    }
-  };
-
   return (
     <div className="flex h-screen flex-col">
-      <div className="relative flex flex-1 overflow-hidden">
-        {!isPanelOpen ? (
-          <div className="absolute top-2 left-0 z-10 flex flex-col items-center gap-2 rounded-e-md border border-border bg-card p-2 shadow-sm">
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon-sm"
-              onClick={() => setIsPanelOpen(true)}
-              aria-label="Show control panel"
-              title="Show control panel"
-            >
-              <ChevronRight />
-            </Button>
-            <span className="max-w-16 text-center text-muted-foreground text-xs font-medium">
-              Control panel
-            </span>
+      <div className="flex-1 overflow-y-auto">
+        <div className="p-8 flex flex-col gap-7">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col gap-4">
+              <h1 className="font-bold text-3xl">Reports quality checker</h1>
+              <p className="text-muted-foreground text-sm">
+                Review and validate monthly reports. Last updated: August 2025
+              </p>
+            </div>
+            <Select value={country} onValueChange={setCountry}>
+              <SelectTrigger
+                id="country-select"
+                className="w-40 shrink-0"
+                aria-label="Country"
+              >
+                <SelectValue placeholder="Select country" />
+              </SelectTrigger>
+              <SelectContent>
+                {COUNTRIES.map(({ value, label, flag }) => (
+                  <SelectItem key={value} value={value}>
+                    {flag} {label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-        ) : null}
+          <div className="flex flex-wrap items-end gap-2">
+            <Select defaultValue="may">
+              <SelectTrigger
+                id="month-select"
+                className="w-48"
+                aria-label="Month"
+              >
+                <SelectValue placeholder="Select month" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="january">January</SelectItem>
+                <SelectItem value="february">February</SelectItem>
+                <SelectItem value="march">March</SelectItem>
+                <SelectItem value="april">April</SelectItem>
+                <SelectItem value="may">May</SelectItem>
+                <SelectItem value="june">June</SelectItem>
+                <SelectItem value="july">July</SelectItem>
+                <SelectItem value="august">August</SelectItem>
+                <SelectItem value="september">September</SelectItem>
+                <SelectItem value="october">October</SelectItem>
+                <SelectItem value="november">November</SelectItem>
+                <SelectItem value="december">December</SelectItem>
+              </SelectContent>
+            </Select>
 
-        <div
-          className={`shrink-0 overflow-hidden border-e border-border transition-[width] duration-300 ease-in-out ${
-            isPanelOpen ? "w-72" : "w-0"
-          }`}
-        >
-          <ControlPanel />
-        </div>
+            <Select defaultValue="2025">
+              <SelectTrigger
+                id="year-select"
+                className="w-48"
+                aria-label="Year"
+              >
+                <SelectValue placeholder="Select year" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="2025">2025</SelectItem>
+                <SelectItem value="2024">2024</SelectItem>
+                <SelectItem value="2023">2023</SelectItem>
+                <SelectItem value="2022">2022</SelectItem>
+              </SelectContent>
+            </Select>
 
-        <div className="flex-1 overflow-y-auto bg-muted">
-          <div className="mx-auto max-w-7xl p-8">
-            <div className="mb-8">
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor="month-select">Month</Label>
-                  <Select defaultValue="may">
-                    <SelectTrigger id="month-select" className="w-full">
-                      <SelectValue placeholder="Select month" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="january">January</SelectItem>
-                      <SelectItem value="february">February</SelectItem>
-                      <SelectItem value="march">March</SelectItem>
-                      <SelectItem value="april">April</SelectItem>
-                      <SelectItem value="may">May</SelectItem>
-                      <SelectItem value="june">June</SelectItem>
-                      <SelectItem value="july">July</SelectItem>
-                      <SelectItem value="august">August</SelectItem>
-                      <SelectItem value="september">September</SelectItem>
-                      <SelectItem value="october">October</SelectItem>
-                      <SelectItem value="november">November</SelectItem>
-                      <SelectItem value="december">December</SelectItem>
-                    </SelectContent>
-                  </Select>
+            <Select defaultValue="region1">
+              <SelectTrigger
+                id="region-select"
+                className="w-48"
+                aria-label="Admin region"
+              >
+                <SelectValue placeholder="Select region" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="region1">Admin region 1</SelectItem>
+                <SelectItem value="region2">Admin region 2</SelectItem>
+                <SelectItem value="region3">Admin region 3</SelectItem>
+                <SelectItem value="region4">Admin region 4</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={qualityFilter} onValueChange={setQualityFilter}>
+              <SelectTrigger
+                id="quality-select"
+                className="w-48"
+                aria-label="Quality"
+              >
+                <SelectValue placeholder="Quality: All" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Quality: All</SelectItem>
+                <SelectItem value="excellent">Quality: Excellent</SelectItem>
+                <SelectItem value="good">Quality: Good</SelectItem>
+                <SelectItem value="fair">Quality: Fair</SelectItem>
+                <SelectItem value="critical">Quality: Critical</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={statusFilter}
+              onValueChange={(value) =>
+                setStatusFilter(value as "all" | SchoolStatus)
+              }
+            >
+              <SelectTrigger
+                id="status-select"
+                className="w-48"
+                aria-label="Status"
+              >
+                <SelectValue placeholder="Status: All" />
+              </SelectTrigger>
+              <SelectContent>
+                {STATUS_FILTERS.map(({ value, label }) => (
+                  <SelectItem key={value} value={value}>
+                    {label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button type="button" variant="outline" aria-label="Sort">
+                  <ArrowUpDown />
+                  Sort
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuRadioGroup
+                  value={orderBy}
+                  onValueChange={setOrderBy}
+                >
+                  <DropdownMenuRadioItem value="score-asc">
+                    Data quality (ascending)
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="score-desc">
+                    Data quality (descending)
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="status">
+                    Status
+                  </DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <SettingsSheet />
+
+            <Button variant="outline" className="ml-auto">
+              <Download />
+              Download all reports
+            </Button>
+          </div>
+
+          <SchoolRankingTable schools={sortedSchools} />
+
+          <div className="mt-8 grid gap-6 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Average school attendance</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2 border-border border-t pt-4">
+                <div className="flex items-center justify-between py-1">
+                  <span className="text-muted-foreground text-sm">Total</span>
+                  <span className="font-semibold tabular-nums">
+                    {avgAttendanceTotal}%
+                  </span>
                 </div>
-
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor="year-select">Year</Label>
-                  <Select defaultValue="2025">
-                    <SelectTrigger id="year-select" className="w-full">
-                      <SelectValue placeholder="Select year" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="2025">2025</SelectItem>
-                      <SelectItem value="2024">2024</SelectItem>
-                      <SelectItem value="2023">2023</SelectItem>
-                      <SelectItem value="2022">2022</SelectItem>
-                    </SelectContent>
-                  </Select>
+                <div className="flex items-center justify-between py-1">
+                  <span className="text-muted-foreground text-sm">Boys</span>
+                  <span className="font-semibold tabular-nums">
+                    {avgAttendanceBoys}%
+                  </span>
                 </div>
-
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor="country-select">Country</Label>
-                  <Select defaultValue="gambia">
-                    <SelectTrigger id="country-select" className="w-full">
-                      <SelectValue placeholder="Select country" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="gambia">Gambia</SelectItem>
-                      <SelectItem value="senegal">Senegal</SelectItem>
-                      <SelectItem value="guinea">Guinea</SelectItem>
-                      <SelectItem value="mali">Mali</SelectItem>
-                      <SelectItem value="burkina-faso">Burkina Faso</SelectItem>
-                    </SelectContent>
-                  </Select>
+                <div className="flex items-center justify-between py-1">
+                  <span className="text-muted-foreground text-sm">Girls</span>
+                  <span className="font-semibold tabular-nums">
+                    {avgAttendanceGirls}%
+                  </span>
                 </div>
+              </CardContent>
+            </Card>
 
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor="region-select">Admin region</Label>
-                  <Select defaultValue="region1">
-                    <SelectTrigger id="region-select" className="w-full">
-                      <SelectValue placeholder="Select region" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="region1">Admin region 1</SelectItem>
-                      <SelectItem value="region2">Admin region 2</SelectItem>
-                      <SelectItem value="region3">Admin region 3</SelectItem>
-                      <SelectItem value="region4">Admin region 4</SelectItem>
-                    </SelectContent>
-                  </Select>
+            <Card>
+              <CardHeader>
+                <CardTitle>Meals delivered</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2 border-border border-t pt-4">
+                <div className="flex items-center justify-between py-1">
+                  <span className="text-muted-foreground text-sm">
+                    Total meals delivered
+                  </span>
+                  <span className="font-semibold tabular-nums">
+                    {aggregatedData.totalMeals.toLocaleString()}
+                  </span>
                 </div>
-              </div>
-            </div>
-
-            <div className="mb-2 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-              <StatCard label="Total schools" value="50" />
-              <StatCard label="Excellent" value="15" indicator="excellent" />
-              <StatCard label="Good" value="17" indicator="good" />
-              <StatCard label="Fair" value="18" indicator="fair" />
-              <StatCard label="Critical" value="0" indicator="critical" />
-            </div>
-
-            <p className="mb-8 text-muted-foreground text-sm">
-              Last updated: August 2025
-            </p>
-
-            <div>
-              <div className="mb-4 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-                <h2 className="font-semibold text-lg">
-                  School monthly report for May 2025
-                </h2>
-
-                <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
-                  <Select value={qualityFilter} onValueChange={setQualityFilter}>
-                    <SelectTrigger className="w-full sm:w-48">
-                      <SelectValue>{getQualityLabel(qualityFilter)}</SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All</SelectItem>
-                      <SelectItem value="excellent">Excellent</SelectItem>
-                      <SelectItem value="good">Good</SelectItem>
-                      <SelectItem value="fair">Fair</SelectItem>
-                      <SelectItem value="critical">Critical</SelectItem>
-                    </SelectContent>
-                  </Select>
-
-                  <Select value={orderBy} onValueChange={setOrderBy}>
-                    <SelectTrigger className="w-full sm:w-48">
-                      <SelectValue placeholder="Order by" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="score-asc">Score (ascending)</SelectItem>
-                      <SelectItem value="score-desc">Score (descending)</SelectItem>
-                      <SelectItem value="quality">Quality</SelectItem>
-                      <SelectItem value="status">Status</SelectItem>
-                    </SelectContent>
-                  </Select>
-
-                  <Button type="button" variant="secondary" className="gap-2">
-                    <Download />
-                    Download all schools report
-                  </Button>
+                <div className="flex items-center justify-between py-1">
+                  <span className="text-muted-foreground text-sm">
+                    Average meals per day
+                  </span>
+                  <span className="font-semibold tabular-nums">
+                    {avgMealsPerDay.toLocaleString()}
+                  </span>
                 </div>
-              </div>
-
-              <SchoolRankingTable schools={sortedSchools} />
-            </div>
-
-            <div className="mt-8 grid gap-6 md:grid-cols-2">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Average school attendance</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2 border-border border-t pt-4">
-                  <div className="flex items-center justify-between py-1">
-                    <span className="text-muted-foreground text-sm">Total</span>
-                    <span className="font-semibold tabular-nums">
-                      {avgAttendanceTotal}%
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between py-1">
-                    <span className="text-muted-foreground text-sm">Boys</span>
-                    <span className="font-semibold tabular-nums">
-                      {avgAttendanceBoys}%
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between py-1">
-                    <span className="text-muted-foreground text-sm">Girls</span>
-                    <span className="font-semibold tabular-nums">
-                      {avgAttendanceGirls}%
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Meals delivered</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2 border-border border-t pt-4">
-                  <div className="flex items-center justify-between py-1">
-                    <span className="text-muted-foreground text-sm">
-                      Total meals delivered
-                    </span>
-                    <span className="font-semibold tabular-nums">
-                      {aggregatedData.totalMeals.toLocaleString()}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between py-1">
-                    <span className="text-muted-foreground text-sm">
-                      Average meals per day
-                    </span>
-                    <span className="font-semibold tabular-nums">
-                      {avgMealsPerDay.toLocaleString()}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>

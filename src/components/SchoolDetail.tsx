@@ -7,7 +7,7 @@ import {
   Info,
   List,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import {
   CartesianGrid,
@@ -18,7 +18,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { ControlPanel } from "@/components/ControlPanel";
+import { SettingsSheet } from "@/components/SettingsSheet";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -37,26 +37,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  dataQualityScoreAccentClass,
+  dataQualityScoreTextClass,
   generateHistoricalData,
   getSchoolDetail,
   type SchoolDetailRecord,
-  type SchoolQuality,
   type SchoolStatus,
 } from "@/data/reportDashboard";
 import { issueLabel, SEVERITY_LABELS } from "@/data/issueLabels";
-
-const QUALITY_LABELS: Record<SchoolQuality, string> = {
-  excellent: "Excellent",
-  good: "Good",
-  fair: "Fair",
-  critical: "Critical",
-};
+import { cn } from "@/lib/utils";
 
 function statusBadgeVariant(status: SchoolStatus) {
   switch (status) {
-    case "To be Reviewed":
+    case "To be reviewed":
       return "default" as const;
-    case "Waiting for Corrections":
+    case "Waiting for corrections":
       return "warning" as const;
     case "Accepted":
       return "success" as const;
@@ -107,10 +102,10 @@ function SchoolStatusSelect({ school }: { school: SchoolDetailRecord }) {
           </SelectValue>
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="To be Reviewed">
+          <SelectItem value="To be reviewed">
             <Badge variant="default">To be reviewed</Badge>
           </SelectItem>
-          <SelectItem value="Waiting for Corrections">
+          <SelectItem value="Waiting for corrections">
             <Badge variant="warning">Waiting for corrections</Badge>
           </SelectItem>
           <SelectItem value="Accepted">
@@ -127,13 +122,6 @@ export function SchoolDetail() {
   const navigate = useNavigate();
 
   const school = getSchoolDetail(schoolId);
-  const [isPanelOpen, setIsPanelOpen] = useState(true);
-
-  useEffect(() => {
-    const handleToggle = () => setIsPanelOpen((prev) => !prev);
-    window.addEventListener("togglePanel", handleToggle);
-    return () => window.removeEventListener("togglePanel", handleToggle);
-  }, []);
 
   const historicalData = useMemo(() => {
     if (!school) return [];
@@ -159,8 +147,6 @@ export function SchoolDetail() {
     );
   }
 
-  const getQualityText = (quality: SchoolQuality) => QUALITY_LABELS[quality];
-
   const handlePrevious = () => {
     navigate(`/school/${Math.max(1, school.id - 1)}`);
   };
@@ -181,35 +167,8 @@ export function SchoolDetail() {
 
   return (
     <div className="flex h-screen flex-col">
-      <div className="relative flex flex-1 overflow-hidden">
-        {!isPanelOpen ? (
-          <div className="absolute top-2 left-0 z-10 flex flex-col items-center gap-2 rounded-e-md border border-border bg-card p-2 shadow-sm">
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon-sm"
-              onClick={() => setIsPanelOpen(true)}
-              aria-label="Show control panel"
-              title="Show control panel"
-            >
-              <ChevronRight />
-            </Button>
-            <span className="max-w-16 text-center text-muted-foreground text-xs font-medium">
-              Control panel
-            </span>
-          </div>
-        ) : null}
-
-        <div
-          className={`shrink-0 overflow-hidden border-e border-border transition-[width] duration-300 ease-in-out ${
-            isPanelOpen ? "w-72" : "w-0"
-          }`}
-        >
-          <ControlPanel />
-        </div>
-
-        <div className="flex-1 overflow-y-auto bg-muted">
-          <div className="mx-auto max-w-5xl p-8">
+      <div className="flex-1 overflow-y-auto">
+        <div className="mx-auto max-w-5xl p-8">
             <Card className="mb-6">
               <CardHeader>
                 <CardTitle className="text-2xl">{school.name}</CardTitle>
@@ -217,15 +176,15 @@ export function SchoolDetail() {
               </CardHeader>
               <CardContent className="flex flex-col gap-4 border-border border-t pt-6 sm:flex-row sm:items-center sm:justify-between">
                 <SchoolStatusSelect key={school.id} school={school} />
-                <div className="flex flex-wrap gap-3">
-                  <Button type="button" variant="secondary" className="gap-2">
+                <div className="flex flex-wrap items-center gap-3">
+                  <SettingsSheet />
+                  <Button type="button" variant="secondary">
                     <Download />
                     Download issues report
                   </Button>
                   <Button
                     type="button"
                     variant="outline"
-                    className="gap-2"
                     onClick={() => navigate("/")}
                   >
                     <List />
@@ -314,24 +273,26 @@ export function SchoolDetail() {
               <CardContent className="space-y-3 border-border border-t pt-6">
                 <div className="flex items-center justify-between">
                   <span className="text-sm">Current score</span>
-                  <span className="font-bold text-2xl text-primary tabular-nums">
+                  <span
+                    className={cn(
+                      "font-bold text-2xl tabular-nums",
+                      dataQualityScoreTextClass(school.score),
+                    )}
+                  >
                     {school.score}%
                   </span>
                 </div>
                 <meter
-                  className="h-2 w-full accent-primary"
+                  className={cn(
+                    "h-2 w-full",
+                    dataQualityScoreAccentClass(school.score),
+                  )}
                   min={0}
                   max={100}
                   value={school.score}
                 >
                   {school.score}%
                 </meter>
-                <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                  <span>Quality level</span>
-                  <Badge variant="warning" className="capitalize">
-                    {getQualityText(school.quality)}
-                  </Badge>
-                </div>
               </CardContent>
             </Card>
 
@@ -460,7 +421,6 @@ export function SchoolDetail() {
                 variant="outline"
                 onClick={handlePrevious}
                 disabled={school.id === 1}
-                className="gap-2"
               >
                 <ChevronLeft />
                 Previous school
@@ -470,7 +430,6 @@ export function SchoolDetail() {
                 variant="outline"
                 onClick={handleNext}
                 disabled={school.id === 20}
-                className="gap-2"
               >
                 Next school
                 <ChevronRight />
@@ -479,6 +438,5 @@ export function SchoolDetail() {
           </div>
         </div>
       </div>
-    </div>
   );
 }
