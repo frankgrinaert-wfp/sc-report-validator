@@ -92,7 +92,7 @@ export function SchoolRankingTable({
         <TableBody>
           {schools.map((school) => (
             <TableRow key={school.id}>
-              <TableCell>{school.name}</TableCell>
+              <TableCell className="font-medium">{school.name}</TableCell>
               <TableCell>{reportMonth}</TableCell>
               <TableCell className="tabular-nums">
                 <span
