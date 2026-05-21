@@ -109,18 +109,15 @@ export function Dashboard() {
     },
   );
 
-  const avgAttendanceTotal = (
-    (aggregatedData.totalAttendance / aggregatedData.totalEnrollment) *
-    100
-  ).toFixed(1);
-  const avgAttendanceBoys = (
-    (aggregatedData.boysAttendance / aggregatedData.boysEnrollment) *
-    100
-  ).toFixed(1);
-  const avgAttendanceGirls = (
-    (aggregatedData.girlsAttendance / aggregatedData.girlsEnrollment) *
-    100
-  ).toFixed(1);
+  const avgAttendanceTotal = Math.round(
+    (aggregatedData.totalAttendance / aggregatedData.totalEnrollment) * 100,
+  );
+  const avgAttendanceBoys = Math.round(
+    (aggregatedData.boysAttendance / aggregatedData.boysEnrollment) * 100,
+  );
+  const avgAttendanceGirls = Math.round(
+    (aggregatedData.girlsAttendance / aggregatedData.girlsEnrollment) * 100,
+  );
   const avgMealsPerDay = Math.round(aggregatedData.totalAttendance / 20);
 
   return (

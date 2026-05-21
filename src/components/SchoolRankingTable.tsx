@@ -90,7 +90,7 @@ export function SchoolRankingTable({ schools }: SchoolRankingTableProps) {
               <TableCell>{school.name}</TableCell>
               <TableCell>
                 <span className={cn(dataQualityScoreTextClass(school.score))}>
-                  {school.score}%
+                  {Math.round(school.score)}%
                 </span>
               </TableCell>
               <TableCell className="tabular-nums">

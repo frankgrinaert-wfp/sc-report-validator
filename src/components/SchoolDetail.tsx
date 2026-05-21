@@ -203,30 +203,30 @@ export function SchoolDetail() {
                   <div className="flex items-center justify-between py-1">
                     <span className="text-muted-foreground text-sm">Total</span>
                     <span className="font-semibold tabular-nums">
-                      {(
+                      {Math.round(
                         (school.attendance.total / school.enrollment.total) *
-                        100
-                      ).toFixed(1)}
+                          100,
+                      )}
                       %
                     </span>
                   </div>
                   <div className="flex items-center justify-between py-1">
                     <span className="text-muted-foreground text-sm">Boys</span>
                     <span className="font-semibold tabular-nums">
-                      {(
+                      {Math.round(
                         (school.attendance.boys / school.enrollment.boys) *
-                        100
-                      ).toFixed(1)}
+                          100,
+                      )}
                       %
                     </span>
                   </div>
                   <div className="flex items-center justify-between py-1">
                     <span className="text-muted-foreground text-sm">Girls</span>
                     <span className="font-semibold tabular-nums">
-                      {(
+                      {Math.round(
                         (school.attendance.girls / school.enrollment.girls) *
-                        100
-                      ).toFixed(1)}
+                          100,
+                      )}
                       %
                     </span>
                   </div>
@@ -279,7 +279,7 @@ export function SchoolDetail() {
                       dataQualityScoreTextClass(school.score),
                     )}
                   >
-                    {school.score}%
+                    {Math.round(school.score)}%
                   </span>
                 </div>
                 <meter
@@ -291,7 +291,7 @@ export function SchoolDetail() {
                   max={100}
                   value={school.score}
                 >
-                  {school.score}%
+                  {Math.round(school.score)}%
                 </meter>
               </CardContent>
             </Card>
@@ -398,9 +398,15 @@ export function SchoolDetail() {
                       <YAxis
                         tick={{ fontSize: 11 }}
                         className="text-muted-foreground"
+                        tickFormatter={(value) =>
+                          String(Math.round(Number(value)))
+                        }
                       />
                       <Tooltip
-                        formatter={(value) => [value ?? "", "Current score"]}
+                        formatter={(value) => [
+                          value != null ? Math.round(Number(value)) : "",
+                          "Current score",
+                        ]}
                       />
                       <Line
                         type="monotone"
