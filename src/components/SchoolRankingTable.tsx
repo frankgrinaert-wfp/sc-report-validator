@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/table";
 import {
   dataQualityScoreTextClass,
+  REPORT_DAILY_ENTRIES_TOTAL,
   type SchoolDashboardRow,
   type SchoolStatus,
 } from "@/data/reportDashboard";
@@ -71,56 +72,68 @@ export function SchoolRankingTable({ schools }: SchoolRankingTableProps) {
 
   return (
     <div className="overflow-hidden rounded-lg bg-background shadow-sm">
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>School</TableHead>
-          <TableHead>Data quality</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>
-            <span className="sr-only">Actions</span>
-          </TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {schools.map((school) => (
-          <TableRow key={school.id}>
-            <TableCell>{school.name}</TableCell>
-            <TableCell>
-              <span className={cn(dataQualityScoreTextClass(school.score))}>
-                {school.score}%
-              </span>
-            </TableCell>
-            <TableCell>
-              <Badge variant={statusBadgeVariant(school.status)}>
-                {school.status}
-              </Badge>
-            </TableCell>
-            <TableCell className="w-px text-right">
-              <div className="inline-flex items-center gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => navigate(`/school/${school.id}`)}
-                >
-                  View details
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon-sm"
-                  onClick={() => handleDownload(school)}
-                  aria-label="Download issues report"
-                >
-                  <Download />
-                </Button>
-              </div>
-            </TableCell>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>School</TableHead>
+            <TableHead>Data quality</TableHead>
+            <TableHead>Daily entries</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>
+              <span className="sr-only">Actions</span>
+            </TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {schools.map((school) => (
+            <TableRow key={school.id}>
+              <TableCell>{school.name}</TableCell>
+              <TableCell>
+                <span className={cn(dataQualityScoreTextClass(school.score))}>
+                  {school.score}%
+                </span>
+              </TableCell>
+              <TableCell className="tabular-nums">
+                <span
+                  className={cn(
+                    school.dailyEntries < REPORT_DAILY_ENTRIES_TOTAL
+                      ? "text-warning-600"
+                      : "text-success-600",
+                  )}
+                >
+                  {school.dailyEntries} of {REPORT_DAILY_ENTRIES_TOTAL}
+                </span>
+              </TableCell>
+              <TableCell>
+                <Badge variant={statusBadgeVariant(school.status)}>
+                  {school.status}
+                </Badge>
+              </TableCell>
+              <TableCell className="w-px text-right">
+                <div className="inline-flex items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => navigate(`/school/${school.id}`)}
+                  >
+                    View details
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon-sm"
+                    onClick={() => handleDownload(school)}
+                    aria-label="Download issues report"
+                  >
+                    <Download />
+                  </Button>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
 }

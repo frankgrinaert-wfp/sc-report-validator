@@ -52,7 +52,9 @@ export type ValidationIssue = {
   commodity?: string;
 };
 
-export type SchoolDashboardRow = {
+export const REPORT_DAILY_ENTRIES_TOTAL = 20;
+
+type SchoolRecordCore = {
   id: number;
   name: string;
   code: string;
@@ -64,7 +66,12 @@ export type SchoolDashboardRow = {
   avgMealsPerDay: number;
 };
 
-export type SchoolDetailRecord = SchoolDashboardRow & {
+export type SchoolDashboardRow = SchoolRecordCore & {
+  /** Number of school days with a submitted daily entry (mock). */
+  dailyEntries: number;
+};
+
+export type SchoolDetailRecord = SchoolRecordCore & {
   issues: ValidationIssue[];
 };
 
@@ -712,11 +719,38 @@ export function getSchoolDetail(
   return SCHOOL_DETAIL_BY_ID[schoolId];
 }
 
+/** Mock daily-entry counts (out of REPORT_DAILY_ENTRIES_TOTAL) per school id. */
+const MOCK_DAILY_ENTRIES_BY_ID: Record<number, number> = {
+  1: 12,
+  2: 14,
+  3: 15,
+  4: 15,
+  5: 16,
+  6: 17,
+  7: 17,
+  8: 18,
+  9: 18,
+  10: 19,
+  11: 19,
+  12: 19,
+  13: 20,
+  14: 20,
+  15: 20,
+  16: 20,
+  17: 20,
+  18: 20,
+  19: 20,
+  20: 20,
+};
+
 export const DASHBOARD_SCHOOLS: SchoolDashboardRow[] = (
   Object.values(SCHOOL_DETAIL_BY_ID) as SchoolDetailRecord[]
-).map(stripIssuesFromDetail);
+).map((row) => ({
+  ...stripIssuesFromDetail(row),
+  dailyEntries: MOCK_DAILY_ENTRIES_BY_ID[row.id] ?? 17,
+}));
 
-function stripIssuesFromDetail(row: SchoolDetailRecord): SchoolDashboardRow {
+function stripIssuesFromDetail(row: SchoolDetailRecord): SchoolRecordCore {
   const { issues, ...rest } = row;
   void issues;
   return rest;
