@@ -76,13 +76,13 @@ function IssueSeverityIcon({ severity }: { severity: string }) {
   switch (severity) {
     case "critical":
     case "error":
-      return <CircleAlert className="size-4" />;
+      return <CircleAlert />;
     case "warning":
-      return <AlertTriangle className="size-4" />;
+      return <AlertTriangle />;
     case "info":
-      return <Info className="size-4" />;
+      return <Info />;
     default:
-      return <Info className="size-4" />;
+      return <Info />;
   }
 }
 
@@ -169,280 +169,277 @@ export function SchoolDetail() {
     <div className="flex h-screen flex-col">
       <div className="flex-1 overflow-y-auto">
         <div className="mx-auto max-w-5xl p-8">
-            <Card className="mb-6">
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="text-2xl">{school.name}</CardTitle>
+              <CardDescription>Month: 2025-05</CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-4 border-border border-t pt-6 sm:flex-row sm:items-center sm:justify-between">
+              <SchoolStatusSelect key={school.id} school={school} />
+              <div className="flex flex-wrap items-center gap-3">
+                <SettingsSheet />
+                <Button type="button" variant="secondary">
+                  <Download />
+                  Download issues report
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate("/")}
+                >
+                  <List />
+                  Back to list
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="mb-6 grid gap-6 md:grid-cols-2">
+            <Card>
               <CardHeader>
-                <CardTitle className="text-2xl">{school.name}</CardTitle>
-                <CardDescription>Month: 2025-05</CardDescription>
+                <CardTitle>Average school attendance</CardTitle>
               </CardHeader>
-              <CardContent className="flex flex-col gap-4 border-border border-t pt-6 sm:flex-row sm:items-center sm:justify-between">
-                <SchoolStatusSelect key={school.id} school={school} />
-                <div className="flex flex-wrap items-center gap-3">
-                  <SettingsSheet />
-                  <Button type="button" variant="secondary">
-                    <Download />
-                    Download issues report
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => navigate("/")}
-                  >
-                    <List />
-                    Back to list
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            <div className="mb-6 grid gap-6 md:grid-cols-2">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Average school attendance</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2 border-border border-t pt-4">
-                  <div className="flex items-center justify-between py-1">
-                    <span className="text-muted-foreground text-sm">Total</span>
-                    <span className="font-semibold tabular-nums">
-                      {Math.round(
-                        (school.attendance.total / school.enrollment.total) *
-                          100,
-                      )}
-                      %
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between py-1">
-                    <span className="text-muted-foreground text-sm">Boys</span>
-                    <span className="font-semibold tabular-nums">
-                      {Math.round(
-                        (school.attendance.boys / school.enrollment.boys) *
-                          100,
-                      )}
-                      %
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between py-1">
-                    <span className="text-muted-foreground text-sm">Girls</span>
-                    <span className="font-semibold tabular-nums">
-                      {Math.round(
-                        (school.attendance.girls / school.enrollment.girls) *
-                          100,
-                      )}
-                      %
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Meals delivered</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2 border-border border-t pt-4">
-                  <div className="flex items-center justify-between py-1">
-                    <span className="text-muted-foreground text-sm">
-                      Total meals delivered
-                    </span>
-                    <span className="font-semibold tabular-nums">
-                      {school.totalMeals.toLocaleString()}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between py-1">
-                    <span className="text-muted-foreground text-sm">
-                      Average meals per day
-                    </span>
-                    <span className="font-semibold tabular-nums">
-                      {school.avgMealsPerDay}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <Card className="mb-6">
-              <CardHeader>
-                <div className="flex gap-3">
-                  <Info className="mt-1 size-5 shrink-0 text-primary" />
-                  <div>
-                    <CardTitle>Data quality score</CardTitle>
-                    <CardDescription>
-                      Overall assessment of data completeness and accuracy
-                    </CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-3 border-border border-t pt-6">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">Current score</span>
-                  <span
-                    className={cn(
-                      "font-bold text-2xl tabular-nums",
-                      dataQualityScoreTextClass(school.score),
+              <CardContent className="space-y-2 border-border border-t pt-4">
+                <div className="flex items-center justify-between py-1">
+                  <span className="text-muted-foreground text-sm">Total</span>
+                  <span className="font-semibold tabular-nums">
+                    {Math.round(
+                      (school.attendance.total / school.enrollment.total) * 100,
                     )}
-                  >
-                    {Math.round(school.score)}%
+                    %
                   </span>
                 </div>
-                <meter
+                <div className="flex items-center justify-between py-1">
+                  <span className="text-muted-foreground text-sm">Boys</span>
+                  <span className="font-semibold tabular-nums">
+                    {Math.round(
+                      (school.attendance.boys / school.enrollment.boys) * 100,
+                    )}
+                    %
+                  </span>
+                </div>
+                <div className="flex items-center justify-between py-1">
+                  <span className="text-muted-foreground text-sm">Girls</span>
+                  <span className="font-semibold tabular-nums">
+                    {Math.round(
+                      (school.attendance.girls / school.enrollment.girls) * 100,
+                    )}
+                    %
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Meals delivered</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2 border-border border-t pt-4">
+                <div className="flex items-center justify-between py-1">
+                  <span className="text-muted-foreground text-sm">
+                    Total meals delivered
+                  </span>
+                  <span className="font-semibold tabular-nums">
+                    {school.totalMeals.toLocaleString()}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between py-1">
+                  <span className="text-muted-foreground text-sm">
+                    Average meals per day
+                  </span>
+                  <span className="font-semibold tabular-nums">
+                    {school.avgMealsPerDay}
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card className="mb-6">
+            <CardHeader>
+              <div className="flex gap-3">
+                <Info className="mt-1 size-5 shrink-0 text-primary" />
+                <div>
+                  <CardTitle>Data quality score</CardTitle>
+                  <CardDescription>
+                    Overall assessment of data completeness and accuracy
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-3 border-border border-t pt-6">
+              <div className="flex items-center justify-between">
+                <span className="text-sm">Current score</span>
+                <span
                   className={cn(
-                    "h-2 w-full",
-                    dataQualityScoreAccentClass(school.score),
+                    "font-bold text-2xl tabular-nums",
+                    dataQualityScoreTextClass(school.score),
                   )}
-                  min={0}
-                  max={100}
-                  value={school.score}
                 >
                   {Math.round(school.score)}%
-                </meter>
-              </CardContent>
-            </Card>
-
-            <div className="mb-6">
-              <h2 className="mb-4 font-semibold text-lg">Flagged issues</h2>
-              <div className="flex flex-col gap-3">
-                {sortedIssues.map((issue, index) => {
-                  const translatedIssue = issueLabel(issue.issueKey);
-                  const displayIssue = issue.commodity
-                    ? translatedIssue.replace(
-                        "{commodity}",
-                        String(issue.commodity),
-                      )
-                    : translatedIssue;
-
-                  return (
-                    <Card key={`issue-${index}`} className="gap-0 py-0">
-                      <details className="group">
-                        <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden">
-                          <div className="p-0">
-                            <Alert variant={issueAlertVariant(issue.severity)}>
-                              <IssueSeverityIcon severity={issue.severity} />
-                              <AlertTitle>
-                                {SEVERITY_LABELS[issue.severity] ??
-                                  issue.severity}
-                              </AlertTitle>
-                              <AlertDescription>
-                                {displayIssue} ({issue.occurrences.length}{" "}
-                                {issue.occurrences.length !== 1
-                                  ? "occurrences"
-                                  : "occurrence"}
-                                )
-                              </AlertDescription>
-                            </Alert>
-                          </div>
-                        </summary>
-                        <CardContent className="border-border border-t pt-4">
-                          <div className="overflow-x-auto">
-                            <table className="w-full text-sm">
-                              <thead>
-                                <tr className="border-b border-border text-left">
-                                  <th className="px-3 py-2 font-semibold">
-                                    Date
-                                  </th>
-                                  <th className="px-3 py-2 font-semibold">
-                                    {issue.metric}
-                                  </th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {issue.occurrences.map((occurrence, idx) => (
-                                  <tr
-                                    key={idx}
-                                    className="border-b border-border last:border-0"
-                                  >
-                                    <td className="px-3 py-2 tabular-nums">
-                                      {occurrence.date}
-                                    </td>
-                                    <td className="px-3 py-2">
-                                      {String(occurrence.value)}
-                                    </td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                          </div>
-                        </CardContent>
-                      </details>
-                    </Card>
-                  );
-                })}
+                </span>
               </div>
-            </div>
-
-            <Card className="mb-8">
-              <CardHeader>
-                <div className="flex gap-3">
-                  <Info className="mt-1 size-5 shrink-0 text-primary" />
-                  <div>
-                    <CardTitle>Historical data quality score</CardTitle>
-                    <CardDescription>
-                      Trend of data quality scores over the last 12 months
-                    </CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="border-border border-t pt-6">
-                <div className="h-72 w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={historicalData}>
-                      <CartesianGrid
-                        strokeDasharray="3 3"
-                        className="stroke-border"
-                      />
-                      <XAxis
-                        dataKey="month"
-                        tick={{ fontSize: 11 }}
-                        className="text-muted-foreground"
-                        angle={-45}
-                        textAnchor="end"
-                        height={72}
-                      />
-                      <YAxis
-                        tick={{ fontSize: 11 }}
-                        className="text-muted-foreground"
-                        tickFormatter={(value) =>
-                          String(Math.round(Number(value)))
-                        }
-                      />
-                      <Tooltip
-                        formatter={(value) => [
-                          value != null ? Math.round(Number(value)) : "",
-                          "Current score",
-                        ]}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="score"
-                        stroke="var(--primary)"
-                        strokeWidth={2}
-                        dot={{ fill: "var(--primary)", r: 4 }}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
-
-            <div className="flex items-center justify-between border-border border-t pt-6">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handlePrevious}
-                disabled={school.id === 1}
+              <meter
+                className={cn(
+                  "h-2 w-full",
+                  dataQualityScoreAccentClass(school.score),
+                )}
+                min={0}
+                max={100}
+                value={school.score}
               >
-                <ChevronLeft />
-                Previous school
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleNext}
-                disabled={school.id === 20}
-              >
-                Next school
-                <ChevronRight />
-              </Button>
+                {Math.round(school.score)}%
+              </meter>
+            </CardContent>
+          </Card>
+
+          <div className="mb-6">
+            <h2 className="mb-4 font-semibold text-lg">Flagged issues</h2>
+            <div className="flex flex-col gap-3">
+              {sortedIssues.map((issue, index) => {
+                const translatedIssue = issueLabel(issue.issueKey);
+                const displayIssue = issue.commodity
+                  ? translatedIssue.replace(
+                      "{commodity}",
+                      String(issue.commodity),
+                    )
+                  : translatedIssue;
+
+                return (
+                  <Card key={`issue-${index}`} className="gap-0 py-0">
+                    <details className="group">
+                      <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                        <div className="p-0">
+                          <Alert variant={issueAlertVariant(issue.severity)}>
+                            <IssueSeverityIcon severity={issue.severity} />
+                            <AlertTitle>
+                              {SEVERITY_LABELS[issue.severity] ??
+                                issue.severity}
+                            </AlertTitle>
+                            <AlertDescription>
+                              {displayIssue} ({issue.occurrences.length}{" "}
+                              {issue.occurrences.length !== 1
+                                ? "occurrences"
+                                : "occurrence"}
+                              )
+                            </AlertDescription>
+                          </Alert>
+                        </div>
+                      </summary>
+                      <CardContent className="border-border border-t pt-4">
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-sm">
+                            <thead>
+                              <tr className="border-b border-border text-left">
+                                <th className="px-3 py-2 font-semibold">
+                                  Date
+                                </th>
+                                <th className="px-3 py-2 font-semibold">
+                                  {issue.metric}
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {issue.occurrences.map((occurrence, idx) => (
+                                <tr
+                                  key={idx}
+                                  className="border-b border-border last:border-0"
+                                >
+                                  <td className="px-3 py-2 tabular-nums">
+                                    {occurrence.date}
+                                  </td>
+                                  <td className="px-3 py-2">
+                                    {String(occurrence.value)}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </CardContent>
+                    </details>
+                  </Card>
+                );
+              })}
             </div>
+          </div>
+
+          <Card className="mb-8">
+            <CardHeader>
+              <div className="flex gap-3">
+                <Info className="mt-1 size-5 shrink-0 text-primary" />
+                <div>
+                  <CardTitle>Historical data quality score</CardTitle>
+                  <CardDescription>
+                    Trend of data quality scores over the last 12 months
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="border-border border-t pt-6">
+              <div className="h-72 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={historicalData}>
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      className="stroke-border"
+                    />
+                    <XAxis
+                      dataKey="month"
+                      tick={{ fontSize: 11 }}
+                      className="text-muted-foreground"
+                      angle={-45}
+                      textAnchor="end"
+                      height={72}
+                    />
+                    <YAxis
+                      tick={{ fontSize: 11 }}
+                      className="text-muted-foreground"
+                      tickFormatter={(value) =>
+                        String(Math.round(Number(value)))
+                      }
+                    />
+                    <Tooltip
+                      formatter={(value) => [
+                        value != null ? Math.round(Number(value)) : "",
+                        "Current score",
+                      ]}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="score"
+                      stroke="var(--primary)"
+                      strokeWidth={2}
+                      dot={{ fill: "var(--primary)", r: 4 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="flex items-center justify-between border-border border-t pt-6">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handlePrevious}
+              disabled={school.id === 1}
+            >
+              <ChevronLeft />
+              Previous school
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleNext}
+              disabled={school.id === 20}
+            >
+              Next school
+              <ChevronRight />
+            </Button>
           </div>
         </div>
       </div>
+    </div>
   );
 }

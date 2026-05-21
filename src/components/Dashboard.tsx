@@ -21,6 +21,7 @@ import { SettingsSheet } from "@/components/SettingsSheet";
 import { SchoolRankingTable } from "@/components/SchoolRankingTable";
 import {
   DASHBOARD_SCHOOLS,
+  formatReportMonth,
   schoolQualityFromScore,
 } from "@/data/reportDashboard";
 
@@ -47,6 +48,9 @@ export function Dashboard() {
   const [qualityFilter, setQualityFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState<"all" | SchoolStatus>("all");
   const [orderBy, setOrderBy] = useState("score-asc");
+  const [reportMonth, setReportMonth] = useState("may");
+  const [reportYear, setReportYear] = useState("2025");
+  const reportMonthLabel = formatReportMonth(reportMonth, reportYear);
 
   const filteredSchools = DASHBOARD_SCHOOLS.filter((school) => {
     if (
@@ -149,7 +153,7 @@ export function Dashboard() {
             </Select>
           </div>
           <div className="flex flex-wrap items-end gap-2">
-            <Select defaultValue="may">
+            <Select value={reportMonth} onValueChange={setReportMonth}>
               <SelectTrigger
                 id="month-select"
                 className="w-48"
@@ -173,7 +177,7 @@ export function Dashboard() {
               </SelectContent>
             </Select>
 
-            <Select defaultValue="2025">
+            <Select value={reportYear} onValueChange={setReportYear}>
               <SelectTrigger
                 id="year-select"
                 className="w-48"
@@ -277,7 +281,10 @@ export function Dashboard() {
             </Button>
           </div>
 
-          <SchoolRankingTable schools={sortedSchools} />
+          <SchoolRankingTable
+            schools={sortedSchools}
+            reportMonth={reportMonthLabel}
+          />
 
           <div className="mt-8 grid gap-6 md:grid-cols-2">
             <Card>

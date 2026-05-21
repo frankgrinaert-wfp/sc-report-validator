@@ -54,6 +54,13 @@ export type ValidationIssue = {
 
 export const REPORT_DAILY_ENTRIES_TOTAL = 20;
 
+/** e.g. `formatReportMonth("march", "2025")` → `"March, 2025"` */
+export function formatReportMonth(monthKey: string, year: string): string {
+  const monthName =
+    monthKey.charAt(0).toUpperCase() + monthKey.slice(1).toLowerCase();
+  return `${monthName}, ${year}`;
+}
+
 type SchoolRecordCore = {
   id: number;
   name: string;

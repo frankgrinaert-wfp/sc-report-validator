@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils";
 
 type SchoolRankingTableProps = {
   schools: SchoolDashboardRow[];
+  reportMonth: string;
 };
 
 function statusBadgeVariant(status: SchoolStatus) {
@@ -33,7 +34,10 @@ function statusBadgeVariant(status: SchoolStatus) {
   }
 }
 
-export function SchoolRankingTable({ schools }: SchoolRankingTableProps) {
+export function SchoolRankingTable({
+  schools,
+  reportMonth,
+}: SchoolRankingTableProps) {
   const navigate = useNavigate();
 
   const handleDownload = (school: SchoolDashboardRow) => {
@@ -76,8 +80,9 @@ export function SchoolRankingTable({ schools }: SchoolRankingTableProps) {
         <TableHeader>
           <TableRow>
             <TableHead>School</TableHead>
-            <TableHead>Data quality</TableHead>
+            <TableHead>Month</TableHead>
             <TableHead>Daily entries</TableHead>
+            <TableHead>Data quality</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>
               <span className="sr-only">Actions</span>
@@ -88,11 +93,7 @@ export function SchoolRankingTable({ schools }: SchoolRankingTableProps) {
           {schools.map((school) => (
             <TableRow key={school.id}>
               <TableCell>{school.name}</TableCell>
-              <TableCell>
-                <span className={cn(dataQualityScoreTextClass(school.score))}>
-                  {Math.round(school.score)}%
-                </span>
-              </TableCell>
+              <TableCell>{reportMonth}</TableCell>
               <TableCell className="tabular-nums">
                 <span
                   className={cn(
@@ -102,6 +103,11 @@ export function SchoolRankingTable({ schools }: SchoolRankingTableProps) {
                   )}
                 >
                   {school.dailyEntries} of {REPORT_DAILY_ENTRIES_TOTAL}
+                </span>
+              </TableCell>
+              <TableCell>
+                <span className={cn(dataQualityScoreTextClass(school.score))}>
+                  {Math.round(school.score)}%
                 </span>
               </TableCell>
               <TableCell>
