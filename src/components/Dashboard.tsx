@@ -129,7 +129,7 @@ export function Dashboard() {
         <div className="p-8 flex flex-col gap-7">
           <div className="flex items-start justify-between gap-4">
             <div className="flex flex-col gap-4">
-              <h1 className="font-bold text-3xl">Reports quality check</h1>
+              <h1 className="font-bold text-3xl">Reports quality checker</h1>
               <p className="text-muted-foreground text-sm">
                 Review and validate monthly reports. Last updated: August 2025
               </p>
