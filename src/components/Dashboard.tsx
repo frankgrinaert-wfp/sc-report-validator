@@ -73,8 +73,8 @@ export function Dashboard() {
   const [regionFilter, setRegionFilter] = useState("all");
   const [qualityFilter, setQualityFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState<"all" | SchoolStatus>("all");
-  const [sortBy, setSortBy] = useState<DashboardSortBy>("quality");
-  const [sortOrder, setSortOrder] = useState<DashboardSortOrder>("asc");
+  const [sortBy, setSortBy] = useState<DashboardSortBy>("month");
+  const [sortOrder, setSortOrder] = useState<DashboardSortOrder>("desc");
   const [schoolYear, setSchoolYear] = useState("all");
   const [reportMonth, setReportMonth] = useState("all");
 
