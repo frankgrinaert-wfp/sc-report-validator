@@ -16,7 +16,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { SchoolStatus } from "@/data/reportDashboard";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SettingsSheet } from "@/components/SettingsSheet";
 import { SchoolRankingTable } from "@/components/SchoolRankingTable";
 import {
@@ -90,39 +89,6 @@ export function Dashboard() {
         return 0;
     }
   });
-
-  const aggregatedData = DASHBOARD_SCHOOLS.reduce(
-    (acc, school) => {
-      acc.totalEnrollment += school.enrollment.total;
-      acc.boysEnrollment += school.enrollment.boys;
-      acc.girlsEnrollment += school.enrollment.girls;
-      acc.totalAttendance += school.attendance.total;
-      acc.boysAttendance += school.attendance.boys;
-      acc.girlsAttendance += school.attendance.girls;
-      acc.totalMeals += school.totalMeals;
-      return acc;
-    },
-    {
-      totalEnrollment: 0,
-      boysEnrollment: 0,
-      girlsEnrollment: 0,
-      totalAttendance: 0,
-      boysAttendance: 0,
-      girlsAttendance: 0,
-      totalMeals: 0,
-    },
-  );
-
-  const avgAttendanceTotal = Math.round(
-    (aggregatedData.totalAttendance / aggregatedData.totalEnrollment) * 100,
-  );
-  const avgAttendanceBoys = Math.round(
-    (aggregatedData.boysAttendance / aggregatedData.boysEnrollment) * 100,
-  );
-  const avgAttendanceGirls = Math.round(
-    (aggregatedData.girlsAttendance / aggregatedData.girlsEnrollment) * 100,
-  );
-  const avgMealsPerDay = Math.round(aggregatedData.totalAttendance / 20);
 
   return (
     <div className="flex h-screen flex-col">
@@ -285,58 +251,6 @@ export function Dashboard() {
             schools={sortedSchools}
             reportMonth={reportMonthLabel}
           />
-
-          <div className="mt-8 grid gap-6 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Average school attendance</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2 border-border border-t pt-4">
-                <div className="flex items-center justify-between py-1">
-                  <span className="text-muted-foreground text-sm">Total</span>
-                  <span className="font-semibold tabular-nums">
-                    {avgAttendanceTotal}%
-                  </span>
-                </div>
-                <div className="flex items-center justify-between py-1">
-                  <span className="text-muted-foreground text-sm">Boys</span>
-                  <span className="font-semibold tabular-nums">
-                    {avgAttendanceBoys}%
-                  </span>
-                </div>
-                <div className="flex items-center justify-between py-1">
-                  <span className="text-muted-foreground text-sm">Girls</span>
-                  <span className="font-semibold tabular-nums">
-                    {avgAttendanceGirls}%
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Meals delivered</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2 border-border border-t pt-4">
-                <div className="flex items-center justify-between py-1">
-                  <span className="text-muted-foreground text-sm">
-                    Total meals delivered
-                  </span>
-                  <span className="font-semibold tabular-nums">
-                    {aggregatedData.totalMeals.toLocaleString()}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between py-1">
-                  <span className="text-muted-foreground text-sm">
-                    Average meals per day
-                  </span>
-                  <span className="font-semibold tabular-nums">
-                    {avgMealsPerDay.toLocaleString()}
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
         </div>
       </div>
     </div>
