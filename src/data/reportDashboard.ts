@@ -8,7 +8,7 @@ export function schoolQualityFromScore(score: number): SchoolQuality {
   return "critical";
 }
 
-export type ProgressMetricTone = "success" | "warning" | "danger";
+export type ProgressMetricTone = "success" | "warning" | "danger" | "neutral";
 
 const PROGRESS_METRIC_TONE_CLASSES: Record<
   ProgressMetricTone,
@@ -17,6 +17,7 @@ const PROGRESS_METRIC_TONE_CLASSES: Record<
   success: { text: "text-success-600", indicator: "bg-success-500" },
   warning: { text: "text-warning-600", indicator: "bg-warning-500" },
   danger: { text: "text-danger-600", indicator: "bg-danger-500" },
+  neutral: { text: "text-neutral-600", indicator: "bg-neutral-500" },
 };
 
 export function progressMetricTextClass(tone: ProgressMetricTone): string {
@@ -68,7 +69,7 @@ export function dailyEntriesTone(
   entries: number,
   total = REPORT_DAILY_ENTRIES_TOTAL,
 ): ProgressMetricTone {
-  return entries >= total ? "success" : "warning";
+  return entries >= total ? "success" : "neutral";
 }
 
 export type MetricProgressConfig = {
