@@ -3,23 +3,27 @@ import {
   Ban,
   Check,
   Download,
+  ExternalLink,
   Info,
   OctagonX,
   TriangleAlert,
 } from "lucide-react";
+import { Fragment } from "react";
 import { useNavigate, useParams } from "react-router";
 import { MetricProgress } from "@/components/MetricProgress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemGroup,
+  ItemMedia,
+  ItemSeparator,
+  ItemTitle,
+} from "@/components/ui/item";
 import {
   dailyEntriesMetricConfig,
   dataQualityMetricConfig,
@@ -43,6 +47,15 @@ function statusBadgeVariant(status: SchoolStatus) {
   }
 }
 
+const AUDIT_ISSUE_SEVERITY_SUMMARY: {
+  severity: ReportAuditIssueSeverity;
+  label: string;
+}[] = [
+  { severity: "critical", label: "critical" },
+  { severity: "high", label: "important" },
+  { severity: "low", label: "trivial" },
+];
+
 function AuditIssueSeverityIcon({
   severity,
 }: {
@@ -50,16 +63,24 @@ function AuditIssueSeverityIcon({
 }) {
   switch (severity) {
     case "critical":
-      return (
-        <OctagonX className="size-5 text-danger-500" aria-label="Critical" />
-      );
+      return <OctagonX className="text-danger-500 size-5" />;
     case "high":
-      return (
-        <TriangleAlert className="size-5 text-warning-500" aria-label="High" />
-      );
+      return <TriangleAlert className="text-warning-500 size-5" />;
     case "low":
-      return <Info className="size-5 text-info-500" aria-label="Low" />;
+      return <Info className="text-info-500 size-5" />;
   }
+}
+
+function countAuditIssuesBySeverity(
+  issues: typeof REPORT_AUDIT_ISSUES,
+): Record<ReportAuditIssueSeverity, number> {
+  return issues.reduce(
+    (counts, issue) => {
+      counts[issue.severity] += 1;
+      return counts;
+    },
+    { critical: 0, high: 0, low: 0 },
+  );
 }
 
 export function SchoolDetail() {
@@ -90,6 +111,7 @@ export function SchoolDetail() {
   const dailyEntries =
     report?.dailyEntries ?? MOCK_DAILY_ENTRIES_BY_ID[school.id] ?? 0;
   const qualityScore = report?.score ?? school.score;
+  const issueCounts = countAuditIssuesBySeverity(REPORT_AUDIT_ISSUES);
 
   return (
     <div className="flex h-screen flex-col">
@@ -110,8 +132,23 @@ export function SchoolDetail() {
           </div>
 
           <div className="flex items-center gap-4">
-            <p className="font-medium">Report review</p>
+            <p className="text-muted-foreground text-sm">Report review</p>
             <Badge variant={statusBadgeVariant(status)}>{status}</Badge>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" variant="success-secondary">
+              <Check />
+              Approve report
+            </Button>
+            <Button type="button" variant="destructive-secondary">
+              <Ban />
+              Request corrections
+            </Button>
+            <Button type="button" variant="outline">
+              <ExternalLink />
+              View report
+            </Button>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
@@ -139,49 +176,58 @@ export function SchoolDetail() {
             </Card>
           </div>
 
-          <div className="flex flex-wrap gap-2">
-            <Button type="button" variant="success-secondary">
-              <Check />
-              Approve
-            </Button>
-            <Button type="button" variant="destructive-secondary">
-              <Ban />
-              Request corrections
-            </Button>
-            <Button type="button" variant="outline">
-              View report
-            </Button>
-            <Button type="button" variant="outline">
-              <Download />
-              Download
-            </Button>
-          </div>
+          <div className="overflow-hidden rounded-lg bg-background shadow-sm p-5 flex flex-col gap-5 border">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <h2 className="font-semibold text-xl">Data quality issues</h2>
+              <Button type="button" variant="outline">
+                <Download />
+                Download
+              </Button>
+            </div>
 
-          <h2 className="font-semibold text-xl">Data quality issues</h2>
+            <div className="grid gap-4 md:grid-cols-3">
+              {AUDIT_ISSUE_SEVERITY_SUMMARY.map(({ severity, label }) => (
+                <Item
+                  key={severity}
+                  variant="outline"
+                  className="bg-background"
+                >
+                  <ItemMedia>
+                    <AuditIssueSeverityIcon severity={severity} />
+                  </ItemMedia>
+                  <ItemContent>
+                    <ItemTitle className="text-base">
+                      {issueCounts[severity]} {label}
+                    </ItemTitle>
+                  </ItemContent>
+                </Item>
+              ))}
+            </div>
 
-          <div className="overflow-hidden rounded-lg bg-background shadow-sm">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Severity</TableHead>
-                  <TableHead>Details</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {REPORT_AUDIT_ISSUES.map((issue) => (
-                  <TableRow key={issue.date}>
-                    <TableCell className="whitespace-nowrap tabular-nums">
-                      {formatAuditIssueDate(issue.date)}
-                    </TableCell>
-                    <TableCell className="w-px">
+            <ItemGroup>
+              {REPORT_AUDIT_ISSUES.map((issue, index) => (
+                <Fragment key={issue.date}>
+                  {index > 0 ? <ItemSeparator /> : null}
+                  <Item role="listitem">
+                    <ItemMedia>
                       <AuditIssueSeverityIcon severity={issue.severity} />
-                    </TableCell>
-                    <TableCell>{issue.details}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                    </ItemMedia>
+                    <ItemContent>
+                      <ItemTitle>{issue.title}</ItemTitle>
+                      <ItemDescription className="tabular-nums">
+                        {formatAuditIssueDate(issue.date)}
+                      </ItemDescription>
+                    </ItemContent>
+                    <ItemActions>
+                      <Button type="button" variant="outline">
+                        <ExternalLink />
+                        View
+                      </Button>
+                    </ItemActions>
+                  </Item>
+                </Fragment>
+              ))}
+            </ItemGroup>
           </div>
         </div>
       </div>

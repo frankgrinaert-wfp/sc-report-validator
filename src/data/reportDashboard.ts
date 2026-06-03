@@ -886,38 +886,70 @@ export type ReportAuditIssueSeverity = "critical" | "high" | "low";
 export type ReportAuditIssue = {
   date: string;
   severity: ReportAuditIssueSeverity;
-  details: string;
+  title: string;
 };
-
-const AUDIT_ISSUE_LOREM =
-  "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
 
 /** Static issues table shared by all report detail pages (mock). */
 export const REPORT_AUDIT_ISSUES: ReportAuditIssue[] = [
   {
     date: "2024-04-12",
     severity: "critical",
-    details: AUDIT_ISSUE_LOREM,
+    title:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
   },
   {
     date: "2024-04-08",
     severity: "high",
-    details: AUDIT_ISSUE_LOREM,
+    title:
+      "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.",
   },
   {
     date: "2024-04-15",
     severity: "low",
-    details: AUDIT_ISSUE_LOREM,
+    title:
+      "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit.",
   },
   {
     date: "2024-04-22",
     severity: "high",
-    details: AUDIT_ISSUE_LOREM,
+    title:
+      "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit.",
   },
   {
     date: "2024-04-03",
     severity: "critical",
-    details: AUDIT_ISSUE_LOREM,
+    title:
+      "Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet consectetur adipisci velit.",
+  },
+  {
+    date: "2024-04-01",
+    severity: "low",
+    title:
+      "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium.",
+  },
+  {
+    date: "2024-04-05",
+    severity: "critical",
+    title:
+      "Et harum quidem rerum facilis est et expedita distinctio nam libero tempore cum soluta.",
+  },
+  {
+    date: "2024-04-10",
+    severity: "high",
+    title:
+      "Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet.",
+  },
+  {
+    date: "2024-04-18",
+    severity: "critical",
+    title:
+      "Hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis.",
+  },
+  {
+    date: "2024-04-25",
+    severity: "high",
+    title:
+      "Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae.",
   },
 ];
 
