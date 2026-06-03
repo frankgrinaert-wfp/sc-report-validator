@@ -1,5 +1,6 @@
 import { ChevronRight, Download } from "lucide-react";
-import { useNavigate } from "react-router";
+import { useState } from "react";
+import { SchoolDetailSheet } from "@/components/SchoolDetail";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -34,7 +35,7 @@ function statusBadgeVariant(status: SchoolStatus) {
 }
 
 export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
-  const navigate = useNavigate();
+  const [detailSchoolId, setDetailSchoolId] = useState<number | null>(null);
 
   const handleDownload = (report: DashboardReportRow) => {
     const payload = {
@@ -72,6 +73,7 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
   };
 
   return (
+    <>
     <div className="overflow-hidden rounded-lg bg-background shadow-sm">
       <Table>
         <TableHeader>
@@ -119,7 +121,7 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
                     type="button"
                     variant="outline"
                     size="sm"
-                    onClick={() => navigate(`/school/${report.schoolId}`)}
+                    onClick={() => setDetailSchoolId(report.schoolId)}
                   >
                     View details
                     <ChevronRight />
@@ -131,5 +133,13 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
         </TableBody>
       </Table>
     </div>
+    <SchoolDetailSheet
+      schoolId={detailSchoolId}
+      open={detailSchoolId != null}
+      onOpenChange={(open) => {
+        if (!open) setDetailSchoolId(null);
+      }}
+    />
+    </>
   );
 }

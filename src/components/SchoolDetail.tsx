@@ -1,5 +1,4 @@
 import {
-  ArrowLeft,
   Ban,
   Check,
   Download,
@@ -9,11 +8,10 @@ import {
   TriangleAlert,
 } from "lucide-react";
 import { Fragment } from "react";
-import { useNavigate, useParams } from "react-router";
-import { MetricProgress } from "@/components/MetricProgress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import {
   Item,
   ItemActions,
@@ -25,9 +23,17 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import {
+  Sheet,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import {
   dailyEntriesMetricConfig,
   dataQualityMetricConfig,
   formatAuditIssueDate,
+  progressMetricIndicatorClass,
   getDashboardReportForSchool,
   getSchoolDetail,
   MOCK_DAILY_ENTRIES_BY_ID,
@@ -83,60 +89,159 @@ function countAuditIssuesBySeverity(
   );
 }
 
-export function SchoolDetail() {
-  const { schoolId } = useParams();
-  const navigate = useNavigate();
+type SchoolDetailContentProps = {
+  schoolId: number;
+};
 
-  const school = getSchoolDetail(schoolId);
+export function SchoolDetailContent({ schoolId }: SchoolDetailContentProps) {
+  const school = getSchoolDetail(String(schoolId));
   const report = school ? getDashboardReportForSchool(school.id) : undefined;
 
   if (!school) {
-    return (
-      <div className="p-8">
-        <p className="mb-4 text-muted-foreground">School not found.</p>
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          onClick={() => navigate("/")}
-        >
-          <ArrowLeft />
-        </Button>
-      </div>
-    );
+    return <p className="text-muted-foreground text-sm">School not found.</p>;
   }
 
-  const periodLabel = report?.periodLabel ?? "May 2025";
   const status = report?.status ?? school.status;
   const dailyEntries =
     report?.dailyEntries ?? MOCK_DAILY_ENTRIES_BY_ID[school.id] ?? 0;
   const qualityScore = report?.score ?? school.score;
   const issueCounts = countAuditIssuesBySeverity(REPORT_AUDIT_ISSUES);
+  const completenessMetric = dailyEntriesMetricConfig(dailyEntries);
+  const qualityMetric = dataQualityMetricConfig(qualityScore);
 
   return (
-    <div className="flex h-screen flex-col">
-      <div className="flex-1 overflow-y-auto">
-        <div className="mx-auto flex max-w-5xl flex-col gap-6 p-8">
-          <div className="flex flex-wrap items-center gap-4">
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              onClick={() => navigate("/")}
-            >
-              <ArrowLeft />
-            </Button>
-            <h1 className="font-bold text-3xl">
-              {school.name} – {periodLabel}
-            </h1>
-          </div>
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-wrap items-center gap-4">
+        <Badge variant={statusBadgeVariant(status)}>{status}</Badge>
+        <Button type="button" variant="link" size="sm">
+          <ExternalLink />
+          View report
+        </Button>
+      </div>
 
-          <div className="flex items-center gap-4">
-            <p className="text-muted-foreground text-sm">Report review</p>
-            <Badge variant={statusBadgeVariant(status)}>{status}</Badge>
-          </div>
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card className="shadow-none">
+          <CardHeader>
+            <CardTitle className="tabular-nums">
+              {completenessMetric.label}{" "}
+              <span className="font-normal">days entered</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Progress
+              value={completenessMetric.value}
+              className="w-full"
+              indicatorClassName={progressMetricIndicatorClass(
+                completenessMetric.tone,
+              )}
+              aria-label={completenessMetric.ariaLabel}
+            />
+          </CardContent>
+        </Card>
+        <Card className="shadow-none">
+          <CardHeader>
+            <CardTitle className="tabular-nums">
+              {qualityMetric.label}{" "}
+              <span className="font-normal">data quality</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Progress
+              value={qualityMetric.value}
+              className="w-full"
+              indicatorClassName={progressMetricIndicatorClass(
+                qualityMetric.tone,
+              )}
+              aria-label={qualityMetric.ariaLabel}
+            />
+          </CardContent>
+        </Card>
+      </div>
 
-          <div className="flex flex-wrap gap-2">
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
+        <h2 className="font-semibold text-lg">Data quality issues</h2>
+        <Button type="button" variant="outline">
+          <Download />
+          Download
+        </Button>
+      </div>
+
+      <div className="grid gap-3 md:grid-cols-3">
+        {AUDIT_ISSUE_SEVERITY_SUMMARY.map(({ severity, label }) => (
+          <Item key={severity} variant="outline" className="bg-background">
+            <ItemMedia>
+              <AuditIssueSeverityIcon severity={severity} />
+            </ItemMedia>
+            <ItemContent>
+              <ItemTitle>
+                {issueCounts[severity]} {label}
+              </ItemTitle>
+            </ItemContent>
+          </Item>
+        ))}
+      </div>
+
+      <ItemGroup>
+        {REPORT_AUDIT_ISSUES.map((issue, index) => (
+          <Fragment key={issue.date}>
+            {index > 0 ? <ItemSeparator /> : null}
+            <Item role="listitem">
+              <ItemMedia>
+                <AuditIssueSeverityIcon severity={issue.severity} />
+              </ItemMedia>
+              <ItemContent>
+                <ItemTitle>{issue.title}</ItemTitle>
+                <ItemDescription className="tabular-nums">
+                  {formatAuditIssueDate(issue.date)}
+                </ItemDescription>
+              </ItemContent>
+              <ItemActions>
+                <Button type="button" variant="outline">
+                  <ExternalLink />
+                  View
+                </Button>
+              </ItemActions>
+            </Item>
+          </Fragment>
+        ))}
+      </ItemGroup>
+    </div>
+  );
+}
+
+type SchoolDetailSheetProps = {
+  schoolId: number | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+};
+
+export function SchoolDetailSheet({
+  schoolId,
+  open,
+  onOpenChange,
+}: SchoolDetailSheetProps) {
+  const school =
+    schoolId != null ? getSchoolDetail(String(schoolId)) : undefined;
+  const report = school ? getDashboardReportForSchool(school.id) : undefined;
+  const periodLabel = report?.periodLabel ?? "May 2025";
+  const title = school ? `${school.name} – ${periodLabel}` : "School details";
+
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent
+        side="right"
+        className="flex h-full w-full flex-col gap-0 p-0 sm:max-w-4xl"
+      >
+        <SheetHeader className="shrink-0 px-6 py-4">
+          <SheetTitle className="pr-8 text-left text-xl">{title}</SheetTitle>
+        </SheetHeader>
+        <div className="flex-1 overflow-y-auto px-6 py-6">
+          {schoolId != null ? (
+            <SchoolDetailContent schoolId={schoolId} />
+          ) : null}
+        </div>
+        {school ? (
+          <SheetFooter className="shrink-0 flex-row flex-wrap justify-end gap-2 border-t">
             <Button type="button" variant="success-secondary">
               <Check />
               Approve report
@@ -145,92 +250,9 @@ export function SchoolDetail() {
               <Ban />
               Request corrections
             </Button>
-            <Button type="button" variant="outline">
-              <ExternalLink />
-              View report
-            </Button>
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Data completeness</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <MetricProgress
-                  {...dailyEntriesMetricConfig(dailyEntries)}
-                  layout="stacked"
-                />
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle>Data quality</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <MetricProgress
-                  {...dataQualityMetricConfig(qualityScore)}
-                  layout="stacked"
-                />
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="overflow-hidden rounded-lg bg-background shadow-sm p-5 flex flex-col gap-5 border">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <h2 className="font-semibold text-xl">Data quality issues</h2>
-              <Button type="button" variant="outline">
-                <Download />
-                Download
-              </Button>
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-3">
-              {AUDIT_ISSUE_SEVERITY_SUMMARY.map(({ severity, label }) => (
-                <Item
-                  key={severity}
-                  variant="outline"
-                  className="bg-background"
-                >
-                  <ItemMedia>
-                    <AuditIssueSeverityIcon severity={severity} />
-                  </ItemMedia>
-                  <ItemContent>
-                    <ItemTitle className="text-base">
-                      {issueCounts[severity]} {label}
-                    </ItemTitle>
-                  </ItemContent>
-                </Item>
-              ))}
-            </div>
-
-            <ItemGroup>
-              {REPORT_AUDIT_ISSUES.map((issue, index) => (
-                <Fragment key={issue.date}>
-                  {index > 0 ? <ItemSeparator /> : null}
-                  <Item role="listitem">
-                    <ItemMedia>
-                      <AuditIssueSeverityIcon severity={issue.severity} />
-                    </ItemMedia>
-                    <ItemContent>
-                      <ItemTitle>{issue.title}</ItemTitle>
-                      <ItemDescription className="tabular-nums">
-                        {formatAuditIssueDate(issue.date)}
-                      </ItemDescription>
-                    </ItemContent>
-                    <ItemActions>
-                      <Button type="button" variant="outline">
-                        <ExternalLink />
-                        View
-                      </Button>
-                    </ItemActions>
-                  </Item>
-                </Fragment>
-              ))}
-            </ItemGroup>
-          </div>
-        </div>
-      </div>
-    </div>
+          </SheetFooter>
+        ) : null}
+      </SheetContent>
+    </Sheet>
   );
 }
