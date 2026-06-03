@@ -31,6 +31,7 @@ import {
   DASHBOARD_REPORTS,
   filterDashboardReports,
   REPORT_MONTH_OPTIONS,
+  SCHOOL_FILTER_OPTIONS,
   SCHOOL_YEAR_OPTIONS,
 } from "@/data/reportDashboard";
 
@@ -67,6 +68,7 @@ const STATUS_FILTERS: { value: "all" | SchoolStatus; label: string }[] = [
 
 export function Dashboard() {
   const [country, setCountry] = useState("gambia");
+  const [schoolFilter, setSchoolFilter] = useState("all");
   const [regionFilter, setRegionFilter] = useState("all");
   const [qualityFilter, setQualityFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState<"all" | SchoolStatus>("all");
@@ -76,6 +78,7 @@ export function Dashboard() {
   const [reportMonth, setReportMonth] = useState("all");
 
   const filteredReports = filterDashboardReports(DASHBOARD_REPORTS, {
+    schoolId: schoolFilter,
     schoolYear,
     monthKey: reportMonth,
     quality: qualityFilter,
@@ -118,6 +121,25 @@ export function Dashboard() {
             </Select>
           </div>
           <div className="flex flex-wrap items-end gap-2">
+            <Select value={schoolFilter} onValueChange={setSchoolFilter}>
+              <SelectTrigger
+                id="school-select"
+                className="w-48 [&_[data-slot=select-value]]:min-w-0 [&_[data-slot=select-value]]:flex-1 [&_[data-slot=select-value]]:truncate"
+                aria-label="School"
+              >
+                <SelectValue placeholder="School: All" />
+              </SelectTrigger>
+              <SelectContent align="start" className="min-w-48 w-max max-w-80">
+                <SelectItem value="all">School: All</SelectItem>
+                <SelectSeparator />
+                {SCHOOL_FILTER_OPTIONS.map(({ value, label }) => (
+                  <SelectItem key={value} value={value}>
+                    {label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
             <Select value={schoolYear} onValueChange={setSchoolYear}>
               <SelectTrigger
                 id="school-year-select"
@@ -263,9 +285,9 @@ export function Dashboard() {
 
             <SettingsSheet />
 
-            <Button variant="outline" className="ml-auto">
+            <Button type="button" variant="outline">
               <Download />
-              Download all reports
+              Download all
             </Button>
           </div>
 

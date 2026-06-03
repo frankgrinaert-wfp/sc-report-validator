@@ -246,6 +246,7 @@ export function compareDashboardReports(
 export function filterDashboardReports(
   reports: DashboardReportRow[],
   filters: {
+    schoolId?: string;
     schoolYear?: string;
     monthKey?: string;
     quality?: string;
@@ -253,6 +254,13 @@ export function filterDashboardReports(
   },
 ): DashboardReportRow[] {
   return reports.filter((report) => {
+    if (
+      filters.schoolId &&
+      filters.schoolId !== "all" &&
+      report.schoolId !== Number(filters.schoolId)
+    ) {
+      return false;
+    }
     if (
       filters.schoolYear &&
       filters.schoolYear !== "all" &&
@@ -766,6 +774,10 @@ export function getSchoolDetail(
   if (!schoolId) return undefined;
   return SCHOOL_DETAIL_BY_ID[schoolId];
 }
+
+export const SCHOOL_FILTER_OPTIONS = Object.values(SCHOOL_DETAIL_BY_ID)
+  .map(({ id, name }) => ({ value: String(id), label: name }))
+  .sort((a, b) => a.label.localeCompare(b.label));
 
 /** Mock daily-entry counts (out of REPORT_DAILY_ENTRIES_TOTAL) per school id. */
 const MOCK_DAILY_ENTRIES_BY_ID: Record<number, number> = {
