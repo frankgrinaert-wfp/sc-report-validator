@@ -34,10 +34,10 @@ const COUNTRIES = [
 
 const STATUS_FILTERS: { value: "all" | SchoolStatus; label: string }[] = [
   { value: "all", label: "Status: All" },
-  { value: "To be reviewed", label: "Status: To be reviewed" },
+  { value: "To review", label: "Status: To review" },
   {
-    value: "Waiting for corrections",
-    label: "Status: Waiting for corrections",
+    value: "Corrections requested",
+    label: "Status: Corrections requested",
   },
   { value: "Accepted", label: "Status: Accepted" },
 ];
@@ -80,8 +80,8 @@ export function Dashboard() {
       case "status": {
         const statusOrder = {
           Accepted: 1,
-          "To be reviewed": 2,
-          "Waiting for corrections": 3,
+          "To review": 2,
+          "Corrections requested": 3,
         };
         return statusOrder[a.status] - statusOrder[b.status];
       }
