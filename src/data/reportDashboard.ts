@@ -145,11 +145,11 @@ export function calendarYearForSchoolReport(
   return String(year);
 }
 
-/** e.g. `formatReportMonth("march", "2025")` → `"March, 2025"` */
+/** e.g. `formatReportMonth("march", "2025")` → `"March 2025"` */
 export function formatReportMonth(monthKey: string, year: string): string {
   const monthName =
     monthKey.charAt(0).toUpperCase() + monthKey.slice(1).toLowerCase();
-  return `${monthName}, ${year}`;
+  return `${monthName} ${year}`;
 }
 
 export function buildReportPeriodLabel(
