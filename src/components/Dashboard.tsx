@@ -59,12 +59,12 @@ const COUNTRIES = [
 
 const STATUS_FILTERS: { value: "all" | SchoolStatus; label: string }[] = [
   { value: "all", label: "Status: All" },
-  { value: "To review", label: "To review" },
+  { value: "Submitted", label: "Submitted" },
   {
-    value: "Corrections requested",
-    label: "Corrections requested",
+    value: "Awaiting corrections",
+    label: "Awaiting corrections",
   },
-  { value: "Accepted", label: "Accepted" },
+  { value: "Approved", label: "Approved" },
 ];
 
 export function Dashboard() {

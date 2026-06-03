@@ -50,7 +50,7 @@ export function dataQualityScoreIndicatorClass(score: number): string {
   return progressMetricIndicatorClass(dataQualityScoreTone(score));
 }
 
-export type SchoolStatus = "To review" | "Corrections requested" | "Accepted";
+export type SchoolStatus = "Submitted" | "Awaiting corrections" | "Approved";
 
 export type Occurrence = { date: string; value: unknown };
 
@@ -243,9 +243,9 @@ export function compareDashboardReports(
       break;
     case "status": {
       const statusOrder = {
-        Accepted: 1,
-        "To review": 2,
-        "Corrections requested": 3,
+        Approved: 1,
+        "Submitted": 2,
+        "Awaiting corrections": 3,
       };
       comparison = statusOrder[a.status] - statusOrder[b.status];
       break;
@@ -723,7 +723,7 @@ const SCHOOL_DETAIL_BY_ID: Record<string, SchoolDetailRecord> = {
     name: "Bundung Lower Basic School",
     code: "1001",
     score: 72,
-    status: "To review",
+    status: "Submitted",
     enrollment: { total: 220, boys: 112, girls: 108 },
     attendance: { total: 187, boys: 95, girls: 92 },
     totalMeals: 3740,
@@ -735,7 +735,7 @@ const SCHOOL_DETAIL_BY_ID: Record<string, SchoolDetailRecord> = {
     name: "Brikama Upper Basic School",
     code: "1002",
     score: 76,
-    status: "Corrections requested",
+    status: "Awaiting corrections",
     enrollment: { total: 315, boys: 163, girls: 152 },
     attendance: { total: 276, boys: 143, girls: 133 },
     totalMeals: 5520,
@@ -747,7 +747,7 @@ const SCHOOL_DETAIL_BY_ID: Record<string, SchoolDetailRecord> = {
     name: "Serrekunda Lower Basic School",
     code: "1003",
     score: 82,
-    status: "Corrections requested",
+    status: "Awaiting corrections",
     enrollment: { total: 325, boys: 168, girls: 157 },
     attendance: { total: 287, boys: 149, girls: 138 },
     totalMeals: 5740,
@@ -759,7 +759,7 @@ const SCHOOL_DETAIL_BY_ID: Record<string, SchoolDetailRecord> = {
     name: "Armitage Senior Secondary School",
     code: "1004",
     score: 90,
-    status: "To review",
+    status: "Submitted",
     enrollment: { total: 305, boys: 158, girls: 147 },
     attendance: { total: 267, boys: 139, girls: 128 },
     totalMeals: 5340,
@@ -771,7 +771,7 @@ const SCHOOL_DETAIL_BY_ID: Record<string, SchoolDetailRecord> = {
     name: "St. Therese's Upper Basic School",
     code: "1005",
     score: 97,
-    status: "Accepted",
+    status: "Approved",
     enrollment: { total: 365, boys: 189, girls: 176 },
     attendance: { total: 325, boys: 169, girls: 156 },
     totalMeals: 6500,
@@ -810,17 +810,17 @@ function createSeededRandom(seed: number) {
 
 function statusForReportScore(score: number, rand: number): SchoolStatus {
   if (score >= 92) {
-    return rand < 0.65 ? "Accepted" : "To review";
+    return rand < 0.65 ? "Approved" : "Submitted";
   }
   if (score >= 85) {
-    if (rand < 0.35) return "Accepted";
-    if (rand < 0.7) return "To review";
-    return "Corrections requested";
+    if (rand < 0.35) return "Approved";
+    if (rand < 0.7) return "Submitted";
+    return "Awaiting corrections";
   }
   if (score >= 75) {
-    return rand < 0.45 ? "To review" : "Corrections requested";
+    return rand < 0.45 ? "Submitted" : "Awaiting corrections";
   }
-  return rand < 0.25 ? "Corrections requested" : "To review";
+  return rand < 0.25 ? "Awaiting corrections" : "Submitted";
 }
 
 function generateReportIssueCounts(
