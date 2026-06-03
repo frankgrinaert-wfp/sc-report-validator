@@ -784,7 +784,7 @@ export const SCHOOL_FILTER_OPTIONS = Object.values(SCHOOL_DETAIL_BY_ID)
   .sort((a, b) => a.label.localeCompare(b.label));
 
 /** Mock daily-entry counts (out of REPORT_DAILY_ENTRIES_TOTAL) per school id. */
-const MOCK_DAILY_ENTRIES_BY_ID: Record<number, number> = {
+export const MOCK_DAILY_ENTRIES_BY_ID: Record<number, number> = {
   1: 12,
   2: 16,
   3: 19,
@@ -868,6 +868,67 @@ function generateMockReports(count: number): DashboardReportRow[] {
 
 /** ~100 monthly reports across schools and school-year months (mock DB). */
 export const DASHBOARD_REPORTS = generateMockReports(100);
+
+export function getDashboardReportForSchool(
+  schoolId: number,
+): DashboardReportRow | undefined {
+  const reports = DASHBOARD_REPORTS.filter(
+    (report) => report.schoolId === schoolId,
+  );
+  if (reports.length === 0) return undefined;
+  return [...reports].sort((a, b) =>
+    compareDashboardReports(a, b, "month", "desc"),
+  )[0];
+}
+
+export type ReportAuditIssueSeverity = "critical" | "high" | "low";
+
+export type ReportAuditIssue = {
+  date: string;
+  severity: ReportAuditIssueSeverity;
+  details: string;
+};
+
+const AUDIT_ISSUE_LOREM =
+  "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+
+/** Static issues table shared by all report detail pages (mock). */
+export const REPORT_AUDIT_ISSUES: ReportAuditIssue[] = [
+  {
+    date: "2024-04-12",
+    severity: "critical",
+    details: AUDIT_ISSUE_LOREM,
+  },
+  {
+    date: "2024-04-08",
+    severity: "high",
+    details: AUDIT_ISSUE_LOREM,
+  },
+  {
+    date: "2024-04-15",
+    severity: "low",
+    details: AUDIT_ISSUE_LOREM,
+  },
+  {
+    date: "2024-04-22",
+    severity: "high",
+    details: AUDIT_ISSUE_LOREM,
+  },
+  {
+    date: "2024-04-03",
+    severity: "critical",
+    details: AUDIT_ISSUE_LOREM,
+  },
+];
+
+/** e.g. `"2024-04-12"` → `"12 Apr 2024"` */
+export function formatAuditIssueDate(isoDate: string): string {
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(new Date(isoDate));
+}
 
 // Generate historical data for the last 12 months
 export function generateHistoricalData(currentScore: number, schoolId: number) {

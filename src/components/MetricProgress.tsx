@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 type MetricProgressProps = MetricProgressConfig & {
   className?: string;
   barClassName?: string;
+  layout?: "inline" | "stacked";
 };
 
 export function MetricProgress({
@@ -16,13 +17,33 @@ export function MetricProgress({
   tone,
   ariaLabel,
   className,
-  barClassName = "max-w-20",
+  barClassName,
+  layout = "inline",
 }: MetricProgressProps) {
+  const resolvedBarClassName =
+    barClassName ?? (layout === "stacked" ? "w-full" : "max-w-20");
+
+  if (layout === "stacked") {
+    return (
+      <div className={cn("flex flex-col gap-2", className)}>
+        <span className="font-semibold text-foreground text-xl tabular-nums">
+          {label}
+        </span>
+        <Progress
+          value={value}
+          className={resolvedBarClassName}
+          indicatorClassName={progressMetricIndicatorClass(tone)}
+          aria-label={ariaLabel}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className={cn("flex items-center gap-2", className)}>
       <Progress
         value={value}
-        className={barClassName}
+        className={resolvedBarClassName}
         indicatorClassName={progressMetricIndicatorClass(tone)}
         aria-label={ariaLabel}
       />
