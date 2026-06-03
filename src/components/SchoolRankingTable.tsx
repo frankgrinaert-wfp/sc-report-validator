@@ -78,7 +78,7 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
           <TableRow>
             <TableHead>School</TableHead>
             <TableHead>Month</TableHead>
-            <TableHead>Daily entries</TableHead>
+            <TableHead>Data completeness</TableHead>
             <TableHead>Data quality</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>

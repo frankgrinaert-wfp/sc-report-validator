@@ -96,7 +96,7 @@ export function dailyEntriesMetricConfig(
     value: Math.min(100, Math.round((entries / total) * 100)),
     label: `${entries} of ${total}`,
     tone: dailyEntriesTone(entries, total),
-    ariaLabel: `Daily entries ${entries} of ${total}`,
+    ariaLabel: `Data completeness ${entries} of ${total}`,
   };
 }
 
@@ -173,6 +173,7 @@ export type DashboardSortBy =
   | "school"
   | "month"
   | "region"
+  | "completeness"
   | "quality"
   | "status";
 
@@ -225,6 +226,9 @@ export function compareDashboardReports(
       break;
     case "region":
       comparison = a.adminRegion.localeCompare(b.adminRegion);
+      break;
+    case "completeness":
+      comparison = a.dailyEntries - b.dailyEntries;
       break;
     case "quality":
       comparison = a.score - b.score;
