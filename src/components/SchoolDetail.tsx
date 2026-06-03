@@ -37,6 +37,7 @@ import {
   getDashboardReportForSchool,
   getSchoolDetail,
   MOCK_DAILY_ENTRIES_BY_ID,
+  countAuditIssuesBySeverity,
   REPORT_AUDIT_ISSUES,
   type ReportAuditIssueSeverity,
   type SchoolStatus,
@@ -77,18 +78,6 @@ function AuditIssueSeverityIcon({
   }
 }
 
-function countAuditIssuesBySeverity(
-  issues: typeof REPORT_AUDIT_ISSUES,
-): Record<ReportAuditIssueSeverity, number> {
-  return issues.reduce(
-    (counts, issue) => {
-      counts[issue.severity] += 1;
-      return counts;
-    },
-    { critical: 0, high: 0, low: 0 },
-  );
-}
-
 type SchoolDetailContentProps = {
   schoolId: number;
 };
@@ -104,7 +93,8 @@ export function SchoolDetailContent({ schoolId }: SchoolDetailContentProps) {
   const dailyEntries =
     report?.dailyEntries ?? MOCK_DAILY_ENTRIES_BY_ID[school.id] ?? 0;
   const qualityScore = report?.score ?? school.score;
-  const issueCounts = countAuditIssuesBySeverity(REPORT_AUDIT_ISSUES);
+  const issueCounts =
+    report?.issueCounts ?? countAuditIssuesBySeverity(REPORT_AUDIT_ISSUES);
   const completenessMetric = dailyEntriesMetricConfig(dailyEntries);
   const qualityMetric = dataQualityMetricConfig(qualityScore);
 
@@ -158,8 +148,10 @@ export function SchoolDetailContent({ schoolId }: SchoolDetailContentProps) {
           </Button>
         </div>
 
-        <div className="grid gap-3 md:grid-cols-3">
-          {AUDIT_ISSUE_SEVERITY_SUMMARY.map(({ severity, label }) => (
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {AUDIT_ISSUE_SEVERITY_SUMMARY.filter(
+            ({ severity }) => issueCounts[severity] > 0,
+          ).map(({ severity, label }) => (
             <Item key={severity} variant="outline" className="bg-background">
               <ItemMedia>
                 <AuditIssueSeverityIcon severity={severity} />

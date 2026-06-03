@@ -1,4 +1,10 @@
-import { ChevronRight, Download } from "lucide-react";
+import {
+  ChevronRight,
+  Download,
+  Info,
+  OctagonX,
+  TriangleAlert,
+} from "lucide-react";
 import { useState } from "react";
 import { SchoolDetailSheet } from "@/components/SchoolDetail";
 import { Button } from "@/components/ui/button";
@@ -16,12 +22,63 @@ import {
   dailyEntriesMetricConfig,
   dataQualityMetricConfig,
   type DashboardReportRow,
+  type ReportAuditIssueSeverity,
+  type ReportIssueCounts,
   type SchoolStatus,
 } from "@/data/reportDashboard";
 
 type SchoolRankingTableProps = {
   reports: DashboardReportRow[];
 };
+
+const ISSUE_COUNT_DISPLAY: {
+  severity: ReportAuditIssueSeverity;
+  label: string;
+}[] = [
+  { severity: "critical", label: "critical issues" },
+  { severity: "high", label: "important issues" },
+  { severity: "low", label: "trivial issues" },
+];
+
+function AuditIssueSeverityIcon({
+  severity,
+}: {
+  severity: ReportAuditIssueSeverity;
+}) {
+  switch (severity) {
+    case "critical":
+      return <OctagonX className="size-4 text-danger-500" aria-hidden />;
+    case "high":
+      return <TriangleAlert className="size-4 text-warning-500" aria-hidden />;
+    case "low":
+      return <Info className="size-4 text-info-500" aria-hidden />;
+  }
+}
+
+function ReportIssueCountsCell({ counts }: { counts: ReportIssueCounts }) {
+  const visible = ISSUE_COUNT_DISPLAY.filter(
+    ({ severity }) => counts[severity] > 0,
+  );
+
+  if (visible.length === 0) {
+    return <span className="text-muted-foreground text-sm">—</span>;
+  }
+
+  return (
+    <div className="flex items-center gap-4">
+      {visible.map(({ severity, label }) => (
+        <span
+          key={severity}
+          className="inline-flex items-center gap-1 tabular-nums"
+          aria-label={`${counts[severity]} ${label}`}
+        >
+          <AuditIssueSeverityIcon severity={severity} />
+          {counts[severity]}
+        </span>
+      ))}
+    </div>
+  );
+}
 
 function statusBadgeVariant(status: SchoolStatus) {
   switch (status) {
@@ -74,72 +131,78 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
 
   return (
     <>
-    <div className="overflow-hidden rounded-lg bg-background shadow-sm">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>School</TableHead>
-            <TableHead>Month</TableHead>
-            <TableHead>Data completeness</TableHead>
-            <TableHead>Data quality</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>
-              <span className="sr-only">Actions</span>
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {reports.map((report) => (
-            <TableRow key={report.reportId}>
-              <TableCell className="font-medium">{report.schoolName}</TableCell>
-              <TableCell>{report.periodLabel}</TableCell>
-              <TableCell>
-                <MetricProgress
-                  {...dailyEntriesMetricConfig(report.dailyEntries)}
-                />
-              </TableCell>
-              <TableCell>
-                <MetricProgress {...dataQualityMetricConfig(report.score)} />
-              </TableCell>
-              <TableCell>
-                <Badge variant={statusBadgeVariant(report.status)}>
-                  {report.status}
-                </Badge>
-              </TableCell>
-              <TableCell className="w-px text-right">
-                <div className="inline-flex items-center gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon-sm"
-                    onClick={() => handleDownload(report)}
-                    aria-label="Download issues report"
-                  >
-                    <Download />
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setDetailSchoolId(report.schoolId)}
-                  >
-                    View details
-                    <ChevronRight />
-                  </Button>
-                </div>
-              </TableCell>
+      <div className="overflow-hidden rounded-lg bg-background shadow-sm">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>School</TableHead>
+              <TableHead>Month</TableHead>
+              <TableHead>Data completeness</TableHead>
+              <TableHead>Data quality</TableHead>
+              <TableHead>Issues</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>
+                <span className="sr-only">Actions</span>
+              </TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
-    <SchoolDetailSheet
-      schoolId={detailSchoolId}
-      open={detailSchoolId != null}
-      onOpenChange={(open) => {
-        if (!open) setDetailSchoolId(null);
-      }}
-    />
+          </TableHeader>
+          <TableBody>
+            {reports.map((report) => (
+              <TableRow key={report.reportId}>
+                <TableCell className="font-medium">
+                  {report.schoolName}
+                </TableCell>
+                <TableCell>{report.periodLabel}</TableCell>
+                <TableCell>
+                  <MetricProgress
+                    {...dailyEntriesMetricConfig(report.dailyEntries)}
+                  />
+                </TableCell>
+                <TableCell>
+                  <MetricProgress {...dataQualityMetricConfig(report.score)} />
+                </TableCell>
+                <TableCell>
+                  <ReportIssueCountsCell counts={report.issueCounts} />
+                </TableCell>
+                <TableCell>
+                  <Badge variant={statusBadgeVariant(report.status)}>
+                    {report.status}
+                  </Badge>
+                </TableCell>
+                <TableCell className="w-px text-right">
+                  <div className="inline-flex items-center gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon-sm"
+                      onClick={() => handleDownload(report)}
+                      aria-label="Download issues report"
+                    >
+                      <Download />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setDetailSchoolId(report.schoolId)}
+                    >
+                      View details
+                      <ChevronRight />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+      <SchoolDetailSheet
+        schoolId={detailSchoolId}
+        open={detailSchoolId != null}
+        onOpenChange={(open) => {
+          if (!open) setDetailSchoolId(null);
+        }}
+      />
     </>
   );
 }

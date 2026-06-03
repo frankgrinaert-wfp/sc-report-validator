@@ -179,6 +179,12 @@ export type DashboardSortBy =
 
 export type DashboardSortOrder = "asc" | "desc";
 
+export type ReportIssueCounts = {
+  critical: number;
+  high: number;
+  low: number;
+};
+
 export type DashboardReportRow = {
   reportId: string;
   schoolId: number;
@@ -191,6 +197,7 @@ export type DashboardReportRow = {
   score: number;
   status: SchoolStatus;
   dailyEntries: number;
+  issueCounts: ReportIssueCounts;
 };
 
 const REPORT_MONTH_SORT_INDEX = Object.fromEntries(
@@ -815,6 +822,32 @@ function statusForReportScore(score: number, rand: number): SchoolStatus {
   return rand < 0.25 ? "Corrections requested" : "To review";
 }
 
+function generateReportIssueCounts(
+  score: number,
+  rand: () => number,
+): ReportIssueCounts {
+  const scale = score < 75 ? 1.4 : score < 85 ? 1 : 0.6;
+
+  const countForSeverity = (max: number, zeroChance: number) => {
+    if (rand() < zeroChance) return 0;
+    return Math.min(
+      max,
+      Math.max(1, Math.round((Math.floor(rand() * 4) + 1) * scale)),
+    );
+  };
+
+  // Higher scores more often omit critical/important issues entirely.
+  const criticalZeroChance = score >= 90 ? 0.55 : score >= 80 ? 0.35 : 0.15;
+  const highZeroChance = score >= 85 ? 0.4 : 0.2;
+  const lowZeroChance = score < 75 ? 0.15 : 0.35;
+
+  return {
+    critical: countForSeverity(6, criticalZeroChance),
+    high: countForSeverity(8, highZeroChance),
+    low: countForSeverity(6, lowZeroChance),
+  };
+}
+
 function generateMockReports(count: number): DashboardReportRow[] {
   const schools = Object.values(SCHOOL_DETAIL_BY_ID);
   const periods = SCHOOL_YEAR_OPTIONS.flatMap(({ value: schoolYear }) =>
@@ -860,6 +893,7 @@ function generateMockReports(count: number): DashboardReportRow[] {
       score,
       status: statusForReportScore(score, rand()),
       dailyEntries,
+      issueCounts: generateReportIssueCounts(score, rand),
     });
   }
 
@@ -952,6 +986,18 @@ export const REPORT_AUDIT_ISSUES: ReportAuditIssue[] = [
       "Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae.",
   },
 ];
+
+export function countAuditIssuesBySeverity(
+  issues: readonly ReportAuditIssue[],
+): ReportIssueCounts {
+  return issues.reduce(
+    (counts, issue) => {
+      counts[issue.severity] += 1;
+      return counts;
+    },
+    { critical: 0, high: 0, low: 0 },
+  );
+}
 
 /** e.g. `"2024-04-12"` → `"12 Apr 2024"` */
 export function formatAuditIssueDate(isoDate: string): string {
