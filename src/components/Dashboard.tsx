@@ -93,6 +93,23 @@ export function Dashboard() {
   const sortByLabel =
     SORT_BY_OPTIONS.find((option) => option.value === sortBy)?.label ?? "Sort";
 
+  const hasActiveFilters =
+    schoolFilter !== "all" ||
+    schoolYear !== "all" ||
+    reportMonth !== "all" ||
+    regionFilter !== "all" ||
+    qualityFilter !== "all" ||
+    statusFilter !== "all";
+
+  const resetFilters = () => {
+    setSchoolFilter("all");
+    setSchoolYear("all");
+    setReportMonth("all");
+    setRegionFilter("all");
+    setQualityFilter("all");
+    setStatusFilter("all");
+  };
+
   return (
     <div className="flex h-screen flex-col">
       <div className="flex-1 overflow-y-auto">
@@ -124,7 +141,8 @@ export function Dashboard() {
               <SettingsSheet />
             </div>
           </div>
-          <div className="flex flex-wrap items-end gap-2">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div className="flex flex-wrap items-end justify-start gap-2">
             <Select value={schoolFilter} onValueChange={setSchoolFilter}>
               <SelectTrigger
                 id="school-select"
@@ -244,6 +262,18 @@ export function Dashboard() {
               </SelectContent>
             </Select>
 
+            {hasActiveFilters ? (
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={resetFilters}
+              >
+                Reset
+              </Button>
+            ) : null}
+            </div>
+
+            <div className="flex flex-wrap items-center justify-end gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button type="button" variant="outline" aria-label="Sort">
@@ -291,6 +321,7 @@ export function Dashboard() {
               <Download />
               Download all
             </Button>
+            </div>
           </div>
 
           <SchoolRankingTable reports={sortedReports} />
