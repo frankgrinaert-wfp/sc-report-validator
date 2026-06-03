@@ -29,6 +29,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import {
   Select,
   SelectContent,
@@ -37,7 +38,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  dataQualityScoreAccentClass,
+  dataQualityScoreIndicatorClass,
   dataQualityScoreTextClass,
   generateHistoricalData,
   getSchoolDetail,
@@ -279,17 +280,13 @@ export function SchoolDetail() {
                   {Math.round(school.score)}%
                 </span>
               </div>
-              <meter
-                className={cn(
-                  "h-2 w-full",
-                  dataQualityScoreAccentClass(school.score),
-                )}
-                min={0}
-                max={100}
+              <Progress
                 value={school.score}
-              >
-                {Math.round(school.score)}%
-              </meter>
+                indicatorClassName={dataQualityScoreIndicatorClass(
+                  school.score,
+                )}
+                aria-label={`Data quality ${Math.round(school.score)} percent`}
+              />
             </CardContent>
           </Card>
 

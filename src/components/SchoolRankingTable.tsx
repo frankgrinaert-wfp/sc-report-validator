@@ -10,13 +10,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { MetricProgress } from "@/components/MetricProgress";
 import {
-  dataQualityScoreTextClass,
-  REPORT_DAILY_ENTRIES_TOTAL,
+  dailyEntriesMetricConfig,
+  dataQualityMetricConfig,
   type SchoolDashboardRow,
   type SchoolStatus,
 } from "@/data/reportDashboard";
-import { cn } from "@/lib/utils";
 
 type SchoolRankingTableProps = {
   schools: SchoolDashboardRow[];
@@ -94,21 +94,13 @@ export function SchoolRankingTable({
             <TableRow key={school.id}>
               <TableCell className="font-medium">{school.name}</TableCell>
               <TableCell>{reportMonth}</TableCell>
-              <TableCell className="tabular-nums">
-                <span
-                  className={cn(
-                    school.dailyEntries < REPORT_DAILY_ENTRIES_TOTAL
-                      ? "text-warning-600"
-                      : "text-success-600",
-                  )}
-                >
-                  {school.dailyEntries} of {REPORT_DAILY_ENTRIES_TOTAL}
-                </span>
+              <TableCell>
+                <MetricProgress
+                  {...dailyEntriesMetricConfig(school.dailyEntries)}
+                />
               </TableCell>
               <TableCell>
-                <span className={cn(dataQualityScoreTextClass(school.score))}>
-                  {Math.round(school.score)}%
-                </span>
+                <MetricProgress {...dataQualityMetricConfig(school.score)} />
               </TableCell>
               <TableCell>
                 <Badge variant={statusBadgeVariant(school.status)}>

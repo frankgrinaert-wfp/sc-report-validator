@@ -8,32 +8,45 @@ export function schoolQualityFromScore(score: number): SchoolQuality {
   return "critical";
 }
 
-/** Text color for a displayed data quality score (e.g. `87%`). */
-export function dataQualityScoreTextClass(score: number): string {
+export type ProgressMetricTone = "success" | "warning" | "danger";
+
+const PROGRESS_METRIC_TONE_CLASSES: Record<
+  ProgressMetricTone,
+  { text: string; indicator: string }
+> = {
+  success: { text: "text-success-600", indicator: "bg-success-500" },
+  warning: { text: "text-warning-600", indicator: "bg-warning-500" },
+  danger: { text: "text-danger-600", indicator: "bg-danger-500" },
+};
+
+export function progressMetricTextClass(tone: ProgressMetricTone): string {
+  return PROGRESS_METRIC_TONE_CLASSES[tone].text;
+}
+
+export function progressMetricIndicatorClass(tone: ProgressMetricTone): string {
+  return PROGRESS_METRIC_TONE_CLASSES[tone].indicator;
+}
+
+export function dataQualityScoreTone(score: number): ProgressMetricTone {
   switch (schoolQualityFromScore(score)) {
     case "excellent":
-      return "text-success-600";
+      return "success";
     case "good":
-      return "text-warning-600";
     case "fair":
-      return "text-warning-600";
+      return "warning";
     case "critical":
-      return "text-danger-600";
+      return "danger";
   }
 }
 
-/** `accent-*` for score meters / progress UI tied to the same tiers. */
-export function dataQualityScoreAccentClass(score: number): string {
-  switch (schoolQualityFromScore(score)) {
-    case "excellent":
-      return "accent-success-600";
-    case "good":
-      return "accent-warning-600";
-    case "fair":
-      return "accent-warning-600";
-    case "critical":
-      return "accent-danger-600";
-  }
+/** Text color for a displayed data quality score (e.g. `87%`). */
+export function dataQualityScoreTextClass(score: number): string {
+  return progressMetricTextClass(dataQualityScoreTone(score));
+}
+
+/** Fill color for `Progress` indicators tied to the same tiers. */
+export function dataQualityScoreIndicatorClass(score: number): string {
+  return progressMetricIndicatorClass(dataQualityScoreTone(score));
 }
 
 export type SchoolStatus =
@@ -53,6 +66,42 @@ export type ValidationIssue = {
 };
 
 export const REPORT_DAILY_ENTRIES_TOTAL = 20;
+
+export function dailyEntriesTone(
+  entries: number,
+  total = REPORT_DAILY_ENTRIES_TOTAL,
+): ProgressMetricTone {
+  return entries >= total ? "success" : "warning";
+}
+
+export type MetricProgressConfig = {
+  value: number;
+  label: string;
+  tone: ProgressMetricTone;
+  ariaLabel: string;
+};
+
+export function dataQualityMetricConfig(score: number): MetricProgressConfig {
+  const rounded = Math.round(score);
+  return {
+    value: rounded,
+    label: `${rounded}%`,
+    tone: dataQualityScoreTone(score),
+    ariaLabel: `Data quality ${rounded} percent`,
+  };
+}
+
+export function dailyEntriesMetricConfig(
+  entries: number,
+  total = REPORT_DAILY_ENTRIES_TOTAL,
+): MetricProgressConfig {
+  return {
+    value: Math.min(100, Math.round((entries / total) * 100)),
+    label: `${entries} of ${total}`,
+    tone: dailyEntriesTone(entries, total),
+    ariaLabel: `Daily entries ${entries} of ${total}`,
+  };
+}
 
 /** e.g. `formatReportMonth("march", "2025")` → `"March, 2025"` */
 export function formatReportMonth(monthKey: string, year: string): string {
