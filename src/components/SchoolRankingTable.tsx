@@ -14,13 +14,12 @@ import { MetricProgress } from "@/components/MetricProgress";
 import {
   dailyEntriesMetricConfig,
   dataQualityMetricConfig,
-  type SchoolDashboardRow,
+  type DashboardReportRow,
   type SchoolStatus,
 } from "@/data/reportDashboard";
 
 type SchoolRankingTableProps = {
-  schools: SchoolDashboardRow[];
-  reportMonth: string;
+  reports: DashboardReportRow[];
 };
 
 function statusBadgeVariant(status: SchoolStatus) {
@@ -34,17 +33,15 @@ function statusBadgeVariant(status: SchoolStatus) {
   }
 }
 
-export function SchoolRankingTable({
-  schools,
-  reportMonth,
-}: SchoolRankingTableProps) {
+export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
   const navigate = useNavigate();
 
-  const handleDownload = (school: SchoolDashboardRow) => {
-    const report = {
-      schoolName: school.name,
-      schoolCode: school.code,
-      dataQualityScore: school.score,
+  const handleDownload = (report: DashboardReportRow) => {
+    const payload = {
+      schoolName: report.schoolName,
+      schoolCode: report.schoolCode,
+      reportPeriod: report.periodLabel,
+      dataQualityScore: report.score,
       reportDate: new Date().toISOString().split("T")[0],
       flaggedIssues: [
         {
@@ -61,13 +58,13 @@ export function SchoolRankingTable({
       ],
     };
 
-    const blob = new Blob([JSON.stringify(report, null, 2)], {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {
       type: "application/json",
     });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `${school.code}_report.json`;
+    link.download = `${report.schoolCode}_${report.monthKey}_report.json`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -90,21 +87,21 @@ export function SchoolRankingTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {schools.map((school) => (
-            <TableRow key={school.id}>
-              <TableCell className="font-medium">{school.name}</TableCell>
-              <TableCell>{reportMonth}</TableCell>
+          {reports.map((report) => (
+            <TableRow key={report.reportId}>
+              <TableCell className="font-medium">{report.schoolName}</TableCell>
+              <TableCell>{report.periodLabel}</TableCell>
               <TableCell>
                 <MetricProgress
-                  {...dailyEntriesMetricConfig(school.dailyEntries)}
+                  {...dailyEntriesMetricConfig(report.dailyEntries)}
                 />
               </TableCell>
               <TableCell>
-                <MetricProgress {...dataQualityMetricConfig(school.score)} />
+                <MetricProgress {...dataQualityMetricConfig(report.score)} />
               </TableCell>
               <TableCell>
-                <Badge variant={statusBadgeVariant(school.status)}>
-                  {school.status}
+                <Badge variant={statusBadgeVariant(report.status)}>
+                  {report.status}
                 </Badge>
               </TableCell>
               <TableCell className="w-px text-right">
@@ -113,7 +110,7 @@ export function SchoolRankingTable({
                     type="button"
                     variant="outline"
                     size="icon-sm"
-                    onClick={() => handleDownload(school)}
+                    onClick={() => handleDownload(report)}
                     aria-label="Download issues report"
                   >
                     <Download />
@@ -122,7 +119,7 @@ export function SchoolRankingTable({
                     type="button"
                     variant="outline"
                     size="sm"
-                    onClick={() => navigate(`/school/${school.id}`)}
+                    onClick={() => navigate(`/school/${report.schoolId}`)}
                   >
                     View details
                     <ChevronRight />

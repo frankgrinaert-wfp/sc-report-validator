@@ -12,6 +12,7 @@ import {
   Select,
   SelectContent,
   SelectItem,
+  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -19,8 +20,10 @@ import type { SchoolStatus } from "@/data/reportDashboard";
 import { SettingsSheet } from "@/components/SettingsSheet";
 import { SchoolRankingTable } from "@/components/SchoolRankingTable";
 import {
-  DASHBOARD_SCHOOLS,
-  formatReportMonth,
+  DASHBOARD_REPORTS,
+  filterDashboardReports,
+  REPORT_MONTH_OPTIONS,
+  SCHOOL_YEAR_OPTIONS,
   schoolQualityFromScore,
 } from "@/data/reportDashboard";
 
@@ -34,12 +37,12 @@ const COUNTRIES = [
 
 const STATUS_FILTERS: { value: "all" | SchoolStatus; label: string }[] = [
   { value: "all", label: "Status: All" },
-  { value: "To review", label: "Status: To review" },
+  { value: "To review", label: "To review" },
   {
     value: "Corrections requested",
-    label: "Status: Corrections requested",
+    label: "Corrections requested",
   },
-  { value: "Accepted", label: "Status: Accepted" },
+  { value: "Accepted", label: "Accepted" },
 ];
 
 export function Dashboard() {
@@ -48,24 +51,17 @@ export function Dashboard() {
   const [qualityFilter, setQualityFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState<"all" | SchoolStatus>("all");
   const [orderBy, setOrderBy] = useState("score-asc");
-  const [reportMonth, setReportMonth] = useState("may");
-  const [reportYear, setReportYear] = useState("2025");
-  const reportMonthLabel = formatReportMonth(reportMonth, reportYear);
+  const [schoolYear, setSchoolYear] = useState("all");
+  const [reportMonth, setReportMonth] = useState("all");
 
-  const filteredSchools = DASHBOARD_SCHOOLS.filter((school) => {
-    if (
-      qualityFilter !== "all" &&
-      schoolQualityFromScore(school.score) !== qualityFilter
-    ) {
-      return false;
-    }
-    if (statusFilter !== "all" && school.status !== statusFilter) {
-      return false;
-    }
-    return true;
+  const filteredReports = filterDashboardReports(DASHBOARD_REPORTS, {
+    schoolYear,
+    monthKey: reportMonth,
+    quality: qualityFilter,
+    status: statusFilter,
   });
 
-  const sortedSchools = [...filteredSchools].sort((a, b) => {
+  const sortedReports = [...filteredReports].sort((a, b) => {
     switch (orderBy) {
       case "score-asc":
         return a.score - b.score;
@@ -120,43 +116,41 @@ export function Dashboard() {
             </Select>
           </div>
           <div className="flex flex-wrap items-end gap-2">
+            <Select value={schoolYear} onValueChange={setSchoolYear}>
+              <SelectTrigger
+                id="school-year-select"
+                className="w-48"
+                aria-label="School year"
+              >
+                <SelectValue placeholder="School year: All" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">School year: All</SelectItem>
+                <SelectSeparator />
+                {SCHOOL_YEAR_OPTIONS.map(({ value, label }) => (
+                  <SelectItem key={value} value={value}>
+                    {label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
             <Select value={reportMonth} onValueChange={setReportMonth}>
               <SelectTrigger
                 id="month-select"
                 className="w-48"
                 aria-label="Month"
               >
-                <SelectValue placeholder="Select month" />
+                <SelectValue placeholder="Month: All" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="january">January</SelectItem>
-                <SelectItem value="february">February</SelectItem>
-                <SelectItem value="march">March</SelectItem>
-                <SelectItem value="april">April</SelectItem>
-                <SelectItem value="may">May</SelectItem>
-                <SelectItem value="june">June</SelectItem>
-                <SelectItem value="july">July</SelectItem>
-                <SelectItem value="august">August</SelectItem>
-                <SelectItem value="september">September</SelectItem>
-                <SelectItem value="october">October</SelectItem>
-                <SelectItem value="november">November</SelectItem>
-                <SelectItem value="december">December</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select value={reportYear} onValueChange={setReportYear}>
-              <SelectTrigger
-                id="year-select"
-                className="w-48"
-                aria-label="Year"
-              >
-                <SelectValue placeholder="Select year" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="2025">2025</SelectItem>
-                <SelectItem value="2024">2024</SelectItem>
-                <SelectItem value="2023">2023</SelectItem>
-                <SelectItem value="2022">2022</SelectItem>
+                <SelectItem value="all">Month: All</SelectItem>
+                <SelectSeparator />
+                {REPORT_MONTH_OPTIONS.map((month) => (
+                  <SelectItem key={month} value={month}>
+                    {month.charAt(0).toUpperCase() + month.slice(1)}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
 
@@ -170,6 +164,7 @@ export function Dashboard() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Admin region: All</SelectItem>
+                <SelectSeparator />
                 <SelectItem value="region1">Admin region 1</SelectItem>
                 <SelectItem value="region2">Admin region 2</SelectItem>
                 <SelectItem value="region3">Admin region 3</SelectItem>
@@ -187,6 +182,7 @@ export function Dashboard() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Data quality: All</SelectItem>
+                <SelectSeparator />
                 <SelectItem value="excellent">
                   Data quality: Excellent
                 </SelectItem>
@@ -210,11 +206,15 @@ export function Dashboard() {
                 <SelectValue placeholder="Status: All" />
               </SelectTrigger>
               <SelectContent>
-                {STATUS_FILTERS.map(({ value, label }) => (
-                  <SelectItem key={value} value={value}>
-                    {label}
-                  </SelectItem>
-                ))}
+                <SelectItem value="all">Status: All</SelectItem>
+                <SelectSeparator />
+                {STATUS_FILTERS.filter(({ value }) => value !== "all").map(
+                  ({ value, label }) => (
+                    <SelectItem key={value} value={value}>
+                      {label}
+                    </SelectItem>
+                  ),
+                )}
               </SelectContent>
             </Select>
 
@@ -251,10 +251,7 @@ export function Dashboard() {
             </Button>
           </div>
 
-          <SchoolRankingTable
-            schools={sortedSchools}
-            reportMonth={reportMonthLabel}
-          />
+          <SchoolRankingTable reports={sortedReports} />
         </div>
       </div>
     </div>

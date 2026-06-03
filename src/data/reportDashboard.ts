@@ -49,10 +49,7 @@ export function dataQualityScoreIndicatorClass(score: number): string {
   return progressMetricIndicatorClass(dataQualityScoreTone(score));
 }
 
-export type SchoolStatus =
-  | "To review"
-  | "Corrections requested"
-  | "Accepted";
+export type SchoolStatus = "To review" | "Corrections requested" | "Accepted";
 
 export type Occurrence = { date: string; value: unknown };
 
@@ -103,11 +100,121 @@ export function dailyEntriesMetricConfig(
   };
 }
 
+export const SCHOOL_YEAR_OPTIONS = [
+  { value: "2024-2025", label: "2024–2025", startYear: 2024 },
+  { value: "2023-2024", label: "2023–2024", startYear: 2023 },
+  { value: "2022-2023", label: "2022–2023", startYear: 2022 },
+  { value: "2021-2022", label: "2021–2022", startYear: 2021 },
+] as const;
+
+export const REPORT_MONTH_OPTIONS = [
+  "september",
+  "october",
+  "november",
+  "december",
+  "january",
+  "february",
+  "march",
+  "april",
+  "may",
+  "june",
+] as const;
+
+const FALL_REPORT_MONTHS = new Set<string>([
+  "september",
+  "october",
+  "november",
+  "december",
+]);
+
+export function schoolYearStartYear(schoolYearValue: string): number {
+  return (
+    SCHOOL_YEAR_OPTIONS.find((option) => option.value === schoolYearValue)
+      ?.startYear ?? SCHOOL_YEAR_OPTIONS[0].startYear
+  );
+}
+
+/** Calendar year for a month within a school year (e.g. May in 2024–2025 → 2025). */
+export function calendarYearForSchoolReport(
+  monthKey: string,
+  schoolYearStart: number,
+): string {
+  const year = FALL_REPORT_MONTHS.has(monthKey)
+    ? schoolYearStart
+    : schoolYearStart + 1;
+  return String(year);
+}
+
 /** e.g. `formatReportMonth("march", "2025")` → `"March, 2025"` */
 export function formatReportMonth(monthKey: string, year: string): string {
   const monthName =
     monthKey.charAt(0).toUpperCase() + monthKey.slice(1).toLowerCase();
   return `${monthName}, ${year}`;
+}
+
+export function buildReportPeriodLabel(
+  schoolYear: string,
+  monthKey: string,
+): string {
+  return formatReportMonth(
+    monthKey,
+    calendarYearForSchoolReport(monthKey, schoolYearStartYear(schoolYear)),
+  );
+}
+
+export type DashboardReportRow = {
+  reportId: string;
+  schoolId: number;
+  schoolName: string;
+  schoolCode: string;
+  schoolYear: string;
+  monthKey: string;
+  periodLabel: string;
+  score: number;
+  status: SchoolStatus;
+  dailyEntries: number;
+};
+
+export function filterDashboardReports(
+  reports: DashboardReportRow[],
+  filters: {
+    schoolYear?: string;
+    monthKey?: string;
+    quality?: string;
+    status?: "all" | SchoolStatus;
+  },
+): DashboardReportRow[] {
+  return reports.filter((report) => {
+    if (
+      filters.schoolYear &&
+      filters.schoolYear !== "all" &&
+      report.schoolYear !== filters.schoolYear
+    ) {
+      return false;
+    }
+    if (
+      filters.monthKey &&
+      filters.monthKey !== "all" &&
+      report.monthKey !== filters.monthKey
+    ) {
+      return false;
+    }
+    if (
+      filters.quality &&
+      filters.quality !== "all" &&
+      schoolQualityFromScore(report.score) !== filters.quality
+    ) {
+      return false;
+    }
+    if (
+      filters.status &&
+      filters.status !== "all" &&
+      report.status !== filters.status
+    ) {
+      return false;
+    }
+    return true;
+  });
 }
 
 type SchoolRecordCore = {
@@ -120,11 +227,6 @@ type SchoolRecordCore = {
   attendance: { total: number; boys: number; girls: number };
   totalMeals: number;
   avgMealsPerDay: number;
-};
-
-export type SchoolDashboardRow = SchoolRecordCore & {
-  /** Number of school days with a submitted daily entry (mock). */
-  dailyEntries: number;
 };
 
 export type SchoolDetailRecord = SchoolRecordCore & {
@@ -799,18 +901,81 @@ const MOCK_DAILY_ENTRIES_BY_ID: Record<number, number> = {
   20: 20,
 };
 
-export const DASHBOARD_SCHOOLS: SchoolDashboardRow[] = (
-  Object.values(SCHOOL_DETAIL_BY_ID) as SchoolDetailRecord[]
-).map((row) => ({
-  ...stripIssuesFromDetail(row),
-  dailyEntries: MOCK_DAILY_ENTRIES_BY_ID[row.id] ?? 17,
-}));
-
-function stripIssuesFromDetail(row: SchoolDetailRecord): SchoolRecordCore {
-  const { issues, ...rest } = row;
-  void issues;
-  return rest;
+function createSeededRandom(seed: number) {
+  let state = seed >>> 0;
+  return () => {
+    state = (state * 1664525 + 1013904223) >>> 0;
+    return state / 0xffffffff;
+  };
 }
+
+function statusForReportScore(score: number, rand: number): SchoolStatus {
+  if (score >= 92) {
+    return rand < 0.65 ? "Accepted" : "To review";
+  }
+  if (score >= 85) {
+    if (rand < 0.35) return "Accepted";
+    if (rand < 0.7) return "To review";
+    return "Corrections requested";
+  }
+  if (score >= 75) {
+    return rand < 0.45 ? "To review" : "Corrections requested";
+  }
+  return rand < 0.25 ? "Corrections requested" : "To review";
+}
+
+function generateMockReports(count: number): DashboardReportRow[] {
+  const schools = Object.values(SCHOOL_DETAIL_BY_ID);
+  const periods = SCHOOL_YEAR_OPTIONS.flatMap(({ value: schoolYear }) =>
+    REPORT_MONTH_OPTIONS.map((monthKey) => ({ schoolYear, monthKey })),
+  );
+  const rand = createSeededRandom(42);
+  const usedSlots = new Set<string>();
+  const reports: DashboardReportRow[] = [];
+  let attempts = 0;
+
+  while (reports.length < count && attempts < count * 100) {
+    attempts += 1;
+    const school = schools[Math.floor(rand() * schools.length)]!;
+    const period = periods[Math.floor(rand() * periods.length)]!;
+    const slotKey = `${school.id}:${period.schoolYear}:${period.monthKey}`;
+    if (usedSlots.has(slotKey)) {
+      continue;
+    }
+    usedSlots.add(slotKey);
+
+    const score = Math.max(
+      60,
+      Math.min(100, school.score + Math.floor(rand() * 9) - 4),
+    );
+    const entriesBase = MOCK_DAILY_ENTRIES_BY_ID[school.id] ?? 17;
+    const dailyEntries = Math.max(
+      8,
+      Math.min(
+        REPORT_DAILY_ENTRIES_TOTAL,
+        entriesBase + Math.floor(rand() * 5) - 2,
+      ),
+    );
+
+    reports.push({
+      reportId: `report-${reports.length + 1}`,
+      schoolId: school.id,
+      schoolName: school.name,
+      schoolCode: school.code,
+      schoolYear: period.schoolYear,
+      monthKey: period.monthKey,
+      periodLabel: buildReportPeriodLabel(period.schoolYear, period.monthKey),
+      score,
+      status: statusForReportScore(score, rand()),
+      dailyEntries,
+    });
+  }
+
+  return reports;
+}
+
+/** ~100 monthly reports across schools and school-year months (mock DB). */
+export const DASHBOARD_REPORTS = generateMockReports(100);
 
 // Generate historical data for the last 12 months
 export function generateHistoricalData(currentScore: number, schoolId: number) {
