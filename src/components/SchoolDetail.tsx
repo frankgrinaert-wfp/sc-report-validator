@@ -101,7 +101,6 @@ export function SchoolDetailContent({ schoolId }: SchoolDetailContentProps) {
     return <p className="text-muted-foreground text-sm">School not found.</p>;
   }
 
-  const status = report?.status ?? school.status;
   const dailyEntries =
     report?.dailyEntries ?? MOCK_DAILY_ENTRIES_BY_ID[school.id] ?? 0;
   const qualityScore = report?.score ?? school.score;
@@ -110,15 +109,7 @@ export function SchoolDetailContent({ schoolId }: SchoolDetailContentProps) {
   const qualityMetric = dataQualityMetricConfig(qualityScore);
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-center gap-4">
-        <Badge variant={statusBadgeVariant(status)}>{status}</Badge>
-        <Button type="button" variant="link" size="sm">
-          <ExternalLink />
-          View report
-        </Button>
-      </div>
-
+    <div className="flex flex-col gap-4">
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="shadow-none">
           <CardHeader>
@@ -158,53 +149,55 @@ export function SchoolDetailContent({ schoolId }: SchoolDetailContentProps) {
         </Card>
       </div>
 
-      <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
-        <h2 className="font-semibold text-lg">Data quality issues</h2>
-        <Button type="button" variant="outline">
-          <Download />
-          Download
-        </Button>
-      </div>
+      <div className="flex flex-col gap-5 rounded-lg border bg-background p-5">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <h2 className="font-semibold text-lg">Data quality issues</h2>
+          <Button type="button" variant="outline" size="sm">
+            <Download />
+            Download
+          </Button>
+        </div>
 
-      <div className="grid gap-3 md:grid-cols-3">
-        {AUDIT_ISSUE_SEVERITY_SUMMARY.map(({ severity, label }) => (
-          <Item key={severity} variant="outline" className="bg-background">
-            <ItemMedia>
-              <AuditIssueSeverityIcon severity={severity} />
-            </ItemMedia>
-            <ItemContent>
-              <ItemTitle>
-                {issueCounts[severity]} {label}
-              </ItemTitle>
-            </ItemContent>
-          </Item>
-        ))}
-      </div>
-
-      <ItemGroup>
-        {REPORT_AUDIT_ISSUES.map((issue, index) => (
-          <Fragment key={issue.date}>
-            {index > 0 ? <ItemSeparator /> : null}
-            <Item role="listitem">
+        <div className="grid gap-3 md:grid-cols-3">
+          {AUDIT_ISSUE_SEVERITY_SUMMARY.map(({ severity, label }) => (
+            <Item key={severity} variant="outline" className="bg-background">
               <ItemMedia>
-                <AuditIssueSeverityIcon severity={issue.severity} />
+                <AuditIssueSeverityIcon severity={severity} />
               </ItemMedia>
               <ItemContent>
-                <ItemTitle>{issue.title}</ItemTitle>
-                <ItemDescription className="tabular-nums">
-                  {formatAuditIssueDate(issue.date)}
-                </ItemDescription>
+                <ItemTitle>
+                  {issueCounts[severity]} {label}
+                </ItemTitle>
               </ItemContent>
-              <ItemActions>
-                <Button type="button" variant="outline">
-                  <ExternalLink />
-                  View
-                </Button>
-              </ItemActions>
             </Item>
-          </Fragment>
-        ))}
-      </ItemGroup>
+          ))}
+        </div>
+
+        <ItemGroup>
+          {REPORT_AUDIT_ISSUES.map((issue, index) => (
+            <Fragment key={issue.date}>
+              {index > 0 ? <ItemSeparator /> : null}
+              <Item role="listitem">
+                <ItemMedia>
+                  <AuditIssueSeverityIcon severity={issue.severity} />
+                </ItemMedia>
+                <ItemContent>
+                  <ItemTitle>{issue.title}</ItemTitle>
+                  <ItemDescription className="tabular-nums">
+                    {formatAuditIssueDate(issue.date)}
+                  </ItemDescription>
+                </ItemContent>
+                <ItemActions>
+                  <Button type="button" variant="link">
+                    <ExternalLink />
+                    View in report
+                  </Button>
+                </ItemActions>
+              </Item>
+            </Fragment>
+          ))}
+        </ItemGroup>
+      </div>
     </div>
   );
 }
@@ -225,30 +218,44 @@ export function SchoolDetailSheet({
   const report = school ? getDashboardReportForSchool(school.id) : undefined;
   const periodLabel = report?.periodLabel ?? "May 2025";
   const title = school ? `${school.name} – ${periodLabel}` : "School details";
+  const status = report?.status ?? school?.status;
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="flex h-full w-full flex-col gap-0 p-0 sm:max-w-4xl"
+        className="flex h-full w-full flex-col gap-0 p-0 sm:max-w-4xl bg-muted"
       >
-        <SheetHeader className="shrink-0 px-6 py-4">
-          <SheetTitle className="pr-8 text-left text-xl">{title}</SheetTitle>
+        <SheetHeader className="shrink-0 gap-0 bg-background border-b px-6 py-5">
+          <div className="flex items-center gap-4 pr-8">
+            <SheetTitle className="text-left text-xl">{title}</SheetTitle>
+            {status ? (
+              <Badge variant={statusBadgeVariant(status)} className="shrink-0">
+                {status}
+              </Badge>
+            ) : null}
+          </div>
         </SheetHeader>
-        <div className="flex-1 overflow-y-auto px-6 py-6">
+        <div className="flex-1 overflow-y-auto px-5 py-6">
           {schoolId != null ? (
             <SchoolDetailContent schoolId={schoolId} />
           ) : null}
         </div>
         {school ? (
-          <SheetFooter className="shrink-0 flex-row flex-wrap justify-end gap-2 border-t">
-            <Button type="button" variant="success-secondary">
-              <Check />
-              Approve report
-            </Button>
-            <Button type="button" variant="destructive-secondary">
-              <Ban />
-              Request corrections
+          <SheetFooter className="bg-background border-t shrink-0 flex-row flex-wrap p-5 items-center justify-between gap-2 shadow-sm">
+            <div className="flex flex-wrap gap-2">
+              <Button type="button" variant="success-secondary">
+                <Check />
+                Approve report
+              </Button>
+              <Button type="button" variant="destructive-secondary">
+                <Ban />
+                Request corrections
+              </Button>
+            </div>
+            <Button type="button" variant="outline">
+              <ExternalLink />
+              View report
             </Button>
           </SheetFooter>
         ) : null}
