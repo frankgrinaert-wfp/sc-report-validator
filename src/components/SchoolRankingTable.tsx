@@ -1,4 +1,4 @@
-import { Download } from "lucide-react";
+import { ChevronRight, Download } from "lucide-react";
 import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -112,19 +112,20 @@ export function SchoolRankingTable({
                   <Button
                     type="button"
                     variant="outline"
-                    size="sm"
-                    onClick={() => navigate(`/school/${school.id}`)}
-                  >
-                    View details
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
                     size="icon-sm"
                     onClick={() => handleDownload(school)}
                     aria-label="Download issues report"
                   >
                     <Download />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => navigate(`/school/${school.id}`)}
+                  >
+                    View details
+                    <ChevronRight />
                   </Button>
                 </div>
               </TableCell>
