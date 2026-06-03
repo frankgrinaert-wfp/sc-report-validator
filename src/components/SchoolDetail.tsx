@@ -42,6 +42,7 @@ import {
   dataQualityScoreTextClass,
   generateHistoricalData,
   getSchoolDetail,
+  MAX_SCHOOL_ID,
   type SchoolDetailRecord,
   type SchoolStatus,
 } from "@/data/reportDashboard";
@@ -153,7 +154,7 @@ export function SchoolDetail() {
   };
 
   const handleNext = () => {
-    navigate(`/school/${Math.min(20, school.id + 1)}`);
+    navigate(`/school/${Math.min(MAX_SCHOOL_ID, school.id + 1)}`);
   };
 
   const sortedIssues = [...school.issues].sort((a, b) => {
@@ -429,7 +430,7 @@ export function SchoolDetail() {
               type="button"
               variant="outline"
               onClick={handleNext}
-              disabled={school.id === 20}
+              disabled={school.id === MAX_SCHOOL_ID}
             >
               Next school
               <ChevronRight />
