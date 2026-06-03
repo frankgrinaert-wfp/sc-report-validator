@@ -66,11 +66,6 @@ const issueTypes = [
     label: "No absences recorded for 10 consecutive days",
   },
   {
-    id: "attendance-missing",
-    category: "Attendance & enrolment",
-    label: "Attendance data is missing",
-  },
-  {
     id: "attendance-zero",
     category: "Attendance & enrolment",
     label: "Attendance is recorded as zero",
