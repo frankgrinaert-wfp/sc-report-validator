@@ -44,6 +44,7 @@ const STATUS_FILTERS: { value: "all" | SchoolStatus; label: string }[] = [
 
 export function Dashboard() {
   const [country, setCountry] = useState("gambia");
+  const [regionFilter, setRegionFilter] = useState("all");
   const [qualityFilter, setQualityFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState<"all" | SchoolStatus>("all");
   const [orderBy, setOrderBy] = useState("score-asc");
@@ -159,15 +160,16 @@ export function Dashboard() {
               </SelectContent>
             </Select>
 
-            <Select defaultValue="region1">
+            <Select value={regionFilter} onValueChange={setRegionFilter}>
               <SelectTrigger
                 id="region-select"
                 className="w-48"
                 aria-label="Admin region"
               >
-                <SelectValue placeholder="Select region" />
+                <SelectValue placeholder="Admin region: All" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="all">Admin region: All</SelectItem>
                 <SelectItem value="region1">Admin region 1</SelectItem>
                 <SelectItem value="region2">Admin region 2</SelectItem>
                 <SelectItem value="region3">Admin region 3</SelectItem>
