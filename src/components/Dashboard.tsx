@@ -104,22 +104,25 @@ export function Dashboard() {
                 Review and validate monthly reports. Last updated: August 2025
               </p>
             </div>
-            <Select value={country} onValueChange={setCountry}>
-              <SelectTrigger
-                id="country-select"
-                className="w-40 shrink-0"
-                aria-label="Country"
-              >
-                <SelectValue placeholder="Select country" />
-              </SelectTrigger>
-              <SelectContent>
-                {COUNTRIES.map(({ value, label, flag }) => (
-                  <SelectItem key={value} value={value}>
-                    {flag} {label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex shrink-0 items-center gap-2">
+              <Select value={country} onValueChange={setCountry}>
+                <SelectTrigger
+                  id="country-select"
+                  className="w-40"
+                  aria-label="Country"
+                >
+                  <SelectValue placeholder="Select country" />
+                </SelectTrigger>
+                <SelectContent>
+                  {COUNTRIES.map(({ value, label, flag }) => (
+                    <SelectItem key={value} value={value}>
+                      {flag} {label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <SettingsSheet />
+            </div>
           </div>
           <div className="flex flex-wrap items-end gap-2">
             <Select value={schoolFilter} onValueChange={setSchoolFilter}>
@@ -283,8 +286,6 @@ export function Dashboard() {
                 </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>
-
-            <SettingsSheet />
 
             <Button type="button" variant="outline">
               <Download />
