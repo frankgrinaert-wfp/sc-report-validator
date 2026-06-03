@@ -179,16 +179,18 @@ export function Dashboard() {
               <SelectTrigger
                 id="quality-select"
                 className="w-48"
-                aria-label="Quality"
+                aria-label="Data quality"
               >
-                <SelectValue placeholder="Quality: All" />
+                <SelectValue placeholder="Data quality: All" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Quality: All</SelectItem>
-                <SelectItem value="excellent">Quality: Excellent</SelectItem>
-                <SelectItem value="good">Quality: Good</SelectItem>
-                <SelectItem value="fair">Quality: Fair</SelectItem>
-                <SelectItem value="critical">Quality: Critical</SelectItem>
+                <SelectItem value="all">Data quality: All</SelectItem>
+                <SelectItem value="excellent">
+                  Data quality: Excellent
+                </SelectItem>
+                <SelectItem value="good">Data quality: Good</SelectItem>
+                <SelectItem value="fair">Data quality: Fair</SelectItem>
+                <SelectItem value="critical">Data quality: Critical</SelectItem>
               </SelectContent>
             </Select>
 
