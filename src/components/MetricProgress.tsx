@@ -2,7 +2,6 @@ import { Progress } from "@/components/ui/progress";
 import {
   type MetricProgressConfig,
   progressMetricIndicatorClass,
-  progressMetricTextClass,
 } from "@/data/reportDashboard";
 import { cn } from "@/lib/utils";
 
@@ -27,12 +26,7 @@ export function MetricProgress({
         indicatorClassName={progressMetricIndicatorClass(tone)}
         aria-label={ariaLabel}
       />
-      <span
-        className={cn(
-          "shrink-0 text-sm tabular-nums",
-          progressMetricTextClass(tone),
-        )}
-      >
+      <span className="shrink-0 text-foreground text-sm tabular-nums">
         {label}
       </span>
     </div>
