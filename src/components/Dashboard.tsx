@@ -185,12 +185,10 @@ export function Dashboard() {
               <SelectContent>
                 <SelectItem value="all">Data quality: All</SelectItem>
                 <SelectSeparator />
-                <SelectItem value="excellent">
-                  Data quality: Excellent
-                </SelectItem>
-                <SelectItem value="good">Data quality: Good</SelectItem>
-                <SelectItem value="fair">Data quality: Fair</SelectItem>
-                <SelectItem value="critical">Data quality: Critical</SelectItem>
+                <SelectItem value="excellent">Excellent</SelectItem>
+                <SelectItem value="good">Good</SelectItem>
+                <SelectItem value="fair">Fair</SelectItem>
+                <SelectItem value="critical">Critical</SelectItem>
               </SelectContent>
             </Select>
 
