@@ -1,11 +1,6 @@
-import {
-  ChevronRight,
-  Download,
-  Info,
-  OctagonX,
-  TriangleAlert,
-} from "lucide-react";
+import { ChevronRight, Download } from "lucide-react";
 import { useState } from "react";
+import { ReportIssueCounts } from "@/components/ReportIssueCounts";
 import { SchoolDetailSheet } from "@/components/SchoolDetail";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -22,63 +17,12 @@ import {
   dailyEntriesMetricConfig,
   dataQualityMetricConfig,
   type DashboardReportRow,
-  type ReportAuditIssueSeverity,
-  type ReportIssueCounts,
   type SchoolStatus,
 } from "@/data/reportDashboard";
 
 type SchoolRankingTableProps = {
   reports: DashboardReportRow[];
 };
-
-const ISSUE_COUNT_DISPLAY: {
-  severity: ReportAuditIssueSeverity;
-  label: string;
-}[] = [
-  { severity: "critical", label: "critical issues" },
-  { severity: "high", label: "important issues" },
-  { severity: "low", label: "trivial issues" },
-];
-
-function AuditIssueSeverityIcon({
-  severity,
-}: {
-  severity: ReportAuditIssueSeverity;
-}) {
-  switch (severity) {
-    case "critical":
-      return <OctagonX className="size-4 text-danger-500" aria-hidden />;
-    case "high":
-      return <TriangleAlert className="size-4 text-warning-500" aria-hidden />;
-    case "low":
-      return <Info className="size-4 text-info-500" aria-hidden />;
-  }
-}
-
-function ReportIssueCountsCell({ counts }: { counts: ReportIssueCounts }) {
-  const visible = ISSUE_COUNT_DISPLAY.filter(
-    ({ severity }) => counts[severity] > 0,
-  );
-
-  if (visible.length === 0) {
-    return <span className="text-muted-foreground text-sm">—</span>;
-  }
-
-  return (
-    <div className="flex items-center gap-4">
-      {visible.map(({ severity, label }) => (
-        <span
-          key={severity}
-          className="inline-flex items-center gap-1 tabular-nums"
-          aria-label={`${counts[severity]} ${label}`}
-        >
-          <AuditIssueSeverityIcon severity={severity} />
-          {counts[severity]}
-        </span>
-      ))}
-    </div>
-  );
-}
 
 function statusBadgeVariant(status: SchoolStatus) {
   switch (status) {
@@ -92,7 +36,7 @@ function statusBadgeVariant(status: SchoolStatus) {
 }
 
 export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
-  const [detailSchoolId, setDetailSchoolId] = useState<number | null>(null);
+  const [detailReportId, setDetailReportId] = useState<string | null>(null);
 
   const handleDownload = (report: DashboardReportRow) => {
     const payload = {
@@ -162,7 +106,7 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
                   <MetricProgress {...dataQualityMetricConfig(report.score)} />
                 </TableCell>
                 <TableCell>
-                  <ReportIssueCountsCell counts={report.issueCounts} />
+                  <ReportIssueCounts counts={report.issueCounts} />
                 </TableCell>
                 <TableCell>
                   <Badge variant={statusBadgeVariant(report.status)}>
@@ -184,7 +128,7 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
                       type="button"
                       variant="outline"
                       size="sm"
-                      onClick={() => setDetailSchoolId(report.schoolId)}
+                      onClick={() => setDetailReportId(report.reportId)}
                     >
                       View details
                       <ChevronRight />
@@ -197,10 +141,10 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
         </Table>
       </div>
       <SchoolDetailSheet
-        schoolId={detailSchoolId}
-        open={detailSchoolId != null}
+        reportId={detailReportId}
+        open={detailReportId != null}
         onOpenChange={(open) => {
-          if (!open) setDetailSchoolId(null);
+          if (!open) setDetailReportId(null);
         }}
       />
     </>

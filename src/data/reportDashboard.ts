@@ -843,9 +843,9 @@ function generateReportIssueCounts(
   const lowZeroChance = score < 75 ? 0.15 : 0.35;
 
   return {
-    critical: countForSeverity(6, criticalZeroChance),
-    high: countForSeverity(8, highZeroChance),
-    low: countForSeverity(6, lowZeroChance),
+    critical: Math.min(countForSeverity(6, criticalZeroChance), 4),
+    high: Math.min(countForSeverity(8, highZeroChance), 4),
+    low: Math.min(countForSeverity(6, lowZeroChance), 2),
   };
 }
 
@@ -903,6 +903,13 @@ function generateMockReports(count: number): DashboardReportRow[] {
 
 /** ~100 monthly reports across schools and school-year months (mock DB). */
 export const DASHBOARD_REPORTS = generateMockReports(100);
+
+export function getDashboardReport(
+  reportId: string | undefined,
+): DashboardReportRow | undefined {
+  if (!reportId) return undefined;
+  return DASHBOARD_REPORTS.find((report) => report.reportId === reportId);
+}
 
 export function getDashboardReportForSchool(
   schoolId: number,
@@ -998,6 +1005,30 @@ export function countAuditIssuesBySeverity(
     },
     { critical: 0, high: 0, low: 0 },
   );
+}
+
+/** Issues from the mock pool matching per-severity totals (e.g. header counts). */
+export function selectAuditIssuesForCounts(
+  counts: ReportIssueCounts,
+  pool: readonly ReportAuditIssue[] = REPORT_AUDIT_ISSUES,
+): ReportAuditIssue[] {
+  const bySeverity: Record<ReportAuditIssueSeverity, ReportAuditIssue[]> = {
+    critical: [],
+    high: [],
+    low: [],
+  };
+
+  for (const issue of pool) {
+    bySeverity[issue.severity].push(issue);
+  }
+
+  const selected = [
+    ...bySeverity.critical.slice(0, counts.critical),
+    ...bySeverity.high.slice(0, counts.high),
+    ...bySeverity.low.slice(0, counts.low),
+  ];
+
+  return selected.sort((a, b) => b.date.localeCompare(a.date));
 }
 
 /** e.g. `"2024-04-12"` → `"12 Apr 2024"` */

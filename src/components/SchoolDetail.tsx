@@ -8,6 +8,7 @@ import {
   TriangleAlert,
 } from "lucide-react";
 import { Fragment } from "react";
+import { ReportIssueCounts } from "@/components/ReportIssueCounts";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,11 +35,9 @@ import {
   dataQualityMetricConfig,
   formatAuditIssueDate,
   progressMetricIndicatorClass,
-  getDashboardReportForSchool,
+  getDashboardReport,
   getSchoolDetail,
-  MOCK_DAILY_ENTRIES_BY_ID,
-  countAuditIssuesBySeverity,
-  REPORT_AUDIT_ISSUES,
+  selectAuditIssuesForCounts,
   type ReportAuditIssueSeverity,
   type SchoolStatus,
 } from "@/data/reportDashboard";
@@ -53,15 +52,6 @@ function statusBadgeVariant(status: SchoolStatus) {
       return "success" as const;
   }
 }
-
-const AUDIT_ISSUE_SEVERITY_SUMMARY: {
-  severity: ReportAuditIssueSeverity;
-  label: string;
-}[] = [
-  { severity: "critical", label: "critical" },
-  { severity: "high", label: "important" },
-  { severity: "low", label: "trivial" },
-];
 
 function AuditIssueSeverityIcon({
   severity,
@@ -79,22 +69,21 @@ function AuditIssueSeverityIcon({
 }
 
 type SchoolDetailContentProps = {
-  schoolId: number;
+  reportId: string;
 };
 
-export function SchoolDetailContent({ schoolId }: SchoolDetailContentProps) {
-  const school = getSchoolDetail(String(schoolId));
-  const report = school ? getDashboardReportForSchool(school.id) : undefined;
+export function SchoolDetailContent({ reportId }: SchoolDetailContentProps) {
+  const report = getDashboardReport(reportId);
+  const school = report ? getSchoolDetail(String(report.schoolId)) : undefined;
 
-  if (!school) {
-    return <p className="text-muted-foreground text-sm">School not found.</p>;
+  if (!report || !school) {
+    return <p className="text-muted-foreground text-sm">Report not found.</p>;
   }
 
-  const dailyEntries =
-    report?.dailyEntries ?? MOCK_DAILY_ENTRIES_BY_ID[school.id] ?? 0;
-  const qualityScore = report?.score ?? school.score;
-  const issueCounts =
-    report?.issueCounts ?? countAuditIssuesBySeverity(REPORT_AUDIT_ISSUES);
+  const dailyEntries = report.dailyEntries;
+  const qualityScore = report.score;
+  const issueCounts = report.issueCounts;
+  const auditIssues = selectAuditIssuesForCounts(issueCounts);
   const completenessMetric = dailyEntriesMetricConfig(dailyEntries);
   const qualityMetric = dataQualityMetricConfig(qualityScore);
 
@@ -140,37 +129,19 @@ export function SchoolDetailContent({ schoolId }: SchoolDetailContentProps) {
       </div>
 
       <div className="flex flex-col gap-5 rounded-lg border bg-background p-5">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <h2 className="font-semibold text-lg">Data quality issues</h2>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex flex-wrap items-center gap-4">
+            <h2 className="font-semibold text-lg">Data quality issues</h2>
+            <ReportIssueCounts counts={issueCounts} />
+          </div>
           <Button type="button" variant="outline" size="sm">
             <Download />
             Download
           </Button>
         </div>
 
-        <div className="flex w-full gap-3">
-          {AUDIT_ISSUE_SEVERITY_SUMMARY.filter(
-            ({ severity }) => issueCounts[severity] > 0,
-          ).map(({ severity, label }) => (
-            <Item
-              key={severity}
-              variant="outline"
-              className="min-w-0 flex-1 bg-background"
-            >
-              <ItemMedia>
-                <AuditIssueSeverityIcon severity={severity} />
-              </ItemMedia>
-              <ItemContent>
-                <ItemTitle>
-                  {issueCounts[severity]} {label}
-                </ItemTitle>
-              </ItemContent>
-            </Item>
-          ))}
-        </div>
-
         <ItemGroup>
-          {REPORT_AUDIT_ISSUES.map((issue, index) => (
+          {auditIssues.map((issue, index) => (
             <Fragment key={issue.date}>
               {index > 0 ? <ItemSeparator /> : null}
               <Item role="listitem">
@@ -199,19 +170,18 @@ export function SchoolDetailContent({ schoolId }: SchoolDetailContentProps) {
 }
 
 type SchoolDetailSheetProps = {
-  schoolId: number | null;
+  reportId: string | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
 
 export function SchoolDetailSheet({
-  schoolId,
+  reportId,
   open,
   onOpenChange,
 }: SchoolDetailSheetProps) {
-  const school =
-    schoolId != null ? getSchoolDetail(String(schoolId)) : undefined;
-  const report = school ? getDashboardReportForSchool(school.id) : undefined;
+  const report = reportId ? getDashboardReport(reportId) : undefined;
+  const school = report ? getSchoolDetail(String(report.schoolId)) : undefined;
   const periodLabel = report?.periodLabel ?? "May 2025";
   const title = school ? `${school.name} – ${periodLabel}` : "School details";
   const status = report?.status ?? school?.status;
@@ -233,8 +203,8 @@ export function SchoolDetailSheet({
           </div>
         </SheetHeader>
         <div className="flex-1 overflow-y-auto px-5 py-6">
-          {schoolId != null ? (
-            <SchoolDetailContent schoolId={schoolId} />
+          {reportId != null ? (
+            <SchoolDetailContent reportId={reportId} />
           ) : null}
         </div>
         {school ? (
