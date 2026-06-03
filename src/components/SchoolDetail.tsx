@@ -148,11 +148,15 @@ export function SchoolDetailContent({ schoolId }: SchoolDetailContentProps) {
           </Button>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="flex w-full gap-3">
           {AUDIT_ISSUE_SEVERITY_SUMMARY.filter(
             ({ severity }) => issueCounts[severity] > 0,
           ).map(({ severity, label }) => (
-            <Item key={severity} variant="outline" className="bg-background">
+            <Item
+              key={severity}
+              variant="outline"
+              className="min-w-0 flex-1 bg-background"
+            >
               <ItemMedia>
                 <AuditIssueSeverityIcon severity={severity} />
               </ItemMedia>
