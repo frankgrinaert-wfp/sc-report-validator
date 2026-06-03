@@ -162,11 +162,28 @@ export function buildReportPeriodLabel(
   );
 }
 
+export const ADMIN_REGIONS = [
+  "Admin region 1",
+  "Admin region 2",
+  "Admin region 3",
+  "Admin region 4",
+] as const;
+
+export type DashboardSortBy =
+  | "school"
+  | "month"
+  | "region"
+  | "quality"
+  | "status";
+
+export type DashboardSortOrder = "asc" | "desc";
+
 export type DashboardReportRow = {
   reportId: string;
   schoolId: number;
   schoolName: string;
   schoolCode: string;
+  adminRegion: (typeof ADMIN_REGIONS)[number];
   schoolYear: string;
   monthKey: string;
   periodLabel: string;
@@ -174,6 +191,57 @@ export type DashboardReportRow = {
   status: SchoolStatus;
   dailyEntries: number;
 };
+
+const REPORT_MONTH_SORT_INDEX = Object.fromEntries(
+  REPORT_MONTH_OPTIONS.map((month, index) => [month, index]),
+) as Record<string, number>;
+
+function reportPeriodSortKey(report: DashboardReportRow): number {
+  const calendarYear = Number(
+    calendarYearForSchoolReport(
+      report.monthKey,
+      schoolYearStartYear(report.schoolYear),
+    ),
+  );
+  const monthIndex = REPORT_MONTH_SORT_INDEX[report.monthKey] ?? 0;
+  return calendarYear * 12 + monthIndex;
+}
+
+export function compareDashboardReports(
+  a: DashboardReportRow,
+  b: DashboardReportRow,
+  sortBy: DashboardSortBy,
+  sortOrder: DashboardSortOrder,
+): number {
+  const direction = sortOrder === "asc" ? 1 : -1;
+  let comparison = 0;
+
+  switch (sortBy) {
+    case "school":
+      comparison = a.schoolName.localeCompare(b.schoolName);
+      break;
+    case "month":
+      comparison = reportPeriodSortKey(a) - reportPeriodSortKey(b);
+      break;
+    case "region":
+      comparison = a.adminRegion.localeCompare(b.adminRegion);
+      break;
+    case "quality":
+      comparison = a.score - b.score;
+      break;
+    case "status": {
+      const statusOrder = {
+        Accepted: 1,
+        "To review": 2,
+        "Corrections requested": 3,
+      };
+      comparison = statusOrder[a.status] - statusOrder[b.status];
+      break;
+    }
+  }
+
+  return comparison * direction;
+}
 
 export function filterDashboardReports(
   reports: DashboardReportRow[],
@@ -962,6 +1030,7 @@ function generateMockReports(count: number): DashboardReportRow[] {
       schoolId: school.id,
       schoolName: school.name,
       schoolCode: school.code,
+      adminRegion: ADMIN_REGIONS[(school.id - 1) % ADMIN_REGIONS.length]!,
       schoolYear: period.schoolYear,
       monthKey: period.monthKey,
       periodLabel: buildReportPeriodLabel(period.schoolYear, period.monthKey),

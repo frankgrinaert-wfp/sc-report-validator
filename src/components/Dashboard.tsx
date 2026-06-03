@@ -1,11 +1,14 @@
-import { ArrowUpDown, Download } from "lucide-react";
+import { ArrowUpDown, ChevronDown, Download } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -16,16 +19,33 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { SchoolStatus } from "@/data/reportDashboard";
+import type {
+  DashboardSortBy,
+  DashboardSortOrder,
+  SchoolStatus,
+} from "@/data/reportDashboard";
 import { SettingsSheet } from "@/components/SettingsSheet";
 import { SchoolRankingTable } from "@/components/SchoolRankingTable";
 import {
+  compareDashboardReports,
   DASHBOARD_REPORTS,
   filterDashboardReports,
   REPORT_MONTH_OPTIONS,
   SCHOOL_YEAR_OPTIONS,
-  schoolQualityFromScore,
 } from "@/data/reportDashboard";
+
+const SORT_BY_OPTIONS: { value: DashboardSortBy; label: string }[] = [
+  { value: "school", label: "School" },
+  { value: "month", label: "Month" },
+  { value: "region", label: "Admin region" },
+  { value: "quality", label: "Data quality" },
+  { value: "status", label: "Status" },
+];
+
+const SORT_ORDER_OPTIONS: { value: DashboardSortOrder; label: string }[] = [
+  { value: "asc", label: "Ascending" },
+  { value: "desc", label: "Descending" },
+];
 
 const COUNTRIES = [
   { value: "burkina-faso", label: "Burkina Faso", flag: "🇧🇫" },
@@ -50,7 +70,8 @@ export function Dashboard() {
   const [regionFilter, setRegionFilter] = useState("all");
   const [qualityFilter, setQualityFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState<"all" | SchoolStatus>("all");
-  const [orderBy, setOrderBy] = useState("score-asc");
+  const [sortBy, setSortBy] = useState<DashboardSortBy>("quality");
+  const [sortOrder, setSortOrder] = useState<DashboardSortOrder>("asc");
   const [schoolYear, setSchoolYear] = useState("all");
   const [reportMonth, setReportMonth] = useState("all");
 
@@ -61,31 +82,12 @@ export function Dashboard() {
     status: statusFilter,
   });
 
-  const sortedReports = [...filteredReports].sort((a, b) => {
-    switch (orderBy) {
-      case "score-asc":
-        return a.score - b.score;
-      case "score-desc":
-        return b.score - a.score;
-      case "quality": {
-        const qualityOrder = { excellent: 1, good: 2, fair: 3, critical: 4 };
-        return (
-          qualityOrder[schoolQualityFromScore(a.score)] -
-          qualityOrder[schoolQualityFromScore(b.score)]
-        );
-      }
-      case "status": {
-        const statusOrder = {
-          Accepted: 1,
-          "To review": 2,
-          "Corrections requested": 3,
-        };
-        return statusOrder[a.status] - statusOrder[b.status];
-      }
-      default:
-        return 0;
-    }
-  });
+  const sortedReports = [...filteredReports].sort((a, b) =>
+    compareDashboardReports(a, b, sortBy, sortOrder),
+  );
+
+  const sortByLabel =
+    SORT_BY_OPTIONS.find((option) => option.value === sortBy)?.label ?? "Sort";
 
   return (
     <div className="flex h-screen flex-col">
@@ -222,24 +224,42 @@ export function Dashboard() {
               <DropdownMenuTrigger asChild>
                 <Button type="button" variant="outline" aria-label="Sort">
                   <ArrowUpDown />
-                  Sort
+                  {sortByLabel}
+                  <ChevronDown />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuRadioGroup
-                  value={orderBy}
-                  onValueChange={setOrderBy}
-                >
-                  <DropdownMenuRadioItem value="score-asc">
-                    Data quality (ascending)
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="score-desc">
-                    Data quality (descending)
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="status">
-                    Status
-                  </DropdownMenuRadioItem>
-                </DropdownMenuRadioGroup>
+              <DropdownMenuContent align="end" className="w-52">
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel>Sort by</DropdownMenuLabel>
+                  <DropdownMenuRadioGroup
+                    value={sortBy}
+                    onValueChange={(value) =>
+                      setSortBy(value as DashboardSortBy)
+                    }
+                  >
+                    {SORT_BY_OPTIONS.map(({ value, label }) => (
+                      <DropdownMenuRadioItem key={value} value={value}>
+                        {label}
+                      </DropdownMenuRadioItem>
+                    ))}
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel>Order</DropdownMenuLabel>
+                  <DropdownMenuRadioGroup
+                    value={sortOrder}
+                    onValueChange={(value) =>
+                      setSortOrder(value as DashboardSortOrder)
+                    }
+                  >
+                    {SORT_ORDER_OPTIONS.map(({ value, label }) => (
+                      <DropdownMenuRadioItem key={value} value={value}>
+                        {label}
+                      </DropdownMenuRadioItem>
+                    ))}
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>
 
