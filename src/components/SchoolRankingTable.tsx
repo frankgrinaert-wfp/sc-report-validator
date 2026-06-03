@@ -149,7 +149,7 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
           <TableBody>
             {reports.map((report) => (
               <TableRow key={report.reportId}>
-                <TableCell className="font-medium">
+                <TableCell className="font-medium whitespace-normal">
                   {report.schoolName}
                 </TableCell>
                 <TableCell>{report.periodLabel}</TableCell>
@@ -169,7 +169,7 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
                     {report.status}
                   </Badge>
                 </TableCell>
-                <TableCell className="w-px text-right">
+                <TableCell className="text-right">
                   <div className="inline-flex items-center gap-2">
                     <Button
                       type="button"
