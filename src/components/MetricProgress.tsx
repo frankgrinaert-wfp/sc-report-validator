@@ -11,9 +11,29 @@ type MetricProgressProps = MetricProgressConfig & {
   layout?: "inline" | "stacked";
 };
 
+function MetricProgressLabel({
+  label,
+  labelSuffix,
+  className,
+}: {
+  label: string;
+  labelSuffix?: string;
+  className?: string;
+}) {
+  return (
+    <span className={className}>
+      {label}
+      {labelSuffix ? (
+        <span className="text-muted-foreground"> {labelSuffix}</span>
+      ) : null}
+    </span>
+  );
+}
+
 export function MetricProgress({
   value,
   label,
+  labelSuffix,
   tone,
   ariaLabel,
   className,
@@ -26,9 +46,11 @@ export function MetricProgress({
   if (layout === "stacked") {
     return (
       <div className={cn("flex flex-col gap-2", className)}>
-        <span className="font-semibold text-foreground text-xl tabular-nums">
-          {label}
-        </span>
+        <MetricProgressLabel
+          label={label}
+          labelSuffix={labelSuffix}
+          className="font-semibold text-foreground text-xl tabular-nums"
+        />
         <Progress
           value={value}
           className={resolvedBarClassName}
@@ -47,9 +69,11 @@ export function MetricProgress({
         indicatorClassName={progressMetricIndicatorClass(tone)}
         aria-label={ariaLabel}
       />
-      <span className="shrink-0 text-foreground text-sm tabular-nums">
-        {label}
-      </span>
+      <MetricProgressLabel
+        label={label}
+        labelSuffix={labelSuffix}
+        className="shrink-0 text-foreground text-sm tabular-nums"
+      />
     </div>
   );
 }

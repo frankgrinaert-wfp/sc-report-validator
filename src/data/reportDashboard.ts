@@ -75,6 +75,7 @@ export function dailyEntriesTone(
 export type MetricProgressConfig = {
   value: number;
   label: string;
+  labelSuffix?: string;
   tone: ProgressMetricTone;
   ariaLabel: string;
 };
@@ -95,7 +96,8 @@ export function dailyEntriesMetricConfig(
 ): MetricProgressConfig {
   return {
     value: Math.min(100, Math.round((entries / total) * 100)),
-    label: `${entries} of ${total}`,
+    label: String(entries),
+    labelSuffix: `of ${total}`,
     tone: dailyEntriesTone(entries, total),
     ariaLabel: `Days entered ${entries} of ${total}`,
   };
