@@ -67,7 +67,7 @@ export function MetricProgress({
   layout = "inline",
 }: MetricProgressProps) {
   const resolvedBarClassName =
-    barClassName ?? (layout === "stacked" ? "w-full" : "max-w-20");
+    barClassName ?? (layout === "stacked" ? "w-full" : "w-16 shrink-0");
 
   if (layout === "stacked") {
     return (
