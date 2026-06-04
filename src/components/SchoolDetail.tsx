@@ -223,7 +223,7 @@ export function SchoolDetailSheet({
                 Request corrections
               </Button>
             </div>
-            <Button type="button" variant="outline">
+            <Button type="button" variant="link">
               <ExternalLink />
               View report
             </Button>
