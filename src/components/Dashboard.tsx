@@ -143,6 +143,24 @@ export function Dashboard() {
           </div>
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div className="flex flex-wrap items-end justify-start gap-2">
+            <Select value={regionFilter} onValueChange={setRegionFilter}>
+              <SelectTrigger
+                id="region-select"
+                className="w-48"
+                aria-label="Admin region"
+              >
+                <SelectValue placeholder="Admin region: All" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Admin region: All</SelectItem>
+                <SelectSeparator />
+                <SelectItem value="region1">Admin region 1</SelectItem>
+                <SelectItem value="region2">Admin region 2</SelectItem>
+                <SelectItem value="region3">Admin region 3</SelectItem>
+                <SelectItem value="region4">Admin region 4</SelectItem>
+              </SelectContent>
+            </Select>
+
             <Select value={schoolFilter} onValueChange={setSchoolFilter}>
               <SelectTrigger
                 id="school-select"
@@ -200,42 +218,6 @@ export function Dashboard() {
               </SelectContent>
             </Select>
 
-            <Select value={regionFilter} onValueChange={setRegionFilter}>
-              <SelectTrigger
-                id="region-select"
-                className="w-48"
-                aria-label="Admin region"
-              >
-                <SelectValue placeholder="Admin region: All" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Admin region: All</SelectItem>
-                <SelectSeparator />
-                <SelectItem value="region1">Admin region 1</SelectItem>
-                <SelectItem value="region2">Admin region 2</SelectItem>
-                <SelectItem value="region3">Admin region 3</SelectItem>
-                <SelectItem value="region4">Admin region 4</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select value={qualityFilter} onValueChange={setQualityFilter}>
-              <SelectTrigger
-                id="quality-select"
-                className="w-48"
-                aria-label="Data quality"
-              >
-                <SelectValue placeholder="Data quality: All" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Data quality: All</SelectItem>
-                <SelectSeparator />
-                <SelectItem value="excellent">Excellent</SelectItem>
-                <SelectItem value="good">Good</SelectItem>
-                <SelectItem value="fair">Fair</SelectItem>
-                <SelectItem value="critical">Critical</SelectItem>
-              </SelectContent>
-            </Select>
-
             <Select
               value={statusFilter}
               onValueChange={(value) =>
@@ -259,6 +241,24 @@ export function Dashboard() {
                     </SelectItem>
                   ),
                 )}
+              </SelectContent>
+            </Select>
+
+            <Select value={qualityFilter} onValueChange={setQualityFilter}>
+              <SelectTrigger
+                id="quality-select"
+                className="w-48"
+                aria-label="Data quality"
+              >
+                <SelectValue placeholder="Data quality: All" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Data quality: All</SelectItem>
+                <SelectSeparator />
+                <SelectItem value="excellent">Excellent</SelectItem>
+                <SelectItem value="good">Good</SelectItem>
+                <SelectItem value="fair">Fair</SelectItem>
+                <SelectItem value="critical">Critical</SelectItem>
               </SelectContent>
             </Select>
 
