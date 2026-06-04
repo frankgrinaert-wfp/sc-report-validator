@@ -69,7 +69,7 @@ export function dailyEntriesTone(
   entries: number,
   total = REPORT_DAILY_ENTRIES_TOTAL,
 ): ProgressMetricTone {
-  return entries >= total ? "success" : "neutral";
+  return entries >= total ? "success" : "danger";
 }
 
 export type MetricProgressConfig = {
@@ -97,9 +97,9 @@ export function dailyEntriesMetricConfig(
   return {
     value: Math.min(100, Math.round((entries / total) * 100)),
     label: String(entries),
-    labelSuffix: `of ${total}`,
+    labelSuffix: `/ ${total}`,
     tone: dailyEntriesTone(entries, total),
-    ariaLabel: `Days entered ${entries} of ${total}`,
+    ariaLabel: `Days entered ${entries} / ${total}`,
   };
 }
 

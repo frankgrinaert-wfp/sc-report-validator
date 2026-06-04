@@ -17,9 +17,11 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { MetricProgress } from "@/components/MetricProgress";
 import {
-  dailyEntriesMetricConfig,
+  DailyEntriesDisplay,
+  MetricProgress,
+} from "@/components/MetricProgress";
+import {
   dataQualityMetricConfig,
   type DashboardReportRow,
   type SchoolStatus,
@@ -108,9 +110,7 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  <MetricProgress
-                    {...dailyEntriesMetricConfig(report.dailyEntries)}
-                  />
+                  <DailyEntriesDisplay entries={report.dailyEntries} />
                 </TableCell>
                 <TableCell>
                   <MetricProgress {...dataQualityMetricConfig(report.score)} />

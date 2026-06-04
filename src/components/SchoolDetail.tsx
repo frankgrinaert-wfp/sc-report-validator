@@ -35,6 +35,7 @@ import {
   dataQualityMetricConfig,
   formatAuditIssueDate,
   progressMetricIndicatorClass,
+  REPORT_DAILY_ENTRIES_TOTAL,
   getDashboardReport,
   getSchoolDetail,
   selectAuditIssuesForCounts,
@@ -93,8 +94,11 @@ export function SchoolDetailContent({ reportId }: SchoolDetailContentProps) {
         <Card className="shadow-none">
           <CardHeader>
             <CardTitle className="tabular-nums">
-              {completenessMetric.label}{" "}
-              <span className="font-normal">days entered</span>
+              {completenessMetric.label}
+              <span className="font-normal">
+                {" "}
+                of {REPORT_DAILY_ENTRIES_TOTAL} days entered
+              </span>
             </CardTitle>
           </CardHeader>
           <CardContent>

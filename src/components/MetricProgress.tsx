@@ -1,5 +1,6 @@
 import { Progress } from "@/components/ui/progress";
 import {
+  REPORT_DAILY_ENTRIES_TOTAL,
   type MetricProgressConfig,
   progressMetricIndicatorClass,
 } from "@/data/reportDashboard";
@@ -26,6 +27,31 @@ function MetricProgressLabel({
       {labelSuffix ? (
         <span className="text-muted-foreground"> {labelSuffix}</span>
       ) : null}
+    </span>
+  );
+}
+
+export function DailyEntriesDisplay({
+  entries,
+  total = REPORT_DAILY_ENTRIES_TOTAL,
+}: {
+  entries: number;
+  total?: number;
+}) {
+  return (
+    <span
+      className="text-sm tabular-nums"
+      aria-label={`Days entered ${entries} / ${total}`}
+    >
+      <span
+        className={cn(
+          "font-medium",
+          entries < total ? "text-danger-600" : "text-foreground",
+        )}
+      >
+        {entries}
+      </span>
+      <span className="text-muted-foreground"> / {total}</span>
     </span>
   );
 }
