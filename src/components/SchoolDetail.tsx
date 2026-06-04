@@ -60,11 +60,11 @@ function AuditIssueSeverityIcon({
 }) {
   switch (severity) {
     case "critical":
-      return <OctagonX className="text-danger-500 size-5" />;
+      return <OctagonX className="text-danger-500 size-4" />;
     case "high":
-      return <TriangleAlert className="text-warning-500 size-5" />;
+      return <TriangleAlert className="text-warning-500 size-4" />;
     case "low":
-      return <Info className="text-info-500 size-5" />;
+      return <Info className="text-info-500 size-4" />;
   }
 }
 
@@ -136,7 +136,7 @@ export function SchoolDetailContent({ reportId }: SchoolDetailContentProps) {
           </div>
           <Button type="button" variant="outline" size="sm">
             <Download />
-            Download
+            Download issues
           </Button>
         </div>
 

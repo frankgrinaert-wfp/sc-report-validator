@@ -143,184 +143,183 @@ export function Dashboard() {
           </div>
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div className="flex flex-wrap items-end justify-start gap-2">
-            <Select value={regionFilter} onValueChange={setRegionFilter}>
-              <SelectTrigger
-                id="region-select"
-                className="w-48"
-                aria-label="Admin region"
-              >
-                <SelectValue placeholder="Admin region: All" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Admin region: All</SelectItem>
-                <SelectSeparator />
-                <SelectItem value="region1">Admin region 1</SelectItem>
-                <SelectItem value="region2">Admin region 2</SelectItem>
-                <SelectItem value="region3">Admin region 3</SelectItem>
-                <SelectItem value="region4">Admin region 4</SelectItem>
-              </SelectContent>
-            </Select>
+              <Select value={regionFilter} onValueChange={setRegionFilter}>
+                <SelectTrigger
+                  id="region-select"
+                  className="w-48"
+                  aria-label="Admin region"
+                >
+                  <SelectValue placeholder="Admin region: All" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Admin region: All</SelectItem>
+                  <SelectSeparator />
+                  <SelectItem value="region1">Admin region 1</SelectItem>
+                  <SelectItem value="region2">Admin region 2</SelectItem>
+                  <SelectItem value="region3">Admin region 3</SelectItem>
+                  <SelectItem value="region4">Admin region 4</SelectItem>
+                </SelectContent>
+              </Select>
 
-            <Select value={schoolFilter} onValueChange={setSchoolFilter}>
-              <SelectTrigger
-                id="school-select"
-                className="w-48 [&_[data-slot=select-value]]:min-w-0 [&_[data-slot=select-value]]:flex-1 [&_[data-slot=select-value]]:truncate"
-                aria-label="School"
-              >
-                <SelectValue placeholder="School: All" />
-              </SelectTrigger>
-              <SelectContent align="start" className="min-w-48 w-max max-w-80">
-                <SelectItem value="all">School: All</SelectItem>
-                <SelectSeparator />
-                {SCHOOL_FILTER_OPTIONS.map(({ value, label }) => (
-                  <SelectItem key={value} value={value}>
-                    {label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select value={schoolYear} onValueChange={setSchoolYear}>
-              <SelectTrigger
-                id="school-year-select"
-                className="w-48"
-                aria-label="School year"
-              >
-                <SelectValue placeholder="School year: All" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">School year: All</SelectItem>
-                <SelectSeparator />
-                {SCHOOL_YEAR_OPTIONS.map(({ value, label }) => (
-                  <SelectItem key={value} value={value}>
-                    {label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select value={reportMonth} onValueChange={setReportMonth}>
-              <SelectTrigger
-                id="month-select"
-                className="w-48"
-                aria-label="Month"
-              >
-                <SelectValue placeholder="Month: All" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Month: All</SelectItem>
-                <SelectSeparator />
-                {REPORT_MONTH_OPTIONS.map((month) => (
-                  <SelectItem key={month} value={month}>
-                    {month.charAt(0).toUpperCase() + month.slice(1)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select
-              value={statusFilter}
-              onValueChange={(value) =>
-                setStatusFilter(value as "all" | SchoolStatus)
-              }
-            >
-              <SelectTrigger
-                id="status-select"
-                className="w-48"
-                aria-label="Status"
-              >
-                <SelectValue placeholder="Status: All" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Status: All</SelectItem>
-                <SelectSeparator />
-                {STATUS_FILTERS.filter(({ value }) => value !== "all").map(
-                  ({ value, label }) => (
+              <Select value={schoolFilter} onValueChange={setSchoolFilter}>
+                <SelectTrigger
+                  id="school-select"
+                  className="w-48 [&_[data-slot=select-value]]:min-w-0 [&_[data-slot=select-value]]:flex-1 [&_[data-slot=select-value]]:truncate"
+                  aria-label="School"
+                >
+                  <SelectValue placeholder="School: All" />
+                </SelectTrigger>
+                <SelectContent
+                  align="start"
+                  className="min-w-48 w-max max-w-80"
+                >
+                  <SelectItem value="all">School: All</SelectItem>
+                  <SelectSeparator />
+                  {SCHOOL_FILTER_OPTIONS.map(({ value, label }) => (
                     <SelectItem key={value} value={value}>
                       {label}
                     </SelectItem>
-                  ),
-                )}
-              </SelectContent>
-            </Select>
+                  ))}
+                </SelectContent>
+              </Select>
 
-            <Select value={qualityFilter} onValueChange={setQualityFilter}>
-              <SelectTrigger
-                id="quality-select"
-                className="w-48"
-                aria-label="Data quality"
-              >
-                <SelectValue placeholder="Data quality: All" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Data quality: All</SelectItem>
-                <SelectSeparator />
-                <SelectItem value="excellent">Excellent</SelectItem>
-                <SelectItem value="good">Good</SelectItem>
-                <SelectItem value="fair">Fair</SelectItem>
-                <SelectItem value="critical">Critical</SelectItem>
-              </SelectContent>
-            </Select>
+              <Select value={schoolYear} onValueChange={setSchoolYear}>
+                <SelectTrigger
+                  id="school-year-select"
+                  className="w-48"
+                  aria-label="School year"
+                >
+                  <SelectValue placeholder="School year: All" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">School year: All</SelectItem>
+                  <SelectSeparator />
+                  {SCHOOL_YEAR_OPTIONS.map(({ value, label }) => (
+                    <SelectItem key={value} value={value}>
+                      {label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
-            {hasActiveFilters ? (
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={resetFilters}
+              <Select value={reportMonth} onValueChange={setReportMonth}>
+                <SelectTrigger
+                  id="month-select"
+                  className="w-48"
+                  aria-label="Month"
+                >
+                  <SelectValue placeholder="Month: All" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Month: All</SelectItem>
+                  <SelectSeparator />
+                  {REPORT_MONTH_OPTIONS.map((month) => (
+                    <SelectItem key={month} value={month}>
+                      {month.charAt(0).toUpperCase() + month.slice(1)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select
+                value={statusFilter}
+                onValueChange={(value) =>
+                  setStatusFilter(value as "all" | SchoolStatus)
+                }
               >
-                Reset
-              </Button>
-            ) : null}
+                <SelectTrigger
+                  id="status-select"
+                  className="w-48"
+                  aria-label="Status"
+                >
+                  <SelectValue placeholder="Status: All" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Status: All</SelectItem>
+                  <SelectSeparator />
+                  {STATUS_FILTERS.filter(({ value }) => value !== "all").map(
+                    ({ value, label }) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
+                    ),
+                  )}
+                </SelectContent>
+              </Select>
+
+              <Select value={qualityFilter} onValueChange={setQualityFilter}>
+                <SelectTrigger
+                  id="quality-select"
+                  className="w-48"
+                  aria-label="Data quality"
+                >
+                  <SelectValue placeholder="Data quality: All" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Data quality: All</SelectItem>
+                  <SelectSeparator />
+                  <SelectItem value="excellent">Excellent</SelectItem>
+                  <SelectItem value="good">Good</SelectItem>
+                  <SelectItem value="fair">Fair</SelectItem>
+                  <SelectItem value="critical">Critical</SelectItem>
+                </SelectContent>
+              </Select>
+
+              {hasActiveFilters ? (
+                <Button type="button" variant="ghost" onClick={resetFilters}>
+                  Reset
+                </Button>
+              ) : null}
             </div>
 
             <div className="flex flex-wrap items-center justify-end gap-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button type="button" variant="outline" aria-label="Sort">
-                  <ArrowUpDown />
-                  {sortByLabel}
-                  <ChevronDown />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-52">
-                <DropdownMenuGroup>
-                  <DropdownMenuLabel>Sort by</DropdownMenuLabel>
-                  <DropdownMenuRadioGroup
-                    value={sortBy}
-                    onValueChange={(value) =>
-                      setSortBy(value as DashboardSortBy)
-                    }
-                  >
-                    {SORT_BY_OPTIONS.map(({ value, label }) => (
-                      <DropdownMenuRadioItem key={value} value={value}>
-                        {label}
-                      </DropdownMenuRadioItem>
-                    ))}
-                  </DropdownMenuRadioGroup>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuLabel>Order</DropdownMenuLabel>
-                  <DropdownMenuRadioGroup
-                    value={sortOrder}
-                    onValueChange={(value) =>
-                      setSortOrder(value as DashboardSortOrder)
-                    }
-                  >
-                    {SORT_ORDER_OPTIONS.map(({ value, label }) => (
-                      <DropdownMenuRadioItem key={value} value={value}>
-                        {label}
-                      </DropdownMenuRadioItem>
-                    ))}
-                  </DropdownMenuRadioGroup>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button type="button" variant="outline" aria-label="Sort">
+                    <ArrowUpDown />
+                    {sortByLabel}
+                    <ChevronDown />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-52">
+                  <DropdownMenuGroup>
+                    <DropdownMenuLabel>Sort by</DropdownMenuLabel>
+                    <DropdownMenuRadioGroup
+                      value={sortBy}
+                      onValueChange={(value) =>
+                        setSortBy(value as DashboardSortBy)
+                      }
+                    >
+                      {SORT_BY_OPTIONS.map(({ value, label }) => (
+                        <DropdownMenuRadioItem key={value} value={value}>
+                          {label}
+                        </DropdownMenuRadioItem>
+                      ))}
+                    </DropdownMenuRadioGroup>
+                  </DropdownMenuGroup>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuGroup>
+                    <DropdownMenuLabel>Order</DropdownMenuLabel>
+                    <DropdownMenuRadioGroup
+                      value={sortOrder}
+                      onValueChange={(value) =>
+                        setSortOrder(value as DashboardSortOrder)
+                      }
+                    >
+                      {SORT_ORDER_OPTIONS.map(({ value, label }) => (
+                        <DropdownMenuRadioItem key={value} value={value}>
+                          {label}
+                        </DropdownMenuRadioItem>
+                      ))}
+                    </DropdownMenuRadioGroup>
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
 
-            <Button type="button" variant="outline">
-              <Download />
-              Download all
-            </Button>
+              <Button type="button" variant="outline">
+                <Download />
+                Download all issues
+              </Button>
             </div>
           </div>
 
