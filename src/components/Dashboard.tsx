@@ -118,7 +118,7 @@ export function Dashboard() {
             <div className="flex flex-col gap-4">
               <h1 className="font-bold text-3xl">Report reviews</h1>
               <p className="text-muted-foreground text-sm">
-                Review and validate monthly reports. Last updated: August 2025
+                Review and validate monthly school meals reports.
               </p>
             </div>
             <div className="flex shrink-0 items-center gap-2">
