@@ -50,9 +50,7 @@ export function ReportIssueCounts({ counts }: ReportIssueCountsProps) {
           aria-label={`${counts[severity]} ${label}`}
         >
           <AuditIssueSeverityIcon severity={severity} />
-          <span className="text-muted-foreground text-sm">
-            {counts[severity]}
-          </span>
+          <span className="text-foreground text-sm">{counts[severity]}</span>
         </span>
       ))}
     </div>
