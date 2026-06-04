@@ -44,10 +44,7 @@ export function DailyEntriesDisplay({
       aria-label={`Days entered ${entries} / ${total}`}
     >
       <span
-        className={cn(
-          "font-medium",
-          entries < total ? "text-danger-600" : "text-foreground",
-        )}
+        className={cn(entries < total ? "text-danger-600" : "text-foreground")}
       >
         {entries}
       </span>

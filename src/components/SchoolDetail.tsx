@@ -135,7 +135,7 @@ export function SchoolDetailContent({ reportId }: SchoolDetailContentProps) {
       <div className="flex flex-col gap-5 rounded-lg border bg-background p-5">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-4">
-            <h2 className="font-semibold text-lg">Data quality issues</h2>
+            <h2 className="font-semibold text-base">Data quality issues</h2>
             <ReportIssueCounts counts={issueCounts} />
           </div>
           <Button type="button" variant="outline" size="sm">

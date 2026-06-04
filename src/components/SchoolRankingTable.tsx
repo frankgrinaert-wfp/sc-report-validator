@@ -82,7 +82,7 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
 
   return (
     <>
-      <div className="overflow-hidden rounded-lg bg-background shadow-sm">
+      <div className="overflow-hidden rounded-lg bg-background shadow-none">
         <Table>
           <TableHeader>
             <TableRow>
