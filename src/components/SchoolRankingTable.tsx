@@ -12,6 +12,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { MetricProgress } from "@/components/MetricProgress";
 import {
   dailyEntriesMetricConfig,
@@ -115,15 +120,20 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="inline-flex items-center gap-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon-sm"
-                      onClick={() => handleDownload(report)}
-                      aria-label="Download issues report"
-                    >
-                      <Download />
-                    </Button>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon-sm"
+                          onClick={() => handleDownload(report)}
+                          aria-label="Download issues"
+                        >
+                          <Download />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Download issues</TooltipContent>
+                    </Tooltip>
                     <Button
                       type="button"
                       variant="outline"
