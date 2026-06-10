@@ -30,6 +30,7 @@ import {
   compareDashboardReports,
   DASHBOARD_REPORTS,
   filterDashboardReports,
+  getCurrentSchoolYearValue,
   REPORT_MONTH_OPTIONS,
   SCHOOL_FILTER_OPTIONS,
   SCHOOL_YEAR_OPTIONS,
@@ -75,7 +76,7 @@ export function Dashboard() {
   const [statusFilter, setStatusFilter] = useState<"all" | SchoolStatus>("all");
   const [sortBy, setSortBy] = useState<DashboardSortBy>("month");
   const [sortOrder, setSortOrder] = useState<DashboardSortOrder>("desc");
-  const [schoolYear, setSchoolYear] = useState("all");
+  const [schoolYear, setSchoolYear] = useState(getCurrentSchoolYearValue);
   const [reportMonth, setReportMonth] = useState("all");
 
   const filteredReports = filterDashboardReports(DASHBOARD_REPORTS, {
@@ -95,7 +96,6 @@ export function Dashboard() {
 
   const hasActiveFilters =
     schoolFilter !== "all" ||
-    schoolYear !== "all" ||
     reportMonth !== "all" ||
     regionFilter !== "all" ||
     qualityFilter !== "all" ||
@@ -103,42 +103,63 @@ export function Dashboard() {
 
   const resetFilters = () => {
     setSchoolFilter("all");
-    setSchoolYear("all");
     setReportMonth("all");
     setRegionFilter("all");
     setQualityFilter("all");
     setStatusFilter("all");
   };
 
+  const headerControls = (
+    <>
+      <Select value={country} onValueChange={setCountry}>
+        <SelectTrigger
+          id="country-select"
+          className="w-40"
+          aria-label="Country"
+        >
+          <SelectValue placeholder="Select country" />
+        </SelectTrigger>
+        <SelectContent>
+          {COUNTRIES.map(({ value, label, flag }) => (
+            <SelectItem key={value} value={value}>
+              {flag} {label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <Select value={schoolYear} onValueChange={setSchoolYear}>
+        <SelectTrigger
+          id="school-year-select"
+          className="w-32"
+          aria-label="School year"
+        >
+          <SelectValue placeholder="School year" />
+        </SelectTrigger>
+        <SelectContent>
+          {SCHOOL_YEAR_OPTIONS.map(({ value, label }) => (
+            <SelectItem key={value} value={value}>
+              {label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <SettingsSheet />
+    </>
+  );
+
   return (
     <div className="flex h-screen flex-col">
       <div className="flex-1 overflow-y-auto">
         <div className="p-8 flex flex-col gap-7">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex flex-col gap-4">
-              <h1 className="font-bold text-3xl">Report reviews</h1>
-              <p className="text-muted-foreground text-sm">
-                Review and validate monthly school meals reports.
-              </p>
-            </div>
-            <div className="flex shrink-0 items-center gap-2">
-              <Select value={country} onValueChange={setCountry}>
-                <SelectTrigger
-                  id="country-select"
-                  className="w-40"
-                  aria-label="Country"
-                >
-                  <SelectValue placeholder="Select country" />
-                </SelectTrigger>
-                <SelectContent>
-                  {COUNTRIES.map(({ value, label, flag }) => (
-                    <SelectItem key={value} value={value}>
-                      {flag} {label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <SettingsSheet />
+          <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-start">
+            <h1 className="font-bold text-3xl md:col-start-1 md:row-start-1">
+              Report reviews
+            </h1>
+            <p className="text-muted-foreground text-sm md:col-start-1 md:row-start-2">
+              Review and validate monthly school meals reports.
+            </p>
+            <div className="flex flex-wrap items-center gap-2 md:col-start-2 md:row-span-2 md:row-start-1 md:justify-end md:self-start">
+              {headerControls}
             </div>
           </div>
           <div className="flex flex-wrap items-end justify-between gap-4">
@@ -176,25 +197,6 @@ export function Dashboard() {
                   <SelectItem value="all">School: All</SelectItem>
                   <SelectSeparator />
                   {SCHOOL_FILTER_OPTIONS.map(({ value, label }) => (
-                    <SelectItem key={value} value={value}>
-                      {label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <Select value={schoolYear} onValueChange={setSchoolYear}>
-                <SelectTrigger
-                  id="school-year-select"
-                  className="w-48"
-                  aria-label="School year"
-                >
-                  <SelectValue placeholder="School year: All" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">School year: All</SelectItem>
-                  <SelectSeparator />
-                  {SCHOOL_YEAR_OPTIONS.map(({ value, label }) => (
                     <SelectItem key={value} value={value}>
                       {label}
                     </SelectItem>

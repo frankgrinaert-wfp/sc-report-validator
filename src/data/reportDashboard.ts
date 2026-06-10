@@ -110,6 +110,18 @@ export const SCHOOL_YEAR_OPTIONS = [
   { value: "2021-2022", label: "2021–2022", startYear: 2021 },
 ] as const;
 
+/** School year containing today's date, falling back to the newest listed option. */
+export function getCurrentSchoolYearValue(): string {
+  const now = new Date();
+  const startYear =
+    now.getMonth() >= 8 ? now.getFullYear() : now.getFullYear() - 1;
+  const value = `${startYear}-${startYear + 1}`;
+  return (
+    SCHOOL_YEAR_OPTIONS.find((option) => option.value === value)?.value ??
+    SCHOOL_YEAR_OPTIONS[0].value
+  );
+}
+
 export const REPORT_MONTH_OPTIONS = [
   "september",
   "october",
@@ -275,11 +287,7 @@ export function filterDashboardReports(
     ) {
       return false;
     }
-    if (
-      filters.schoolYear &&
-      filters.schoolYear !== "all" &&
-      report.schoolYear !== filters.schoolYear
-    ) {
+    if (filters.schoolYear && report.schoolYear !== filters.schoolYear) {
       return false;
     }
     if (
