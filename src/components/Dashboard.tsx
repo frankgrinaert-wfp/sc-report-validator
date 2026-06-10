@@ -1,4 +1,4 @@
-import { ArrowUpDown, ChevronDown, Download } from "lucide-react";
+import { ArrowUpDown, Calendar, ChevronDown, Download } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -162,6 +162,7 @@ export function Dashboard() {
           className="w-32"
           aria-label="School year"
         >
+          <Calendar />
           <SelectValue placeholder="School year" />
         </SelectTrigger>
         <SelectContent>
