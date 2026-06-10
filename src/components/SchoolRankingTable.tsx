@@ -86,8 +86,8 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>School</TableHead>
               <TableHead>Month</TableHead>
+              <TableHead>School</TableHead>
               <TableHead>Days entered</TableHead>
               <TableHead>Data quality</TableHead>
               <TableHead>Issues</TableHead>
@@ -100,10 +100,10 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
           <TableBody>
             {reports.map((report) => (
               <TableRow key={report.reportId}>
-                <TableCell className="font-medium whitespace-normal">
+                <TableCell>{report.periodLabel}</TableCell>
+                <TableCell className="whitespace-normal">
                   {report.schoolName}
                 </TableCell>
-                <TableCell>{report.periodLabel}</TableCell>
                 <TableCell>
                   <DailyEntriesDisplay entries={report.dailyEntries} />
                 </TableCell>

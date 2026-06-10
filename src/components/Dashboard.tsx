@@ -221,6 +221,25 @@ export function Dashboard() {
                 </SelectContent>
               </Select>
 
+              <Select value={reportMonth} onValueChange={setReportMonth}>
+                <SelectTrigger
+                  id="month-select"
+                  className="w-48"
+                  aria-label="Month"
+                >
+                  <SelectValue placeholder="Month: All" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Month: All</SelectItem>
+                  <SelectSeparator />
+                  {REPORT_MONTH_OPTIONS.map((month) => (
+                    <SelectItem key={month} value={month}>
+                      {month.charAt(0).toUpperCase() + month.slice(1)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
               <Select value={schoolFilter} onValueChange={setSchoolFilter}>
                 <SelectTrigger
                   id="school-select"
@@ -238,25 +257,6 @@ export function Dashboard() {
                   {SCHOOL_FILTER_OPTIONS.map(({ value, label }) => (
                     <SelectItem key={value} value={value}>
                       {label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <Select value={reportMonth} onValueChange={setReportMonth}>
-                <SelectTrigger
-                  id="month-select"
-                  className="w-48"
-                  aria-label="Month"
-                >
-                  <SelectValue placeholder="Month: All" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Month: All</SelectItem>
-                  <SelectSeparator />
-                  {REPORT_MONTH_OPTIONS.map((month) => (
-                    <SelectItem key={month} value={month}>
-                      {month.charAt(0).toUpperCase() + month.slice(1)}
                     </SelectItem>
                   ))}
                 </SelectContent>
