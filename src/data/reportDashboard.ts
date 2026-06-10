@@ -277,6 +277,7 @@ export function filterDashboardReports(
     monthKey?: string;
     quality?: string;
     status?: "all" | SchoolStatus;
+    issueTypes?: ReportAuditIssueSeverity[];
   },
 ): DashboardReportRow[] {
   return reports.filter((report) => {
@@ -310,6 +311,14 @@ export function filterDashboardReports(
       report.status !== filters.status
     ) {
       return false;
+    }
+    if (filters.issueTypes && filters.issueTypes.length > 0) {
+      const hasMatchingIssue = filters.issueTypes.some(
+        (severity) => report.issueCounts[severity] > 0,
+      );
+      if (!hasMatchingIssue) {
+        return false;
+      }
     }
     return true;
   });
@@ -934,6 +943,15 @@ export function getDashboardReportForSchool(
 }
 
 export type ReportAuditIssueSeverity = "critical" | "high" | "low";
+
+export const ISSUE_TYPE_FILTER_OPTIONS: {
+  value: ReportAuditIssueSeverity;
+  label: string;
+}[] = [
+  { value: "critical", label: "Critical" },
+  { value: "high", label: "Important" },
+  { value: "low", label: "Trivial" },
+];
 
 export type ReportAuditIssue = {
   date: string;

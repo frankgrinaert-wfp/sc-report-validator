@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuLabel,
@@ -22,6 +23,7 @@ import {
 import type {
   DashboardSortBy,
   DashboardSortOrder,
+  ReportAuditIssueSeverity,
   SchoolStatus,
 } from "@/data/reportDashboard";
 import { SettingsSheet } from "@/components/SettingsSheet";
@@ -31,6 +33,7 @@ import {
   DASHBOARD_REPORTS,
   filterDashboardReports,
   getCurrentSchoolYearValue,
+  ISSUE_TYPE_FILTER_OPTIONS,
   REPORT_MONTH_OPTIONS,
   SCHOOL_FILTER_OPTIONS,
   SCHOOL_YEAR_OPTIONS,
@@ -78,6 +81,9 @@ export function Dashboard() {
   const [sortOrder, setSortOrder] = useState<DashboardSortOrder>("desc");
   const [schoolYear, setSchoolYear] = useState(getCurrentSchoolYearValue);
   const [reportMonth, setReportMonth] = useState("all");
+  const [issueTypeFilter, setIssueTypeFilter] = useState<
+    ReportAuditIssueSeverity[]
+  >([]);
 
   const filteredReports = filterDashboardReports(DASHBOARD_REPORTS, {
     schoolId: schoolFilter,
@@ -85,6 +91,7 @@ export function Dashboard() {
     monthKey: reportMonth,
     quality: qualityFilter,
     status: statusFilter,
+    issueTypes: issueTypeFilter,
   });
 
   const sortedReports = [...filteredReports].sort((a, b) =>
@@ -94,12 +101,33 @@ export function Dashboard() {
   const sortByLabel =
     SORT_BY_OPTIONS.find((option) => option.value === sortBy)?.label ?? "Sort";
 
+  const issueTypeFilterLabel =
+    issueTypeFilter.length === 0
+      ? "Issue types: All"
+      : `Issue types: ${issueTypeFilter
+          .map(
+            (severity) =>
+              ISSUE_TYPE_FILTER_OPTIONS.find(
+                (option) => option.value === severity,
+              )?.label,
+          )
+          .join(", ")}`;
+
+  const toggleIssueType = (severity: ReportAuditIssueSeverity) => {
+    setIssueTypeFilter((current) =>
+      current.includes(severity)
+        ? current.filter((value) => value !== severity)
+        : [...current, severity],
+    );
+  };
+
   const hasActiveFilters =
     schoolFilter !== "all" ||
     reportMonth !== "all" ||
     regionFilter !== "all" ||
     qualityFilter !== "all" ||
-    statusFilter !== "all";
+    statusFilter !== "all" ||
+    issueTypeFilter.length > 0;
 
   const resetFilters = () => {
     setSchoolFilter("all");
@@ -107,6 +135,7 @@ export function Dashboard() {
     setRegionFilter("all");
     setQualityFilter("all");
     setStatusFilter("all");
+    setIssueTypeFilter([]);
   };
 
   const headerControls = (
@@ -240,6 +269,32 @@ export function Dashboard() {
                   <SelectItem value="critical">Critical</SelectItem>
                 </SelectContent>
               </Select>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="h-9 w-48 justify-between px-3 font-normal border-neutral-alpha-500 text-foreground"
+                    aria-label="Issue types"
+                  >
+                    <span className="truncate">{issueTypeFilterLabel}</span>
+                    <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-48">
+                  {ISSUE_TYPE_FILTER_OPTIONS.map(({ value, label }) => (
+                    <DropdownMenuCheckboxItem
+                      key={value}
+                      checked={issueTypeFilter.includes(value)}
+                      onCheckedChange={() => toggleIssueType(value)}
+                      onSelect={(event) => event.preventDefault()}
+                    >
+                      {label}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
 
               <Select
                 value={statusFilter}
