@@ -159,7 +159,7 @@ export function Dashboard() {
       <Select value={schoolYear} onValueChange={setSchoolYear}>
         <SelectTrigger
           id="school-year-select"
-          className="w-32"
+          className="w-40"
           aria-label="School year"
         >
           <Calendar />
