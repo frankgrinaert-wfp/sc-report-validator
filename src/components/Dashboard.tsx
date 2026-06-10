@@ -223,6 +223,24 @@ export function Dashboard() {
                 </SelectContent>
               </Select>
 
+              <Select value={qualityFilter} onValueChange={setQualityFilter}>
+                <SelectTrigger
+                  id="quality-select"
+                  className="w-48"
+                  aria-label="Data quality"
+                >
+                  <SelectValue placeholder="Data quality: All" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Data quality: All</SelectItem>
+                  <SelectSeparator />
+                  <SelectItem value="excellent">Excellent</SelectItem>
+                  <SelectItem value="good">Good</SelectItem>
+                  <SelectItem value="fair">Fair</SelectItem>
+                  <SelectItem value="critical">Critical</SelectItem>
+                </SelectContent>
+              </Select>
+
               <Select
                 value={statusFilter}
                 onValueChange={(value) =>
@@ -246,24 +264,6 @@ export function Dashboard() {
                       </SelectItem>
                     ),
                   )}
-                </SelectContent>
-              </Select>
-
-              <Select value={qualityFilter} onValueChange={setQualityFilter}>
-                <SelectTrigger
-                  id="quality-select"
-                  className="w-48"
-                  aria-label="Data quality"
-                >
-                  <SelectValue placeholder="Data quality: All" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Data quality: All</SelectItem>
-                  <SelectSeparator />
-                  <SelectItem value="excellent">Excellent</SelectItem>
-                  <SelectItem value="good">Good</SelectItem>
-                  <SelectItem value="fair">Fair</SelectItem>
-                  <SelectItem value="critical">Critical</SelectItem>
                 </SelectContent>
               </Select>
 

@@ -88,10 +88,10 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
             <TableRow>
               <TableHead>School</TableHead>
               <TableHead>Month</TableHead>
-              <TableHead>Status</TableHead>
               <TableHead>Days entered</TableHead>
               <TableHead>Data quality</TableHead>
               <TableHead>Issues</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead>
                 <span className="sr-only">Actions</span>
               </TableHead>
@@ -105,11 +105,6 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
                 </TableCell>
                 <TableCell>{report.periodLabel}</TableCell>
                 <TableCell>
-                  <Badge variant={statusBadgeVariant(report.status)}>
-                    {report.status}
-                  </Badge>
-                </TableCell>
-                <TableCell>
                   <DailyEntriesDisplay entries={report.dailyEntries} />
                 </TableCell>
                 <TableCell>
@@ -117,6 +112,11 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
                 </TableCell>
                 <TableCell>
                   <ReportIssueCounts counts={report.issueCounts} />
+                </TableCell>
+                <TableCell>
+                  <Badge variant={statusBadgeVariant(report.status)}>
+                    {report.status}
+                  </Badge>
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="inline-flex items-center gap-2">
