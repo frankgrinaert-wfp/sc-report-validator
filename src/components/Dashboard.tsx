@@ -29,6 +29,10 @@ import type {
 import { SettingsSheet } from "@/components/SettingsSheet";
 import { SchoolRankingTable } from "@/components/SchoolRankingTable";
 import {
+  InputGroup,
+  InputGroupAddon,
+} from "@/components/ui/input-group";
+import {
   compareDashboardReports,
   DASHBOARD_REPORTS,
   filterDashboardReports,
@@ -157,14 +161,19 @@ export function Dashboard() {
         </SelectContent>
       </Select>
       <Select value={schoolYear} onValueChange={setSchoolYear}>
-        <SelectTrigger
-          id="school-year-select"
-          className="w-40"
-          aria-label="School year"
-        >
-          <Calendar />
-          <SelectValue placeholder="School year" />
-        </SelectTrigger>
+        <InputGroup className="w-40">
+          <SelectTrigger
+            id="school-year-select"
+            data-slot="input-group-control"
+            className="w-full min-w-0 flex-1 rounded-none border-0 bg-transparent shadow-none focus-visible:border-transparent focus-visible:ring-0"
+            aria-label="School year"
+          >
+            <SelectValue placeholder="School year" />
+          </SelectTrigger>
+          <InputGroupAddon align="inline-start">
+            <Calendar />
+          </InputGroupAddon>
+        </InputGroup>
         <SelectContent>
           {SCHOOL_YEAR_OPTIONS.map(({ value, label }) => (
             <SelectItem key={value} value={value}>
