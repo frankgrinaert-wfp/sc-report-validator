@@ -46,22 +46,15 @@ import {
   dailyEntriesMetricConfig,
   dataQualityMetricConfig,
   formatAuditIssueDate,
+  formatAuditIssuesForClipboard,
   REPORT_DAILY_ENTRIES_TOTAL,
   getDashboardReport,
   getSchoolDetail,
-  ISSUE_TYPE_FILTER_OPTIONS,
   selectAuditIssuesForCounts,
   type ReportAuditIssueSeverity,
   type ReportAuditIssue,
   type SchoolStatus,
 } from "@/data/reportDashboard";
-
-function auditIssueSeverityLabel(severity: ReportAuditIssueSeverity) {
-  return (
-    ISSUE_TYPE_FILTER_OPTIONS.find((option) => option.value === severity)
-      ?.label ?? severity
-  );
-}
 
 function auditIssueKey(issue: ReportAuditIssue) {
   return `${issue.date}:${issue.title}`;
@@ -151,12 +144,7 @@ export function SchoolDetailContent({ reportId }: SchoolDetailContentProps) {
     const flaggedIssues = auditIssues.filter(
       (issue) => !unflaggedIssues.has(auditIssueKey(issue)),
     );
-    const text = flaggedIssues
-      .map(
-        (issue) =>
-          `${auditIssueSeverityLabel(issue.severity)}: ${issue.title} (${formatAuditIssueDate(issue.date)})`,
-      )
-      .join("\n");
+    const text = formatAuditIssuesForClipboard(flaggedIssues);
 
     await navigator.clipboard.writeText(text);
   };

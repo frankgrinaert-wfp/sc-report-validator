@@ -1,9 +1,15 @@
-import { Download } from "lucide-react";
+import { Copy, Download, Ellipsis, ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { ReportIssueCounts } from "@/components/ReportIssueCounts";
 import { SchoolDetailSheet } from "@/components/SchoolDetail";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -23,6 +29,8 @@ import {
 } from "@/components/MetricProgress";
 import {
   dataQualityMetricConfig,
+  formatAuditIssuesForClipboard,
+  selectAuditIssuesForCounts,
   type DashboardReportRow,
   type SchoolStatus,
 } from "@/data/reportDashboard";
@@ -84,6 +92,11 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
     URL.revokeObjectURL(url);
   };
 
+  const handleCopyIssues = async (report: DashboardReportRow) => {
+    const issues = selectAuditIssuesForCounts(report.issueCounts);
+    await navigator.clipboard.writeText(formatAuditIssuesForClipboard(issues));
+  };
+
   return (
     <>
       <div className="overflow-hidden rounded-lg bg-background shadow-sm">
@@ -141,20 +154,41 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
                     >
                       View details
                     </Button>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon-sm"
+                    <DropdownMenu>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="icon-sm"
+                              aria-label="More options"
+                            >
+                              <Ellipsis />
+                            </Button>
+                          </DropdownMenuTrigger>
+                        </TooltipTrigger>
+                        <TooltipContent>More options</TooltipContent>
+                      </Tooltip>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem
+                          onClick={() => handleCopyIssues(report)}
+                        >
+                          <Copy />
+                          Copy issues
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
                           onClick={() => handleDownload(report)}
-                          aria-label="Download issues"
                         >
                           <Download />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>Download issues</TooltipContent>
-                    </Tooltip>
+                          Download issues
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <ExternalLink />
+                          View report
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </TableCell>
               </TableRow>

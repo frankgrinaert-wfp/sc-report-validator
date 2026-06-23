@@ -1136,6 +1136,20 @@ export function selectAuditIssuesForCounts(
   return selected.sort((a, b) => b.date.localeCompare(a.date));
 }
 
+export function formatAuditIssuesForClipboard(
+  issues: ReportAuditIssue[],
+): string {
+  return issues
+    .map((issue) => {
+      const label =
+        ISSUE_TYPE_FILTER_OPTIONS.find(
+          (option) => option.value === issue.severity,
+        )?.label ?? issue.severity;
+      return `${label}: ${issue.title} (${formatAuditIssueDate(issue.date)})`;
+    })
+    .join("\n");
+}
+
 /** e.g. `"2024-04-12"` → `"12 Apr 2024"` */
 export function formatAuditIssueDate(isoDate: string): string {
   return new Intl.DateTimeFormat("en-GB", {
