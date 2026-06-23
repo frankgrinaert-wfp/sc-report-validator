@@ -11,23 +11,14 @@ import {
   OctagonX,
   TriangleAlert,
 } from "lucide-react";
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ReportIssueCounts } from "@/components/ReportIssueCounts";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ToneProgress } from "@/components/MetricProgress";
 import { cn } from "@/lib/utils";
-import {
-  Item,
-  ItemActions,
-  ItemContent,
-  ItemDescription,
-  ItemGroup,
-  ItemMedia,
-  ItemSeparator,
-  ItemTitle,
-} from "@/components/ui/item";
 import {
   Sheet,
   SheetContent,
@@ -68,28 +59,33 @@ function statusBadgeVariant(status: SchoolStatus) {
   }
 }
 
-function AuditIssueSeverityIcon({
-  severity,
-  muted = false,
-}: {
-  severity: ReportAuditIssueSeverity;
-  muted?: boolean;
-}) {
-  const colorClass = muted
-    ? "text-neutral-alpha-500"
-    : severity === "critical"
-      ? "text-danger-500"
-      : severity === "high"
-        ? "text-warning-500"
-        : "text-info-500";
-
+function issueAlertVariant(
+  severity: ReportAuditIssueSeverity,
+  isUnflagged: boolean,
+) {
+  if (isUnflagged) return "default" as const;
   switch (severity) {
     case "critical":
-      return <OctagonX className={cn("size-4", colorClass)} />;
+      return "destructive" as const;
     case "high":
-      return <TriangleAlert className={cn("size-4", colorClass)} />;
+      return "warning" as const;
     case "low":
-      return <Info className={cn("size-4", colorClass)} />;
+      return "info" as const;
+  }
+}
+
+function AuditIssueSeverityIcon({
+  severity,
+}: {
+  severity: ReportAuditIssueSeverity;
+}) {
+  switch (severity) {
+    case "critical":
+      return <OctagonX />;
+    case "high":
+      return <TriangleAlert />;
+    case "low":
+      return <Info />;
   }
 }
 
@@ -133,7 +129,7 @@ export function SchoolDetailContent({ reportId }: SchoolDetailContentProps) {
   const qualityMetric = dataQualityMetricConfig(qualityScore);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-8">
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="shadow-none">
           <CardHeader>
@@ -172,51 +168,48 @@ export function SchoolDetailContent({ reportId }: SchoolDetailContentProps) {
         </Card>
       </div>
 
-      <div className="flex flex-col gap-5 rounded-lg border bg-background p-5">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex flex-wrap items-center gap-4">
-            <h2 className="font-semibold text-base">Data quality issues</h2>
-            <ReportIssueCounts counts={issueCounts} />
-          </div>
-          <Button type="button" variant="outline" size="sm">
-            <Download />
-            Download issues
-          </Button>
+      <div className="flex flex-col gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-wrap items-center gap-4">
+          <h2 className="font-semibold text-base">Data quality issues</h2>
+          <ReportIssueCounts counts={issueCounts} />
         </div>
+        <Button type="button" variant="outline" size="sm">
+          <Download />
+          Download issues
+        </Button>
+      </div>
 
-        <ItemGroup>
-          {auditIssues.map((issue, index) => {
+      <div className="flex flex-col gap-3">
+          {auditIssues.map((issue) => {
             const key = auditIssueKey(issue);
             const isUnflagged = unflaggedIssues.has(key);
 
             return (
-            <Fragment key={key}>
-              {index > 0 ? <ItemSeparator /> : null}
-              <Item role="listitem" aria-disabled={isUnflagged}>
-                <ItemMedia>
-                  <AuditIssueSeverityIcon
-                    severity={issue.severity}
-                    muted={isUnflagged}
-                  />
-                </ItemMedia>
-                <ItemContent>
-                  <ItemTitle
+              <div key={key} className="relative">
+                <Alert
+                  variant={issueAlertVariant(issue.severity, isUnflagged)}
+                  className={cn(
+                    "pr-20",
+                    isUnflagged &&
+                      "[&>svg]:text-neutral-500 [&_[data-slot=alert-title]]:text-neutral-500 [&_[data-slot=alert-description]]:text-neutral-500",
+                  )}
+                  aria-disabled={isUnflagged}
+                >
+                  <AuditIssueSeverityIcon severity={issue.severity} />
+                  <AlertTitle
                     className={cn(
-                      isUnflagged && "text-neutral-alpha-500 line-through",
+                      "line-clamp-none whitespace-normal font-medium",
+                      isUnflagged && "line-through",
                     )}
                   >
                     {issue.title}
-                  </ItemTitle>
-                  <ItemDescription
-                    className={cn(
-                      "tabular-nums",
-                      isUnflagged && "text-neutral-alpha-500",
-                    )}
-                  >
+                  </AlertTitle>
+                  <AlertDescription className="tabular-nums">
                     {formatAuditIssueDate(issue.date)}
-                  </ItemDescription>
-                </ItemContent>
-                <ItemActions>
+                  </AlertDescription>
+                </Alert>
+                <div className="absolute top-3 right-3 flex items-center gap-1">
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
@@ -239,7 +232,6 @@ export function SchoolDetailContent({ reportId }: SchoolDetailContentProps) {
                         type="button"
                         variant="ghost"
                         size="icon-sm"
-                        disabled={isUnflagged}
                         aria-label="View in report"
                       >
                         <ExternalLink />
@@ -247,12 +239,11 @@ export function SchoolDetailContent({ reportId }: SchoolDetailContentProps) {
                     </TooltipTrigger>
                     <TooltipContent>View in report</TooltipContent>
                   </Tooltip>
-                </ItemActions>
-              </Item>
-            </Fragment>
+                </div>
+              </div>
             );
           })}
-        </ItemGroup>
+      </div>
       </div>
     </div>
   );
@@ -279,9 +270,9 @@ export function SchoolDetailSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="flex h-full w-full flex-col gap-0 p-0 sm:max-w-4xl bg-muted"
+        className="flex h-full w-full flex-col gap-0 p-0 sm:max-w-4xl bg-background"
       >
-        <SheetHeader className="shrink-0 gap-0 bg-background border-b px-6 py-5">
+        <SheetHeader className="shrink-0 gap-0 bg-background px-6 py-5">
           <div className="flex items-center gap-4 pr-8">
             <SheetTitle className="text-left text-xl">{title}</SheetTitle>
             {status ? (
