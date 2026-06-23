@@ -23,6 +23,7 @@ import {
 import type {
   DashboardSortBy,
   DashboardSortOrder,
+  ProgrammeManager,
   ReportAuditIssueSeverity,
   SchoolStatus,
 } from "@/data/reportDashboard";
@@ -39,6 +40,7 @@ import {
   filterDashboardReports,
   getCurrentSchoolYearValue,
   ISSUE_TYPE_FILTER_OPTIONS,
+  PROGRAMME_MANAGER_FILTER_OPTIONS,
   REPORT_MONTH_OPTIONS,
   SCHOOL_FILTER_OPTIONS,
   SCHOOL_YEAR_OPTIONS,
@@ -97,6 +99,9 @@ export function Dashboard() {
   const [issueTypeFilter, setIssueTypeFilter] = useState<
     ReportAuditIssueSeverity | undefined
   >();
+  const [programmeManagerFilter, setProgrammeManagerFilter] = useState<
+    ProgrammeManager | undefined
+  >();
 
   const filteredReports = filterDashboardReports(DASHBOARD_REPORTS, {
     schoolId: schoolFilter,
@@ -106,6 +111,7 @@ export function Dashboard() {
     status: statusFilter,
     issueType: issueTypeFilter,
     adminRegionPath: regionFilter,
+    programmeManager: programmeManagerFilter,
   });
 
   const sortedReports = [...filteredReports].sort((a, b) =>
@@ -121,7 +127,8 @@ export function Dashboard() {
     regionFilter.length > 0 ||
     qualityFilter != null ||
     statusFilter != null ||
-    issueTypeFilter != null;
+    issueTypeFilter != null ||
+    programmeManagerFilter != null;
 
   const resetFilters = () => {
     setSchoolFilter(undefined);
@@ -130,6 +137,7 @@ export function Dashboard() {
     setQualityFilter(undefined);
     setStatusFilter(undefined);
     setIssueTypeFilter(undefined);
+    setProgrammeManagerFilter(undefined);
   };
 
   const headerControls = (
@@ -218,6 +226,16 @@ export function Dashboard() {
                 onValueChange={setSchoolFilter}
                 options={SCHOOL_FILTER_OPTIONS}
                 contentClassName="min-w-48 w-max max-w-80"
+              />
+
+              <FilterSelect
+                id="programme-manager-select"
+                label="Programme manager"
+                value={programmeManagerFilter}
+                onValueChange={(value) =>
+                  setProgrammeManagerFilter(value as ProgrammeManager | undefined)
+                }
+                options={PROGRAMME_MANAGER_FILTER_OPTIONS}
               />
 
               <FilterSelect

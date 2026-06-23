@@ -235,8 +235,41 @@ export type DashboardReportRow = {
   status: SchoolStatus;
   dailyEntries: number;
   issueCounts: ReportIssueCounts;
-  programmeManager: string;
+  programmeManager: ProgrammeManager;
 };
+
+export const PROGRAMME_MANAGERS = [
+  "PM-GMB-001",
+  "PM-GMB-002",
+  "PM-GMB-003",
+] as const;
+
+export type ProgrammeManager = (typeof PROGRAMME_MANAGERS)[number];
+
+export const PROGRAMME_MANAGER_FILTER_OPTIONS: {
+  value: ProgrammeManager;
+  label: string;
+}[] = PROGRAMME_MANAGERS.map((value) => ({ value, label: value }));
+
+const SCHOOL_PROGRAMME_MANAGERS: Record<number, ProgrammeManager> = {
+  1: "PM-GMB-001",
+  2: "PM-GMB-002",
+  3: "PM-GMB-003",
+  4: "PM-GMB-001",
+  5: "PM-GMB-002",
+};
+
+function assignProgrammeManager(
+  schoolId: number,
+  rand: () => number,
+): ProgrammeManager {
+  const primary = SCHOOL_PROGRAMME_MANAGERS[schoolId] ?? "PM-GMB-001";
+  if (rand() < 0.7) return primary;
+  const alternatives = PROGRAMME_MANAGERS.filter(
+    (manager) => manager !== primary,
+  );
+  return alternatives[Math.floor(rand() * alternatives.length)]!;
+}
 
 const REPORT_MONTH_SORT_INDEX = Object.fromEntries(
   REPORT_MONTH_OPTIONS.map((month, index) => [month, index]),
@@ -304,6 +337,7 @@ export function filterDashboardReports(
     status?: "all" | SchoolStatus;
     issueType?: ReportAuditIssueSeverity;
     adminRegionPath?: string[];
+    programmeManager?: ProgrammeManager;
   },
 ): DashboardReportRow[] {
   return reports.filter((report) => {
@@ -348,6 +382,12 @@ export function filterDashboardReports(
       filters.adminRegionPath &&
       filters.adminRegionPath.length > 0 &&
       !adminRegionPathsMatch(report.adminRegion, filters.adminRegionPath)
+    ) {
+      return false;
+    }
+    if (
+      filters.programmeManager &&
+      report.programmeManager !== filters.programmeManager
     ) {
       return false;
     }
@@ -945,7 +985,7 @@ function generateMockReports(count: number): DashboardReportRow[] {
       status: statusForReportScore(score, rand()),
       dailyEntries,
       issueCounts: generateReportIssueCounts(score, rand),
-      programmeManager: "PM-GMB-001",
+      programmeManager: assignProgrammeManager(school.id, rand),
     });
   }
 
