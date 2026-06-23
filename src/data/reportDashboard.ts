@@ -939,6 +939,14 @@ function generateReportIssueCounts(
   };
 }
 
+function generateReportScore(baseScore: number, rand: () => number): number {
+  if (rand() < 0.15) {
+    return 55 + Math.floor(rand() * 15);
+  }
+  const varied = baseScore + Math.floor(rand() * 13) - 6;
+  return Math.max(55, Math.min(100, varied));
+}
+
 function generateMockReports(count: number): DashboardReportRow[] {
   const schools = Object.values(SCHOOL_DETAIL_BY_ID);
   const periods = SCHOOL_YEAR_OPTIONS.flatMap(({ value: schoolYear }) =>
@@ -959,10 +967,7 @@ function generateMockReports(count: number): DashboardReportRow[] {
     }
     usedSlots.add(slotKey);
 
-    const score = Math.max(
-      60,
-      Math.min(100, school.score + Math.floor(rand() * 9) - 4),
-    );
+    const score = generateReportScore(school.score, rand);
     const entriesBase = MOCK_DAILY_ENTRIES_BY_ID[school.id] ?? 17;
     const dailyEntries = Math.max(
       8,
