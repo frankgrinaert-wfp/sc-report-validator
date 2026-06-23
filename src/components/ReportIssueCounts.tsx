@@ -54,7 +54,7 @@ export function ReportIssueCounts({ counts }: ReportIssueCountsProps) {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <div className="flex flex-wrap items-center gap-1">
       {visible.map(({ severity, label }) => (
         <Badge
           key={severity}
