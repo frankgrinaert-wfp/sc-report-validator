@@ -1,10 +1,10 @@
 import { ArrowUpDown, Calendar, ChevronDown, Download } from "lucide-react";
 import { useState } from "react";
+import { FilterSelect } from "@/components/FilterSelect";
 import { Button } from "@/components/ui/button";
 import { Cascader } from "@/components/ui/cascader";
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuLabel,
@@ -17,7 +17,6 @@ import {
   Select,
   SelectContent,
   SelectItem,
-  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -67,29 +66,37 @@ const COUNTRIES = [
   { value: "senegal", label: "Senegal", flag: "🇸🇳" },
 ] as const;
 
-const STATUS_FILTERS: { value: "all" | SchoolStatus; label: string }[] = [
-  { value: "all", label: "Status: All" },
+const MONTH_FILTER_OPTIONS = REPORT_MONTH_OPTIONS.map((month) => ({
+  value: month,
+  label: month.charAt(0).toUpperCase() + month.slice(1),
+}));
+
+const QUALITY_FILTER_OPTIONS = [
+  { value: "excellent", label: "Excellent" },
+  { value: "good", label: "Good" },
+  { value: "fair", label: "Fair" },
+  { value: "critical", label: "Critical" },
+];
+
+const STATUS_FILTER_OPTIONS: { value: SchoolStatus; label: string }[] = [
   { value: "Submitted", label: "Submitted" },
-  {
-    value: "Awaiting corrections",
-    label: "Awaiting corrections",
-  },
+  { value: "Awaiting corrections", label: "Awaiting corrections" },
   { value: "Approved", label: "Approved" },
 ];
 
 export function Dashboard() {
   const [country, setCountry] = useState("gambia");
-  const [schoolFilter, setSchoolFilter] = useState("all");
+  const [schoolFilter, setSchoolFilter] = useState<string | undefined>();
   const [regionFilter, setRegionFilter] = useState<string[]>([]);
-  const [qualityFilter, setQualityFilter] = useState("all");
-  const [statusFilter, setStatusFilter] = useState<"all" | SchoolStatus>("all");
+  const [qualityFilter, setQualityFilter] = useState<string | undefined>();
+  const [statusFilter, setStatusFilter] = useState<SchoolStatus | undefined>();
   const [sortBy, setSortBy] = useState<DashboardSortBy>("month");
   const [sortOrder, setSortOrder] = useState<DashboardSortOrder>("desc");
   const [schoolYear, setSchoolYear] = useState(getCurrentSchoolYearValue);
-  const [reportMonth, setReportMonth] = useState("all");
+  const [reportMonth, setReportMonth] = useState<string | undefined>();
   const [issueTypeFilter, setIssueTypeFilter] = useState<
-    ReportAuditIssueSeverity[]
-  >([]);
+    ReportAuditIssueSeverity | undefined
+  >();
 
   const filteredReports = filterDashboardReports(DASHBOARD_REPORTS, {
     schoolId: schoolFilter,
@@ -97,7 +104,7 @@ export function Dashboard() {
     monthKey: reportMonth,
     quality: qualityFilter,
     status: statusFilter,
-    issueTypes: issueTypeFilter,
+    issueType: issueTypeFilter,
     adminRegionPath: regionFilter,
   });
 
@@ -108,41 +115,21 @@ export function Dashboard() {
   const sortByLabel =
     SORT_BY_OPTIONS.find((option) => option.value === sortBy)?.label ?? "Sort";
 
-  const issueTypeFilterLabel =
-    issueTypeFilter.length === 0
-      ? "Issue types: All"
-      : `Issue types: ${issueTypeFilter
-          .map(
-            (severity) =>
-              ISSUE_TYPE_FILTER_OPTIONS.find(
-                (option) => option.value === severity,
-              )?.label,
-          )
-          .join(", ")}`;
-
-  const toggleIssueType = (severity: ReportAuditIssueSeverity) => {
-    setIssueTypeFilter((current) =>
-      current.includes(severity)
-        ? current.filter((value) => value !== severity)
-        : [...current, severity],
-    );
-  };
-
   const hasActiveFilters =
-    schoolFilter !== "all" ||
-    reportMonth !== "all" ||
+    schoolFilter != null ||
+    reportMonth != null ||
     regionFilter.length > 0 ||
-    qualityFilter !== "all" ||
-    statusFilter !== "all" ||
-    issueTypeFilter.length > 0;
+    qualityFilter != null ||
+    statusFilter != null ||
+    issueTypeFilter != null;
 
   const resetFilters = () => {
-    setSchoolFilter("all");
-    setReportMonth("all");
+    setSchoolFilter(undefined);
+    setReportMonth(undefined);
     setRegionFilter([]);
-    setQualityFilter("all");
-    setStatusFilter("all");
-    setIssueTypeFilter([]);
+    setQualityFilter(undefined);
+    setStatusFilter(undefined);
+    setIssueTypeFilter(undefined);
   };
 
   const headerControls = (
@@ -210,122 +197,56 @@ export function Dashboard() {
                 options={GAMBIA_ADMIN_REGION_OPTIONS}
                 value={regionFilter}
                 onChange={(value) => setRegionFilter(value)}
-                placeholder="Admin region: All"
+                placeholder="Admin region"
                 allowClear
                 changeOnSelect
                 className="h-9 w-48 px-3"
               />
 
-              <Select value={reportMonth} onValueChange={setReportMonth}>
-                <SelectTrigger
-                  id="month-select"
-                  className="w-48"
-                  aria-label="Month"
-                >
-                  <SelectValue placeholder="Month: All" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Month: All</SelectItem>
-                  <SelectSeparator />
-                  {REPORT_MONTH_OPTIONS.map((month) => (
-                    <SelectItem key={month} value={month}>
-                      {month.charAt(0).toUpperCase() + month.slice(1)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <FilterSelect
+                id="month-select"
+                label="Month"
+                value={reportMonth}
+                onValueChange={setReportMonth}
+                options={MONTH_FILTER_OPTIONS}
+              />
 
-              <Select value={schoolFilter} onValueChange={setSchoolFilter}>
-                <SelectTrigger
-                  id="school-select"
-                  className="w-48 [&_[data-slot=select-value]]:min-w-0 [&_[data-slot=select-value]]:flex-1 [&_[data-slot=select-value]]:truncate"
-                  aria-label="School"
-                >
-                  <SelectValue placeholder="School: All" />
-                </SelectTrigger>
-                <SelectContent
-                  align="start"
-                  className="min-w-48 w-max max-w-80"
-                >
-                  <SelectItem value="all">School: All</SelectItem>
-                  <SelectSeparator />
-                  {SCHOOL_FILTER_OPTIONS.map(({ value, label }) => (
-                    <SelectItem key={value} value={value}>
-                      {label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <FilterSelect
+                id="school-select"
+                label="School"
+                value={schoolFilter}
+                onValueChange={setSchoolFilter}
+                options={SCHOOL_FILTER_OPTIONS}
+                contentClassName="min-w-48 w-max max-w-80"
+              />
 
-              <Select value={qualityFilter} onValueChange={setQualityFilter}>
-                <SelectTrigger
-                  id="quality-select"
-                  className="w-48"
-                  aria-label="Data quality"
-                >
-                  <SelectValue placeholder="Data quality: All" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Data quality: All</SelectItem>
-                  <SelectSeparator />
-                  <SelectItem value="excellent">Excellent</SelectItem>
-                  <SelectItem value="good">Good</SelectItem>
-                  <SelectItem value="fair">Fair</SelectItem>
-                  <SelectItem value="critical">Critical</SelectItem>
-                </SelectContent>
-              </Select>
+              <FilterSelect
+                id="quality-select"
+                label="Data quality"
+                value={qualityFilter}
+                onValueChange={setQualityFilter}
+                options={QUALITY_FILTER_OPTIONS}
+              />
 
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="h-9 w-48 justify-between px-3 font-normal border-neutral-alpha-500 text-foreground"
-                    aria-label="Issue types"
-                  >
-                    <span className="truncate">{issueTypeFilterLabel}</span>
-                    <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-48">
-                  {ISSUE_TYPE_FILTER_OPTIONS.map(({ value, label }) => (
-                    <DropdownMenuCheckboxItem
-                      key={value}
-                      checked={issueTypeFilter.includes(value)}
-                      onCheckedChange={() => toggleIssueType(value)}
-                      onSelect={(event) => event.preventDefault()}
-                    >
-                      {label}
-                    </DropdownMenuCheckboxItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <FilterSelect
+                id="issue-type-select"
+                label="Issue type"
+                value={issueTypeFilter}
+                onValueChange={(value) =>
+                  setIssueTypeFilter(value as ReportAuditIssueSeverity | undefined)
+                }
+                options={ISSUE_TYPE_FILTER_OPTIONS}
+              />
 
-              <Select
+              <FilterSelect
+                id="status-select"
+                label="Status"
                 value={statusFilter}
                 onValueChange={(value) =>
-                  setStatusFilter(value as "all" | SchoolStatus)
+                  setStatusFilter(value as SchoolStatus | undefined)
                 }
-              >
-                <SelectTrigger
-                  id="status-select"
-                  className="w-48"
-                  aria-label="Status"
-                >
-                  <SelectValue placeholder="Status: All" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Status: All</SelectItem>
-                  <SelectSeparator />
-                  {STATUS_FILTERS.filter(({ value }) => value !== "all").map(
-                    ({ value, label }) => (
-                      <SelectItem key={value} value={value}>
-                        {label}
-                      </SelectItem>
-                    ),
-                  )}
-                </SelectContent>
-              </Select>
+                options={STATUS_FILTER_OPTIONS}
+              />
 
               {hasActiveFilters ? (
                 <Button type="button" variant="ghost" onClick={resetFilters}>

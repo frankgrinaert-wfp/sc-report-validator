@@ -302,7 +302,7 @@ export function filterDashboardReports(
     monthKey?: string;
     quality?: string;
     status?: "all" | SchoolStatus;
-    issueTypes?: ReportAuditIssueSeverity[];
+    issueType?: ReportAuditIssueSeverity;
     adminRegionPath?: string[];
   },
 ): DashboardReportRow[] {
@@ -338,13 +338,11 @@ export function filterDashboardReports(
     ) {
       return false;
     }
-    if (filters.issueTypes && filters.issueTypes.length > 0) {
-      const hasMatchingIssue = filters.issueTypes.some(
-        (severity) => report.issueCounts[severity] > 0,
-      );
-      if (!hasMatchingIssue) {
-        return false;
-      }
+    if (
+      filters.issueType &&
+      report.issueCounts[filters.issueType] === 0
+    ) {
+      return false;
     }
     if (
       filters.adminRegionPath &&
