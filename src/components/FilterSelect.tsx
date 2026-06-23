@@ -50,7 +50,7 @@ export function FilterSelect({
         id={id}
         placeholder={label}
         showClear
-        className={cn("w-48", className)}
+        className={cn("w-44", className)}
         aria-label={label}
       />
       <ComboboxContent className={contentClassName}>

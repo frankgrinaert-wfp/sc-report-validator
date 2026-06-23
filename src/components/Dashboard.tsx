@@ -213,7 +213,7 @@ export function Dashboard() {
                 placeholder="Admin region"
                 allowClear
                 changeOnSelect
-                className="h-9 w-48 px-3"
+                className="h-9 w-44 px-3"
               />
 
               <FilterSelect
@@ -230,7 +230,7 @@ export function Dashboard() {
                 value={schoolFilter}
                 onValueChange={setSchoolFilter}
                 options={SCHOOL_FILTER_OPTIONS}
-                contentClassName="min-w-48 w-max max-w-80"
+                contentClassName="min-w-44 w-max max-w-80"
               />
 
               <FilterSelect
