@@ -82,12 +82,13 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
 
   return (
     <>
-      <div className="overflow-hidden rounded-lg bg-background shadow-none">
+      <div className="overflow-hidden rounded-lg bg-background shadow-sm">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Month</TableHead>
               <TableHead>School</TableHead>
+              <TableHead>Programme manager</TableHead>
               <TableHead>Days entered</TableHead>
               <TableHead>Data quality</TableHead>
               <TableHead>Issues</TableHead>
@@ -104,6 +105,7 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
                 <TableCell className="whitespace-normal">
                   {report.schoolName}
                 </TableCell>
+                <TableCell>{report.programmeManager}</TableCell>
                 <TableCell>
                   <DailyEntriesDisplay entries={report.dailyEntries} />
                 </TableCell>
