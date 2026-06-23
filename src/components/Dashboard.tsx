@@ -222,6 +222,7 @@ export function Dashboard() {
                 value={reportMonth}
                 onValueChange={setReportMonth}
                 options={MONTH_FILTER_OPTIONS}
+                contentClassName="min-w-44 w-max max-w-80"
               />
 
               <FilterSelect
@@ -241,6 +242,7 @@ export function Dashboard() {
                   setProgrammeManagerFilter(value as ProgrammeManager | undefined)
                 }
                 options={PROGRAMME_MANAGER_FILTER_OPTIONS}
+                contentClassName="min-w-44 w-max max-w-80"
               />
 
               <FilterSelect
@@ -249,6 +251,7 @@ export function Dashboard() {
                 value={qualityFilter}
                 onValueChange={setQualityFilter}
                 options={QUALITY_FILTER_OPTIONS}
+                contentClassName="min-w-44 w-max max-w-80"
               />
 
               <FilterSelect
@@ -259,6 +262,7 @@ export function Dashboard() {
                   setIssueTypeFilter(value as ReportAuditIssueSeverity | undefined)
                 }
                 options={ISSUE_TYPE_FILTER_OPTIONS}
+                contentClassName="min-w-44 w-max max-w-80"
               />
 
               <FilterSelect
@@ -269,6 +273,7 @@ export function Dashboard() {
                   setStatusFilter(value as SchoolStatus | undefined)
                 }
                 options={STATUS_FILTER_OPTIONS}
+                contentClassName="min-w-44 w-max max-w-80"
               />
 
               {hasActiveFilters ? (
