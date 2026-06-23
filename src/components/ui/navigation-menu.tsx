@@ -59,7 +59,7 @@ function NavigationMenuItem({
 }
 
 const navigationMenuTriggerStyle = cva(
-  "group inline-flex h-9 w-max cursor-pointer items-center justify-center rounded-md bg-transparent px-4 py-2 font-semibold text-sm outline-none transition-[color,box-shadow] hover:bg-neutral-alpha-100 hover:text-neutral-alpha-700 focus:bg-neutral-alpha-200 focus:text-neutral-alpha-700 focus-visible:outline-1 focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 data-[state=open]:bg-neutral-alpha-200 data-[state=open]:text-neutral-alpha-700 data-[state=open]:focus:bg-neutral-alpha-200 data-[state=open]:hover:bg-neutral-alpha-100",
+  "group inline-flex h-9 w-max cursor-pointer items-center justify-center rounded-md bg-transparent px-3 py-2 font-semibold text-neutral-alpha-700 text-sm outline-none transition-[color,box-shadow] hover:bg-neutral-alpha-100 hover:text-neutral-alpha-700 focus-visible:outline-1 focus-visible:ring-[3px] focus-visible:ring-ring/50 active:bg-neutral-alpha-200 active:text-neutral-alpha-700 disabled:pointer-events-none disabled:opacity-50 data-[state=open]:bg-neutral-alpha-200 data-[state=open]:text-neutral-alpha-700 data-[state=open]:active:bg-neutral-alpha-200 data-[state=open]:hover:bg-neutral-alpha-100",
 );
 
 function NavigationMenuTrigger({
@@ -129,7 +129,7 @@ function NavigationMenuLink({
     <NavigationMenuPrimitive.Link
       data-slot="navigation-menu-link"
       className={cn(
-        "flex flex-col gap-1 rounded-sm p-2 text-sm outline-none transition-all hover:bg-neutral-alpha-100 hover:text-neutral-alpha-700 focus:bg-neutral-alpha-200 focus:text-neutral-alpha-700 focus-visible:outline-1 focus-visible:ring-[3px] focus-visible:ring-ring/50 data-[active=true]:bg-transparent data-[active=true]:text-primary-600 data-[active=true]:focus:bg-primary-200 data-[active=true]:hover:bg-primary-100 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground",
+        "flex flex-col gap-1 rounded-sm p-2 text-sm outline-none transition-all hover:bg-neutral-alpha-100 hover:text-neutral-alpha-700 focus-visible:outline-1 focus-visible:ring-[3px] focus-visible:ring-ring/50 active:bg-neutral-alpha-200 active:text-neutral-alpha-700 data-[active=true]:bg-transparent data-[active=true]:text-primary-600 data-[active=true]:active:bg-primary-200 data-[active=true]:hover:bg-primary-100 data-[active=true]:hover:text-primary-700 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground",
         className,
       )}
       {...props}

@@ -12,9 +12,9 @@ const buttonVariants = cva(
         default:
           "bg-primary text-primary-foreground hover:bg-primary-700 active:bg-primary-800",
         outline:
-          "border border-neutral-alpha-300 bg-background text-neutral-700 hover:bg-neutral-100 hover:text-neutral-700 active:bg-neutral-200 active:text-neutral-700",
+          "border border-neutral-alpha-400 bg-background text-neutral-700 hover:bg-neutral-100 hover:text-neutral-700 active:bg-neutral-200 active:text-neutral-700",
         secondary:
-          "border border-primary-300 bg-background text-primary-600 hover:bg-primary-100 hover:text-primary-700 active:bg-primary-200 active:text-primary-700",
+          "border border-primary-400 bg-background text-primary-600 hover:bg-primary-100 hover:text-primary-700 active:bg-primary-200 active:text-primary-700",
         ghost:
           "text-neutral-700 hover:bg-neutral-alpha-100 hover:text-neutral-700 active:bg-neutral-alpha-200 active:text-neutral-700",
         destructive:
@@ -23,9 +23,9 @@ const buttonVariants = cva(
         success:
           "bg-success-600 text-white hover:bg-success-700 active:bg-success-800",
         "success-secondary":
-          "border border-success-300 bg-background text-success-600 hover:bg-success-100 hover:text-success-700 active:bg-success-200 active:text-success-700",
+          "border border-success-400 bg-background text-success-600 hover:bg-success-100 hover:text-success-700 active:bg-success-200 active:text-success-700",
         "destructive-secondary":
-          "border border-danger-300 bg-background text-danger-600 hover:bg-danger-100 hover:text-danger-700 active:bg-danger-200 active:text-danger-700",
+          "border border-danger-400 bg-background text-danger-600 hover:bg-danger-100 hover:text-danger-700 active:bg-danger-200 active:text-danger-700",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",

@@ -2,9 +2,30 @@ import { Progress } from "@/components/ui/progress";
 import {
   REPORT_DAILY_ENTRIES_TOTAL,
   type MetricProgressConfig,
-  progressMetricIndicatorClass,
+  type ProgressMetricTone,
+  progressMetricIndicatorSlotClass,
 } from "@/data/reportDashboard";
 import { cn } from "@/lib/utils";
+
+type ToneProgressProps = {
+  value: number;
+  tone: ProgressMetricTone;
+  className?: string;
+  "aria-label"?: string;
+};
+
+export function ToneProgress({
+  value,
+  tone,
+  className,
+  "aria-label": ariaLabel,
+}: ToneProgressProps) {
+  return (
+    <div className={cn(progressMetricIndicatorSlotClass(tone), className)}>
+      <Progress value={value} className="w-full" aria-label={ariaLabel} />
+    </div>
+  );
+}
 
 type MetricProgressProps = MetricProgressConfig & {
   className?: string;
@@ -74,10 +95,10 @@ export function MetricProgress({
           labelSuffix={labelSuffix}
           className="font-semibold text-foreground text-xl tabular-nums"
         />
-        <Progress
+        <ToneProgress
           value={value}
+          tone={tone}
           className={resolvedBarClassName}
-          indicatorClassName={progressMetricIndicatorClass(tone)}
           aria-label={ariaLabel}
         />
       </div>
@@ -86,10 +107,10 @@ export function MetricProgress({
 
   return (
     <div className={cn("flex items-center gap-2", className)}>
-      <Progress
+      <ToneProgress
         value={value}
+        tone={tone}
         className={resolvedBarClassName}
-        indicatorClassName={progressMetricIndicatorClass(tone)}
         aria-label={ariaLabel}
       />
       <MetricProgressLabel

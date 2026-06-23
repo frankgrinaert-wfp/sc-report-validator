@@ -12,7 +12,7 @@ import { ReportIssueCounts } from "@/components/ReportIssueCounts";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import { ToneProgress } from "@/components/MetricProgress";
 import {
   Item,
   ItemActions,
@@ -34,7 +34,6 @@ import {
   dailyEntriesMetricConfig,
   dataQualityMetricConfig,
   formatAuditIssueDate,
-  progressMetricIndicatorClass,
   REPORT_DAILY_ENTRIES_TOTAL,
   getDashboardReport,
   getSchoolDetail,
@@ -102,12 +101,10 @@ export function SchoolDetailContent({ reportId }: SchoolDetailContentProps) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <Progress
+            <ToneProgress
               value={completenessMetric.value}
+              tone={completenessMetric.tone}
               className="w-full"
-              indicatorClassName={progressMetricIndicatorClass(
-                completenessMetric.tone,
-              )}
               aria-label={completenessMetric.ariaLabel}
             />
           </CardContent>
@@ -120,12 +117,10 @@ export function SchoolDetailContent({ reportId }: SchoolDetailContentProps) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <Progress
+            <ToneProgress
               value={qualityMetric.value}
+              tone={qualityMetric.tone}
               className="w-full"
-              indicatorClassName={progressMetricIndicatorClass(
-                qualityMetric.tone,
-              )}
               aria-label={qualityMetric.ariaLabel}
             />
           </CardContent>
@@ -200,7 +195,7 @@ export function SchoolDetailSheet({
           <div className="flex items-center gap-4 pr-8">
             <SheetTitle className="text-left text-xl">{title}</SheetTitle>
             {status ? (
-              <Badge variant={statusBadgeVariant(status)} className="shrink-0">
+              <Badge variant={statusBadgeVariant(status)} className="shrink-0 text-sm">
                 {status}
               </Badge>
             ) : null}

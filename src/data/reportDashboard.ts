@@ -12,12 +12,28 @@ export type ProgressMetricTone = "success" | "warning" | "danger" | "neutral";
 
 const PROGRESS_METRIC_TONE_CLASSES: Record<
   ProgressMetricTone,
-  { text: string; indicator: string }
+  { text: string; indicator: string; indicatorSlot: string }
 > = {
-  success: { text: "text-success-600", indicator: "bg-success-500" },
-  warning: { text: "text-warning-600", indicator: "bg-warning-500" },
-  danger: { text: "text-danger-600", indicator: "bg-danger-500" },
-  neutral: { text: "text-neutral-600", indicator: "bg-neutral-500" },
+  success: {
+    text: "text-success-600",
+    indicator: "bg-success-500",
+    indicatorSlot: "[&_[data-slot=progress-indicator]]:bg-success-500",
+  },
+  warning: {
+    text: "text-warning-600",
+    indicator: "bg-warning-500",
+    indicatorSlot: "[&_[data-slot=progress-indicator]]:bg-warning-500",
+  },
+  danger: {
+    text: "text-danger-600",
+    indicator: "bg-danger-500",
+    indicatorSlot: "[&_[data-slot=progress-indicator]]:bg-danger-500",
+  },
+  neutral: {
+    text: "text-neutral-600",
+    indicator: "bg-neutral-500",
+    indicatorSlot: "[&_[data-slot=progress-indicator]]:bg-neutral-500",
+  },
 };
 
 export function progressMetricTextClass(tone: ProgressMetricTone): string {
@@ -26,6 +42,13 @@ export function progressMetricTextClass(tone: ProgressMetricTone): string {
 
 export function progressMetricIndicatorClass(tone: ProgressMetricTone): string {
   return PROGRESS_METRIC_TONE_CLASSES[tone].indicator;
+}
+
+/** Wrapper class that tints a `Progress` indicator without modifying the component. */
+export function progressMetricIndicatorSlotClass(
+  tone: ProgressMetricTone,
+): string {
+  return PROGRESS_METRIC_TONE_CLASSES[tone].indicatorSlot;
 }
 
 export function dataQualityScoreTone(score: number): ProgressMetricTone {

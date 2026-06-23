@@ -114,7 +114,7 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
                   <ReportIssueCounts counts={report.issueCounts} />
                 </TableCell>
                 <TableCell>
-                  <Badge variant={statusBadgeVariant(report.status)}>
+                  <Badge variant={statusBadgeVariant(report.status)} className="text-sm">
                     {report.status}
                   </Badge>
                 </TableCell>
