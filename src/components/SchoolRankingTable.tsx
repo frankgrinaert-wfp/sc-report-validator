@@ -1,4 +1,4 @@
-import { ChevronRight, Download } from "lucide-react";
+import { Download } from "lucide-react";
 import { useState } from "react";
 import { ReportIssueCounts } from "@/components/ReportIssueCounts";
 import { SchoolDetailSheet } from "@/components/SchoolDetail";
@@ -140,7 +140,6 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
                       onClick={() => setDetailReportId(report.reportId)}
                     >
                       View details
-                      <ChevronRight />
                     </Button>
                     <Tooltip>
                       <TooltipTrigger asChild>
