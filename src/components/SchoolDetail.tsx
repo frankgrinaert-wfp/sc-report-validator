@@ -1,18 +1,23 @@
+"use client";
+
 import {
   Ban,
   Check,
   Download,
   ExternalLink,
+  Flag,
+  FlagOff,
   Info,
   OctagonX,
   TriangleAlert,
 } from "lucide-react";
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { ReportIssueCounts } from "@/components/ReportIssueCounts";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ToneProgress } from "@/components/MetricProgress";
+import { cn } from "@/lib/utils";
 import {
   Item,
   ItemActions,
@@ -31,6 +36,11 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
   dailyEntriesMetricConfig,
   dataQualityMetricConfig,
   formatAuditIssueDate,
@@ -39,8 +49,13 @@ import {
   getSchoolDetail,
   selectAuditIssuesForCounts,
   type ReportAuditIssueSeverity,
+  type ReportAuditIssue,
   type SchoolStatus,
 } from "@/data/reportDashboard";
+
+function auditIssueKey(issue: ReportAuditIssue) {
+  return `${issue.date}:${issue.title}`;
+}
 
 function statusBadgeVariant(status: SchoolStatus) {
   switch (status) {
@@ -55,16 +70,26 @@ function statusBadgeVariant(status: SchoolStatus) {
 
 function AuditIssueSeverityIcon({
   severity,
+  muted = false,
 }: {
   severity: ReportAuditIssueSeverity;
+  muted?: boolean;
 }) {
+  const colorClass = muted
+    ? "text-neutral-alpha-500"
+    : severity === "critical"
+      ? "text-danger-500"
+      : severity === "high"
+        ? "text-warning-500"
+        : "text-info-500";
+
   switch (severity) {
     case "critical":
-      return <OctagonX className="text-danger-500 size-4" />;
+      return <OctagonX className={cn("size-4", colorClass)} />;
     case "high":
-      return <TriangleAlert className="text-warning-500 size-4" />;
+      return <TriangleAlert className={cn("size-4", colorClass)} />;
     case "low":
-      return <Info className="text-info-500 size-4" />;
+      return <Info className={cn("size-4", colorClass)} />;
   }
 }
 
@@ -73,8 +98,28 @@ type SchoolDetailContentProps = {
 };
 
 export function SchoolDetailContent({ reportId }: SchoolDetailContentProps) {
+  const [unflaggedIssues, setUnflaggedIssues] = useState<Set<string>>(
+    () => new Set(),
+  );
+
+  useEffect(() => {
+    setUnflaggedIssues(new Set());
+  }, [reportId]);
+
   const report = getDashboardReport(reportId);
   const school = report ? getSchoolDetail(String(report.schoolId)) : undefined;
+
+  const toggleIssueFlag = (key: string) => {
+    setUnflaggedIssues((current) => {
+      const next = new Set(current);
+      if (next.has(key)) {
+        next.delete(key);
+      } else {
+        next.add(key);
+      }
+      return next;
+    });
+  };
 
   if (!report || !school) {
     return <p className="text-muted-foreground text-sm">Report not found.</p>;
@@ -140,28 +185,73 @@ export function SchoolDetailContent({ reportId }: SchoolDetailContentProps) {
         </div>
 
         <ItemGroup>
-          {auditIssues.map((issue, index) => (
-            <Fragment key={issue.date}>
+          {auditIssues.map((issue, index) => {
+            const key = auditIssueKey(issue);
+            const isUnflagged = unflaggedIssues.has(key);
+
+            return (
+            <Fragment key={key}>
               {index > 0 ? <ItemSeparator /> : null}
-              <Item role="listitem">
+              <Item role="listitem" aria-disabled={isUnflagged}>
                 <ItemMedia>
-                  <AuditIssueSeverityIcon severity={issue.severity} />
+                  <AuditIssueSeverityIcon
+                    severity={issue.severity}
+                    muted={isUnflagged}
+                  />
                 </ItemMedia>
                 <ItemContent>
-                  <ItemTitle>{issue.title}</ItemTitle>
-                  <ItemDescription className="tabular-nums">
+                  <ItemTitle
+                    className={cn(
+                      isUnflagged && "text-neutral-alpha-500 line-through",
+                    )}
+                  >
+                    {issue.title}
+                  </ItemTitle>
+                  <ItemDescription
+                    className={cn(
+                      "tabular-nums",
+                      isUnflagged && "text-neutral-alpha-500",
+                    )}
+                  >
                     {formatAuditIssueDate(issue.date)}
                   </ItemDescription>
                 </ItemContent>
                 <ItemActions>
-                  <Button type="button" variant="link">
-                    <ExternalLink />
-                    View in report
-                  </Button>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon-sm"
+                        onClick={() => toggleIssueFlag(key)}
+                        aria-label={isUnflagged ? "Flag" : "Unflag"}
+                      >
+                        {isUnflagged ? <Flag /> : <FlagOff />}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {isUnflagged ? "Flag" : "Unflag"}
+                    </TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon-sm"
+                        disabled={isUnflagged}
+                        aria-label="View in report"
+                      >
+                        <ExternalLink />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>View in report</TooltipContent>
+                  </Tooltip>
                 </ItemActions>
               </Item>
             </Fragment>
-          ))}
+            );
+          })}
         </ItemGroup>
       </div>
     </div>
@@ -201,7 +291,7 @@ export function SchoolDetailSheet({
             ) : null}
           </div>
         </SheetHeader>
-        <div className="flex-1 overflow-y-auto px-5 py-6">
+        <div className="flex-1 overflow-y-auto p-5">
           {reportId != null ? (
             <SchoolDetailContent reportId={reportId} />
           ) : null}
