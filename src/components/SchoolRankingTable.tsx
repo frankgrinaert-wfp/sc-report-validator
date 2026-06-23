@@ -133,6 +133,15 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="inline-flex items-center gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setDetailReportId(report.reportId)}
+                    >
+                      View details
+                      <ChevronRight />
+                    </Button>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Button
@@ -147,15 +156,6 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
                       </TooltipTrigger>
                       <TooltipContent>Download issues</TooltipContent>
                     </Tooltip>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setDetailReportId(report.reportId)}
-                    >
-                      View details
-                      <ChevronRight />
-                    </Button>
                   </div>
                 </TableCell>
               </TableRow>

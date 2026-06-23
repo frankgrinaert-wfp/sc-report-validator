@@ -28,6 +28,11 @@ import type {
   SchoolStatus,
 } from "@/data/reportDashboard";
 import { SettingsSheet } from "@/components/SettingsSheet";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { GAMBIA_ADMIN_REGION_OPTIONS } from "@/data/gambiaAdminRegions";
 import { SchoolRankingTable } from "@/components/SchoolRankingTable";
 import {
@@ -317,10 +322,19 @@ export function Dashboard() {
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              <Button type="button" variant="outline">
-                <Download />
-                Download all issues
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    aria-label="Download all issues"
+                  >
+                    <Download />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Download all issues</TooltipContent>
+              </Tooltip>
             </div>
           </div>
 
