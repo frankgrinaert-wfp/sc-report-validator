@@ -3,6 +3,7 @@
 import {
   Ban,
   Check,
+  Copy,
   Download,
   ExternalLink,
   Flag,
@@ -48,11 +49,19 @@ import {
   REPORT_DAILY_ENTRIES_TOTAL,
   getDashboardReport,
   getSchoolDetail,
+  ISSUE_TYPE_FILTER_OPTIONS,
   selectAuditIssuesForCounts,
   type ReportAuditIssueSeverity,
   type ReportAuditIssue,
   type SchoolStatus,
 } from "@/data/reportDashboard";
+
+function auditIssueSeverityLabel(severity: ReportAuditIssueSeverity) {
+  return (
+    ISSUE_TYPE_FILTER_OPTIONS.find((option) => option.value === severity)
+      ?.label ?? severity
+  );
+}
 
 function auditIssueKey(issue: ReportAuditIssue) {
   return `${issue.date}:${issue.title}`;
@@ -138,6 +147,20 @@ export function SchoolDetailContent({ reportId }: SchoolDetailContentProps) {
   const completenessMetric = dailyEntriesMetricConfig(dailyEntries);
   const qualityMetric = dataQualityMetricConfig(qualityScore);
 
+  const handleCopyIssues = async () => {
+    const flaggedIssues = auditIssues.filter(
+      (issue) => !unflaggedIssues.has(auditIssueKey(issue)),
+    );
+    const text = flaggedIssues
+      .map(
+        (issue) =>
+          `${auditIssueSeverityLabel(issue.severity)}: ${issue.title} (${formatAuditIssueDate(issue.date)})`,
+      )
+      .join("\n");
+
+    await navigator.clipboard.writeText(text);
+  };
+
   return (
     <div className="flex flex-col gap-8">
       <div className="grid gap-4 md:grid-cols-2">
@@ -184,10 +207,16 @@ export function SchoolDetailContent({ reportId }: SchoolDetailContentProps) {
           <h2 className="font-semibold text-base">Flagged data issues</h2>
           <ReportIssueCounts counts={issueCounts} />
         </div>
-        <Button type="button" variant="ghost">
-          <Download />
-          Download issues
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button type="button" variant="ghost" onClick={handleCopyIssues}>
+            <Copy />
+            Copy issues
+          </Button>
+          <Button type="button" variant="ghost">
+            <Download />
+            Download issues
+          </Button>
+        </div>
       </div>
 
       <div className="flex flex-col gap-3">
