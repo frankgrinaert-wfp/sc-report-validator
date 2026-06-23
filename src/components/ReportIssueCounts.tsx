@@ -1,4 +1,5 @@
 import { Info, OctagonX, TriangleAlert } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import type {
   ReportAuditIssueSeverity,
   ReportIssueCounts,
@@ -20,11 +21,22 @@ function AuditIssueSeverityIcon({
 }) {
   switch (severity) {
     case "critical":
-      return <OctagonX className="size-4 text-danger-500" aria-hidden />;
+      return <OctagonX aria-hidden />;
     case "high":
-      return <TriangleAlert className="size-4 text-warning-500" aria-hidden />;
+      return <TriangleAlert aria-hidden />;
     case "low":
-      return <Info className="size-4 text-info-500" aria-hidden />;
+      return <Info aria-hidden />;
+  }
+}
+
+function severityBadgeVariant(severity: ReportAuditIssueSeverity) {
+  switch (severity) {
+    case "critical":
+      return "destructive" as const;
+    case "high":
+      return "warning" as const;
+    case "low":
+      return "default" as const;
   }
 }
 
@@ -42,16 +54,17 @@ export function ReportIssueCounts({ counts }: ReportIssueCountsProps) {
   }
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2">
       {visible.map(({ severity, label }) => (
-        <span
+        <Badge
           key={severity}
-          className="inline-flex items-center gap-1 tabular-nums"
+          variant={severityBadgeVariant(severity)}
+          className="tabular-nums text-sm"
           aria-label={`${counts[severity]} ${label}`}
         >
           <AuditIssueSeverityIcon severity={severity} />
-          <span className="text-foreground text-sm">{counts[severity]}</span>
-        </span>
+          {counts[severity]}
+        </Badge>
       ))}
     </div>
   );
