@@ -174,7 +174,7 @@ export function SchoolDetailContent({ reportId }: SchoolDetailContentProps) {
           <h2 className="font-semibold text-base">Data quality issues</h2>
           <ReportIssueCounts counts={issueCounts} />
         </div>
-        <Button type="button" variant="outline" size="sm">
+        <Button type="button" variant="ghost">
           <Download />
           Download issues
         </Button>
@@ -290,18 +290,18 @@ export function SchoolDetailSheet({
         {school ? (
           <SheetFooter className="bg-background border-t shrink-0 flex-row flex-wrap p-5 items-center justify-between gap-2 shadow-sm">
             <div className="flex flex-wrap gap-2">
-              <Button type="button" variant="success-secondary">
+              <Button type="button" variant="success">
                 <Check />
                 Approve report
               </Button>
-              <Button type="button" variant="destructive-secondary">
+              <Button type="button" variant="destructive">
                 <Ban />
                 Request corrections
               </Button>
             </div>
-            <Button type="button" variant="link">
-              <ExternalLink />
+            <Button type="button" variant="ghost">
               View report
+              <ExternalLink />
             </Button>
           </SheetFooter>
         ) : null}
