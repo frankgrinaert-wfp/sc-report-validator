@@ -65,7 +65,7 @@ function statusBadgeVariant(status: SchoolStatus) {
     case "Submitted":
       return "secondary" as const;
     case "Awaiting corrections":
-      return "warning" as const;
+      return "destructive" as const;
     case "Approved":
       return "success" as const;
   }
