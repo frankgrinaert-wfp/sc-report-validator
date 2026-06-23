@@ -1,3 +1,9 @@
+import {
+  adminRegionPathsMatch,
+  assignAdminRegionPath,
+  formatAdminRegionFullPath,
+} from "@/data/gambiaAdminRegions";
+
 export type SchoolQuality = "excellent" | "good" | "fair" | "critical";
 
 /** Tier implied by the numeric score (no separate quality field on records). */
@@ -200,13 +206,6 @@ export function buildReportPeriodLabel(
   );
 }
 
-export const ADMIN_REGIONS = [
-  "Admin region 1",
-  "Admin region 2",
-  "Admin region 3",
-  "Admin region 4",
-] as const;
-
 export type DashboardSortBy =
   | "school"
   | "month"
@@ -228,7 +227,7 @@ export type DashboardReportRow = {
   schoolId: number;
   schoolName: string;
   schoolCode: string;
-  adminRegion: (typeof ADMIN_REGIONS)[number];
+  adminRegion: string[];
   schoolYear: string;
   monthKey: string;
   periodLabel: string;
@@ -271,7 +270,9 @@ export function compareDashboardReports(
       comparison = reportPeriodSortKey(a) - reportPeriodSortKey(b);
       break;
     case "region":
-      comparison = a.adminRegion.localeCompare(b.adminRegion);
+      comparison = formatAdminRegionFullPath(a.adminRegion).localeCompare(
+        formatAdminRegionFullPath(b.adminRegion),
+      );
       break;
     case "completeness":
       comparison = a.dailyEntries - b.dailyEntries;
@@ -302,6 +303,7 @@ export function filterDashboardReports(
     quality?: string;
     status?: "all" | SchoolStatus;
     issueTypes?: ReportAuditIssueSeverity[];
+    adminRegionPath?: string[];
   },
 ): DashboardReportRow[] {
   return reports.filter((report) => {
@@ -343,6 +345,13 @@ export function filterDashboardReports(
       if (!hasMatchingIssue) {
         return false;
       }
+    }
+    if (
+      filters.adminRegionPath &&
+      filters.adminRegionPath.length > 0 &&
+      !adminRegionPathsMatch(report.adminRegion, filters.adminRegionPath)
+    ) {
+      return false;
     }
     return true;
   });
@@ -930,7 +939,7 @@ function generateMockReports(count: number): DashboardReportRow[] {
       schoolId: school.id,
       schoolName: school.name,
       schoolCode: school.code,
-      adminRegion: ADMIN_REGIONS[(school.id - 1) % ADMIN_REGIONS.length]!,
+      adminRegion: assignAdminRegionPath(school.id, rand),
       schoolYear: period.schoolYear,
       monthKey: period.monthKey,
       periodLabel: buildReportPeriodLabel(period.schoolYear, period.monthKey),

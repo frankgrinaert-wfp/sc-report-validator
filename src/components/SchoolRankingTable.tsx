@@ -26,6 +26,10 @@ import {
   type DashboardReportRow,
   type SchoolStatus,
 } from "@/data/reportDashboard";
+import {
+  formatAdminRegionDisplay,
+  formatAdminRegionFullPath,
+} from "@/data/gambiaAdminRegions";
 
 type SchoolRankingTableProps = {
   reports: DashboardReportRow[];
@@ -88,6 +92,7 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
             <TableRow>
               <TableHead>Month</TableHead>
               <TableHead>School</TableHead>
+              <TableHead>Admin region</TableHead>
               <TableHead>Programme manager</TableHead>
               <TableHead>Days entered</TableHead>
               <TableHead>Data quality</TableHead>
@@ -104,6 +109,12 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
                 <TableCell>{report.periodLabel}</TableCell>
                 <TableCell className="whitespace-normal">
                   {report.schoolName}
+                </TableCell>
+                <TableCell
+                  className="whitespace-normal"
+                  title={formatAdminRegionFullPath(report.adminRegion)}
+                >
+                  {formatAdminRegionDisplay(report.adminRegion)}
                 </TableCell>
                 <TableCell>{report.programmeManager}</TableCell>
                 <TableCell>

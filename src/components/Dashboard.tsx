@@ -1,6 +1,7 @@
 import { ArrowUpDown, Calendar, ChevronDown, Download } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Cascader } from "@/components/ui/cascader";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -27,6 +28,7 @@ import type {
   SchoolStatus,
 } from "@/data/reportDashboard";
 import { SettingsSheet } from "@/components/SettingsSheet";
+import { GAMBIA_ADMIN_REGION_OPTIONS } from "@/data/gambiaAdminRegions";
 import { SchoolRankingTable } from "@/components/SchoolRankingTable";
 import {
   InputGroup,
@@ -78,7 +80,7 @@ const STATUS_FILTERS: { value: "all" | SchoolStatus; label: string }[] = [
 export function Dashboard() {
   const [country, setCountry] = useState("gambia");
   const [schoolFilter, setSchoolFilter] = useState("all");
-  const [regionFilter, setRegionFilter] = useState("all");
+  const [regionFilter, setRegionFilter] = useState<string[]>([]);
   const [qualityFilter, setQualityFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState<"all" | SchoolStatus>("all");
   const [sortBy, setSortBy] = useState<DashboardSortBy>("month");
@@ -96,6 +98,7 @@ export function Dashboard() {
     quality: qualityFilter,
     status: statusFilter,
     issueTypes: issueTypeFilter,
+    adminRegionPath: regionFilter,
   });
 
   const sortedReports = [...filteredReports].sort((a, b) =>
@@ -128,7 +131,7 @@ export function Dashboard() {
   const hasActiveFilters =
     schoolFilter !== "all" ||
     reportMonth !== "all" ||
-    regionFilter !== "all" ||
+    regionFilter.length > 0 ||
     qualityFilter !== "all" ||
     statusFilter !== "all" ||
     issueTypeFilter.length > 0;
@@ -136,7 +139,7 @@ export function Dashboard() {
   const resetFilters = () => {
     setSchoolFilter("all");
     setReportMonth("all");
-    setRegionFilter("all");
+    setRegionFilter([]);
     setQualityFilter("all");
     setStatusFilter("all");
     setIssueTypeFilter([]);
@@ -203,23 +206,15 @@ export function Dashboard() {
           </div>
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div className="flex flex-wrap items-end justify-start gap-2">
-              <Select value={regionFilter} onValueChange={setRegionFilter}>
-                <SelectTrigger
-                  id="region-select"
-                  className="w-48"
-                  aria-label="Admin region"
-                >
-                  <SelectValue placeholder="Admin region: All" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Admin region: All</SelectItem>
-                  <SelectSeparator />
-                  <SelectItem value="region1">Admin region 1</SelectItem>
-                  <SelectItem value="region2">Admin region 2</SelectItem>
-                  <SelectItem value="region3">Admin region 3</SelectItem>
-                  <SelectItem value="region4">Admin region 4</SelectItem>
-                </SelectContent>
-              </Select>
+              <Cascader
+                options={GAMBIA_ADMIN_REGION_OPTIONS}
+                value={regionFilter}
+                onChange={(value) => setRegionFilter(value)}
+                placeholder="Admin region: All"
+                allowClear
+                changeOnSelect
+                className="h-9 w-48 px-3"
+              />
 
               <Select value={reportMonth} onValueChange={setReportMonth}>
                 <SelectTrigger
