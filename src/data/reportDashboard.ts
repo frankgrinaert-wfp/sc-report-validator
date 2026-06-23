@@ -236,6 +236,7 @@ export type DashboardReportRow = {
   status: SchoolStatus;
   dailyEntries: number;
   issueCounts: ReportIssueCounts;
+  programmeManager: string;
 };
 
 const REPORT_MONTH_SORT_INDEX = Object.fromEntries(
@@ -937,6 +938,7 @@ function generateMockReports(count: number): DashboardReportRow[] {
       status: statusForReportScore(score, rand()),
       dailyEntries,
       issueCounts: generateReportIssueCounts(score, rand),
+      programmeManager: "PM-GMB-001",
     });
   }
 
