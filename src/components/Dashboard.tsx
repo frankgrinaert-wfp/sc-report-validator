@@ -124,9 +124,6 @@ export function Dashboard() {
     compareDashboardReports(a, b, sortBy, sortOrder),
   );
 
-  const sortByLabel =
-    SORT_BY_OPTIONS.find((option) => option.value === sortBy)?.label ?? "Sort";
-
   const hasActiveFilters =
     schoolFilter != null ||
     reportMonth != null ||
@@ -288,7 +285,7 @@ export function Dashboard() {
                 <DropdownMenuTrigger asChild>
                   <Button type="button" variant="outline" aria-label="Sort">
                     <ArrowUpDown />
-                    {sortByLabel}
+                    Sort
                     <ChevronDown />
                   </Button>
                 </DropdownMenuTrigger>
