@@ -13,13 +13,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import type {
   DashboardSortBy,
   DashboardSortOrder,
@@ -35,10 +28,6 @@ import {
 } from "@/components/ui/tooltip";
 import { GAMBIA_ADMIN_REGION_OPTIONS } from "@/data/gambiaAdminRegions";
 import { SchoolRankingTable } from "@/components/SchoolRankingTable";
-import {
-  InputGroup,
-  InputGroupAddon,
-} from "@/components/ui/input-group";
 import {
   compareDashboardReports,
   DASHBOARD_REPORTS,
@@ -143,46 +132,60 @@ export function Dashboard() {
     setProgrammeManagerFilter(undefined);
   };
 
+  const selectedCountry = COUNTRIES.find(({ value }) => value === country);
+  const selectedSchoolYear = SCHOOL_YEAR_OPTIONS.find(
+    ({ value }) => value === schoolYear,
+  );
+
   const headerControls = (
     <>
-      <Select value={country} onValueChange={setCountry}>
-        <SelectTrigger
-          id="country-select"
-          className="w-40"
-          aria-label="Country"
-        >
-          <SelectValue placeholder="Select country" />
-        </SelectTrigger>
-        <SelectContent>
-          {COUNTRIES.map(({ value, label, flag }) => (
-            <SelectItem key={value} value={value}>
-              {flag} {label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      <Select value={schoolYear} onValueChange={setSchoolYear}>
-        <InputGroup className="w-40">
-          <SelectTrigger
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            type="button"
+            variant="ghost"
+            id="country-select"
+            aria-label="Country"
+          >
+            {selectedCountry
+              ? `${selectedCountry.flag} ${selectedCountry.label}`
+              : "Select country"}
+            <ChevronDown />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-40">
+          <DropdownMenuRadioGroup value={country} onValueChange={setCountry}>
+            {COUNTRIES.map(({ value, label, flag }) => (
+              <DropdownMenuRadioItem key={value} value={value}>
+                {flag} {label}
+              </DropdownMenuRadioItem>
+            ))}
+          </DropdownMenuRadioGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            type="button"
+            variant="ghost"
             id="school-year-select"
-            data-slot="input-group-control"
-            className="w-full min-w-0 flex-1 rounded-none border-0 bg-transparent shadow-none focus-visible:border-transparent focus-visible:ring-0"
             aria-label="School year"
           >
-            <SelectValue placeholder="School year" />
-          </SelectTrigger>
-          <InputGroupAddon align="inline-start">
             <Calendar />
-          </InputGroupAddon>
-        </InputGroup>
-        <SelectContent>
-          {SCHOOL_YEAR_OPTIONS.map(({ value, label }) => (
-            <SelectItem key={value} value={value}>
-              {label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+            {selectedSchoolYear?.label ?? "School year"}
+            <ChevronDown />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-40">
+          <DropdownMenuRadioGroup value={schoolYear} onValueChange={setSchoolYear}>
+            {SCHOOL_YEAR_OPTIONS.map(({ value, label }) => (
+              <DropdownMenuRadioItem key={value} value={value}>
+                {label}
+              </DropdownMenuRadioItem>
+            ))}
+          </DropdownMenuRadioGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </>
   );
 
