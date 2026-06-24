@@ -1,8 +1,9 @@
 "use client";
 
-import { LogOut, Menu, RefreshCw, Settings, UserCircle, Wifi, WifiOff } from "lucide-react";
+import { LogOut, Menu, RefreshCw, Settings, UserCircle, Wifi } from "lucide-react";
 import { useState } from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -131,11 +132,13 @@ function Navigation() {
             </NavigationMenuList>
           </NavigationMenu>
         </div>
-        <div className="flex shrink-0 items-center gap-4">
-          <div className="flex items-center gap-1">
+        <div className="flex shrink-0 items-center gap-2">
+            <Badge variant="outline">
+              <Wifi className="text-success-500" />
+              Online
+            </Badge>
             <SyncButton />
-            <WifiButton />
-          </div>
+
           <UserMenu />
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild>
@@ -187,30 +190,6 @@ function SyncButton() {
         </Button>
       </TooltipTrigger>
       <TooltipContent>Sync</TooltipContent>
-    </Tooltip>
-  );
-}
-
-function WifiButton() {
-  const [isOnline, setIsOnline] = useState(true);
-  const label = isOnline
-    ? "Online (click to disconnect)"
-    : "Offline (click to connect)";
-
-  return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          aria-label={label}
-          onClick={() => setIsOnline((online) => !online)}
-        >
-          {isOnline ? <Wifi /> : <WifiOff />}
-        </Button>
-      </TooltipTrigger>
-      <TooltipContent>{label}</TooltipContent>
     </Tooltip>
   );
 }
