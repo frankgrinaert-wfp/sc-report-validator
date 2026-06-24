@@ -330,12 +330,12 @@ export function Dashboard() {
                     type="button"
                     variant="outline"
                     size="icon"
-                    aria-label="Download all issues"
+                    aria-label="Download all data issues"
                   >
                     <Download />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>Download all issues</TooltipContent>
+                <TooltipContent>Download all data issues</TooltipContent>
               </Tooltip>
             </div>
           </div>
