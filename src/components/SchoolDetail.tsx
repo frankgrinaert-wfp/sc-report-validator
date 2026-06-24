@@ -192,17 +192,17 @@ export function SchoolDetailContent({ reportId }: SchoolDetailContentProps) {
       <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex flex-wrap items-center gap-4">
-          <h2 className="font-semibold text-base">Flagged data issues</h2>
+          <h2 className="font-semibold text-base">Data issues flagged</h2>
           <ReportIssueCounts counts={issueCounts} />
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Button type="button" variant="ghost" onClick={handleCopyIssues}>
             <Copy />
-            Copy issues
+            Copy
           </Button>
           <Button type="button" variant="ghost">
             <Download />
-            Download issues
+            Download
           </Button>
         </div>
       </div>

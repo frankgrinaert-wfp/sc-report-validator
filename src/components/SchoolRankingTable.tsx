@@ -109,7 +109,7 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
               <TableHead>Programme manager</TableHead>
               <TableHead>Days entered</TableHead>
               <TableHead>Data quality</TableHead>
-              <TableHead>Issues</TableHead>
+              <TableHead>Data issues</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>
                 <span className="sr-only">Actions</span>
@@ -175,13 +175,13 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
                           onClick={() => handleCopyIssues(report)}
                         >
                           <Copy />
-                          Copy issues
+                          Copy data issues
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => handleDownload(report)}
                         >
                           <Download />
-                          Download issues
+                          Download data issues
                         </DropdownMenuItem>
                         <DropdownMenuItem>
                           <ExternalLink />

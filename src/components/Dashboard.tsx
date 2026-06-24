@@ -255,7 +255,7 @@ export function Dashboard() {
 
               <FilterSelect
                 id="issue-type-select"
-                label="Issue type"
+                label="Data issue type"
                 value={issueTypeFilter}
                 onValueChange={(value) =>
                   setIssueTypeFilter(value as ReportAuditIssueSeverity | undefined)

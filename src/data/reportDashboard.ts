@@ -1112,7 +1112,7 @@ export function countAuditIssuesBySeverity(
   );
 }
 
-/** Issues from the mock pool matching per-severity totals (e.g. header counts). */
+/** Data issues from the mock pool matching per-severity totals (e.g. header counts). */
 export function selectAuditIssuesForCounts(
   counts: ReportIssueCounts,
   pool: readonly ReportAuditIssue[] = REPORT_AUDIT_ISSUES,
