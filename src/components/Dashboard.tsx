@@ -245,15 +245,6 @@ export function Dashboard() {
               />
 
               <FilterSelect
-                id="quality-select"
-                label="Data quality"
-                value={qualityFilter}
-                onValueChange={setQualityFilter}
-                options={QUALITY_FILTER_OPTIONS}
-                contentClassName="min-w-44 w-max max-w-80"
-              />
-
-              <FilterSelect
                 id="issue-type-select"
                 label="Data issue type"
                 value={issueTypeFilter}
@@ -261,6 +252,15 @@ export function Dashboard() {
                   setIssueTypeFilter(value as ReportAuditIssueSeverity | undefined)
                 }
                 options={ISSUE_TYPE_FILTER_OPTIONS}
+                contentClassName="min-w-44 w-max max-w-80"
+              />
+
+              <FilterSelect
+                id="quality-select"
+                label="Data quality"
+                value={qualityFilter}
+                onValueChange={setQualityFilter}
+                options={QUALITY_FILTER_OPTIONS}
                 contentClassName="min-w-44 w-max max-w-80"
               />
 

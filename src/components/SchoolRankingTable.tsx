@@ -108,8 +108,8 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
               <TableHead>Admin region</TableHead>
               <TableHead>Programme manager</TableHead>
               <TableHead>Days entered</TableHead>
-              <TableHead>Data quality</TableHead>
               <TableHead>Data issues</TableHead>
+              <TableHead>Data quality</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>
                 <span className="sr-only">Actions</span>
@@ -134,10 +134,10 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
                   <DailyEntriesDisplay entries={report.dailyEntries} />
                 </TableCell>
                 <TableCell>
-                  <MetricProgress {...dataQualityMetricConfig(report.score)} />
+                  <ReportIssueCounts counts={report.issueCounts} />
                 </TableCell>
                 <TableCell>
-                  <ReportIssueCounts counts={report.issueCounts} />
+                  <MetricProgress {...dataQualityMetricConfig(report.score)} />
                 </TableCell>
                 <TableCell>
                   <Badge variant={statusBadgeVariant(report.status)} className="text-sm">
