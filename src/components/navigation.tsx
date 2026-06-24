@@ -20,6 +20,13 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Sheet,
   SheetContent,
   SheetHeader,
@@ -59,8 +66,15 @@ const navigation = {
   },
 } as const;
 
+const SCHOOL_TEXT_OPTIONS = [
+  "school-test-ux-ui-1",
+  "school-test-ux-ui-2",
+  "school-test-ux-ui-3",
+] as const;
+
 function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [schoolText, setSchoolText] = useState<string>(SCHOOL_TEXT_OPTIONS[0]);
 
   return (
     <header className="w-full bg-background shadow-md">
@@ -88,6 +102,18 @@ function Navigation() {
               School Connect
             </p>
           </Button>
+          <Select value={schoolText} onValueChange={setSchoolText}>
+            <SelectTrigger className="w-44" aria-label="School text">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {SCHOOL_TEXT_OPTIONS.map((option) => (
+                <SelectItem key={option} value={option}>
+                  {option}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <NavigationMenu className="hidden md:flex" viewport={false}>
             <NavigationMenuList>
               {navigation.items.map((item) => (
