@@ -103,9 +103,9 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>Admin region</TableHead>
               <TableHead>Month</TableHead>
               <TableHead>School</TableHead>
-              <TableHead>Admin region</TableHead>
               <TableHead>Programme manager</TableHead>
               <TableHead>Days entered</TableHead>
               <TableHead>Data issues</TableHead>
@@ -119,15 +119,15 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
           <TableBody>
             {reports.map((report) => (
               <TableRow key={report.reportId}>
-                <TableCell>{report.periodLabel}</TableCell>
-                <TableCell className="whitespace-normal">
-                  {report.schoolName}
-                </TableCell>
                 <TableCell
                   className="whitespace-normal"
                   title={formatAdminRegionFullPath(report.adminRegion)}
                 >
                   {formatAdminRegionDisplay(report.adminRegion)}
+                </TableCell>
+                <TableCell>{report.periodLabel}</TableCell>
+                <TableCell className="whitespace-normal">
+                  {report.schoolName}
                 </TableCell>
                 <TableCell>{report.programmeManager}</TableCell>
                 <TableCell>
