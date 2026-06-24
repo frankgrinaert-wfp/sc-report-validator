@@ -77,7 +77,7 @@ function Navigation() {
   const [schoolText, setSchoolText] = useState<string>(SCHOOL_TEXT_OPTIONS[0]);
 
   return (
-    <header className="w-full bg-background shadow-md">
+    <header className="sticky top-0 z-50 w-full bg-background shadow-md">
       <div className="flex h-14 items-center justify-between gap-4 px-4">
         <div className="flex min-w-0 items-center gap-4">
           <Button
