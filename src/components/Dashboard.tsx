@@ -183,7 +183,6 @@ export function Dashboard() {
           ))}
         </SelectContent>
       </Select>
-      <SettingsSheet />
     </>
   );
 
@@ -323,6 +322,8 @@ export function Dashboard() {
                   </DropdownMenuGroup>
                 </DropdownMenuContent>
               </DropdownMenu>
+
+              <SettingsSheet />
 
               <Tooltip>
                 <TooltipTrigger asChild>
