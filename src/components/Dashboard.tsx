@@ -190,9 +190,7 @@ export function Dashboard() {
   );
 
   return (
-    <div className="flex h-screen flex-col">
-      <div className="flex-1 overflow-y-auto">
-        <div className="p-8 flex flex-col gap-7">
+    <div className="p-8 flex flex-col gap-7">
           <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-start">
             <h1 className="font-bold text-3xl md:col-start-1 md:row-start-1">
               Report reviews
@@ -343,9 +341,7 @@ export function Dashboard() {
             </div>
           </div>
 
-          <SchoolRankingTable reports={sortedReports} />
-        </div>
-      </div>
+      <SchoolRankingTable reports={sortedReports} />
     </div>
   );
 }
