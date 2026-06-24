@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, Menu, RefreshCw, Settings, UserCircle, Wifi } from "lucide-react";
+import { LogOut, Menu, RefreshCw, Settings, UserCircle, Wifi, WifiOff } from "lucide-react";
 import { useState } from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -192,14 +192,25 @@ function SyncButton() {
 }
 
 function WifiButton() {
+  const [isOnline, setIsOnline] = useState(true);
+  const label = isOnline
+    ? "Online (click to disconnect)"
+    : "Offline (click to connect)";
+
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Button type="button" variant="ghost" size="icon" aria-label="…">
-          <Wifi />
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          aria-label={label}
+          onClick={() => setIsOnline((online) => !online)}
+        >
+          {isOnline ? <Wifi /> : <WifiOff />}
         </Button>
       </TooltipTrigger>
-      <TooltipContent>…</TooltipContent>
+      <TooltipContent>{label}</TooltipContent>
     </Tooltip>
   );
 }
