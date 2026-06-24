@@ -210,6 +210,7 @@ export type DashboardSortBy =
   | "school"
   | "month"
   | "region"
+  | "programmeManager"
   | "completeness"
   | "quality"
   | "status";
@@ -306,6 +307,9 @@ export function compareDashboardReports(
       comparison = formatAdminRegionFullPath(a.adminRegion).localeCompare(
         formatAdminRegionFullPath(b.adminRegion),
       );
+      break;
+    case "programmeManager":
+      comparison = a.programmeManager.localeCompare(b.programmeManager);
       break;
     case "completeness":
       comparison = a.dailyEntries - b.dailyEntries;

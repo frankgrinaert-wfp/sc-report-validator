@@ -55,6 +55,7 @@ const SORT_BY_OPTIONS: { value: DashboardSortBy; label: string }[] = [
   { value: "school", label: "School" },
   { value: "month", label: "Month" },
   { value: "region", label: "Admin region" },
+  { value: "programmeManager", label: "Programme manager" },
   { value: "completeness", label: "Days entered" },
   { value: "quality", label: "Data quality" },
   { value: "status", label: "Status" },
