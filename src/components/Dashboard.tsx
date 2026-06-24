@@ -211,6 +211,7 @@ export function Dashboard() {
                 placeholder="Admin region"
                 allowClear
                 changeOnSelect
+                displayRender={(labels) => labels[labels.length - 1]}
                 className="h-9 w-44 px-3"
               />
 

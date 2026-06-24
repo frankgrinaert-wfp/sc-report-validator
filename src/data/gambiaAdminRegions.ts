@@ -182,8 +182,10 @@ export function adminRegionPathsMatch(
   reportPath: string[],
   filterPath: string[],
 ): boolean {
-  const overlap = Math.min(reportPath.length, filterPath.length);
-  for (let index = 0; index < overlap; index += 1) {
+  if (filterPath.length === 0) return true;
+  if (reportPath.length < filterPath.length) return false;
+
+  for (let index = 0; index < filterPath.length; index += 1) {
     if (reportPath[index] !== filterPath[index]) {
       return false;
     }
