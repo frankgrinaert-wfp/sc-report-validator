@@ -192,7 +192,7 @@ export function Dashboard() {
   return (
     <div className="p-8 flex flex-col gap-7">
           <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-start">
-            <h1 className="font-bold text-2xl md:col-start-1 md:row-start-1">
+            <h1 className="font-semibold text-2xl md:col-start-1 md:row-start-1">
               Report reviews
             </h1>
             <p className="text-muted-foreground text-sm md:col-start-1 md:row-start-2">
