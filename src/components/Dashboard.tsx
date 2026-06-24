@@ -144,6 +144,7 @@ export function Dashboard() {
           <Button
             type="button"
             variant="ghost"
+            size="sm"
             id="country-select"
             aria-label="Country"
           >
@@ -168,6 +169,7 @@ export function Dashboard() {
           <Button
             type="button"
             variant="ghost"
+            size="sm"
             id="school-year-select"
             aria-label="School year"
           >
@@ -191,16 +193,16 @@ export function Dashboard() {
 
   return (
     <div className="p-8 flex flex-col gap-7">
-          <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-start">
-            <h1 className="font-semibold text-2xl md:col-start-1 md:row-start-1">
-              Report reviews
-            </h1>
-            <p className="text-muted-foreground text-sm md:col-start-1 md:row-start-2">
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-wrap items-center gap-3">
+              <h1 className="font-semibold text-2xl">Report reviews</h1>
+              <div className="flex flex-wrap items-center gap-0">
+              {headerControls}
+              </div>
+            </div>
+            <p className="text-muted-foreground text-sm">
               Review and validate monthly school meals reports.
             </p>
-            <div className="flex flex-wrap items-center gap-2 md:col-start-2 md:row-span-2 md:row-start-1 md:justify-end md:self-start">
-              {headerControls}
-            </div>
           </div>
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div className="flex flex-wrap items-end justify-start gap-2">
