@@ -16,7 +16,6 @@ import {
 import type {
   DashboardSortBy,
   DashboardSortOrder,
-  ProgrammeManager,
   ReportAuditIssueSeverity,
   SchoolStatus,
 } from "@/data/reportDashboard";
@@ -34,7 +33,6 @@ import {
   filterDashboardReports,
   getCurrentSchoolYearValue,
   ISSUE_TYPE_FILTER_OPTIONS,
-  PROGRAMME_MANAGER_FILTER_OPTIONS,
   REPORT_MONTH_OPTIONS,
   SCHOOL_FILTER_OPTIONS,
   SCHOOL_YEAR_OPTIONS,
@@ -44,7 +42,6 @@ const SORT_BY_OPTIONS: { value: DashboardSortBy; label: string }[] = [
   { value: "region", label: "Admin region" },
   { value: "month", label: "Month" },
   { value: "school", label: "School" },
-  { value: "programmeManager", label: "Programme manager" },
   { value: "completeness", label: "Days entered" },
   { value: "quality", label: "Data quality" },
   { value: "status", label: "Status" },
@@ -94,9 +91,6 @@ export function Dashboard() {
   const [issueTypeFilter, setIssueTypeFilter] = useState<
     ReportAuditIssueSeverity | undefined
   >();
-  const [programmeManagerFilter, setProgrammeManagerFilter] = useState<
-    ProgrammeManager | undefined
-  >();
 
   const filteredReports = filterDashboardReports(DASHBOARD_REPORTS, {
     schoolId: schoolFilter,
@@ -106,7 +100,6 @@ export function Dashboard() {
     status: statusFilter,
     issueType: issueTypeFilter,
     adminRegionPath: regionFilter,
-    programmeManager: programmeManagerFilter,
   });
 
   const sortedReports = [...filteredReports].sort((a, b) =>
@@ -119,8 +112,7 @@ export function Dashboard() {
     regionFilter.length > 0 ||
     qualityFilter != null ||
     statusFilter != null ||
-    issueTypeFilter != null ||
-    programmeManagerFilter != null;
+    issueTypeFilter != null;
 
   const resetFilters = () => {
     setSchoolFilter(undefined);
@@ -129,7 +121,6 @@ export function Dashboard() {
     setQualityFilter(undefined);
     setStatusFilter(undefined);
     setIssueTypeFilter(undefined);
-    setProgrammeManagerFilter(undefined);
   };
 
   const selectedCountry = COUNTRIES.find(({ value }) => value === country);
@@ -232,17 +223,6 @@ export function Dashboard() {
                 value={schoolFilter}
                 onValueChange={setSchoolFilter}
                 options={SCHOOL_FILTER_OPTIONS}
-                contentClassName="min-w-44 w-max max-w-80"
-              />
-
-              <FilterSelect
-                id="programme-manager-select"
-                label="Programme manager"
-                value={programmeManagerFilter}
-                onValueChange={(value) =>
-                  setProgrammeManagerFilter(value as ProgrammeManager | undefined)
-                }
-                options={PROGRAMME_MANAGER_FILTER_OPTIONS}
                 contentClassName="min-w-44 w-max max-w-80"
               />
 

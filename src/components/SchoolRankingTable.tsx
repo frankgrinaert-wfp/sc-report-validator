@@ -106,7 +106,6 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
               <TableHead>Admin region</TableHead>
               <TableHead>Month</TableHead>
               <TableHead>School</TableHead>
-              <TableHead>Programme manager</TableHead>
               <TableHead>Days entered</TableHead>
               <TableHead>Data issues</TableHead>
               <TableHead>Data quality</TableHead>
@@ -129,7 +128,6 @@ export function SchoolRankingTable({ reports }: SchoolRankingTableProps) {
                 <TableCell className="whitespace-normal">
                   {report.schoolName}
                 </TableCell>
-                <TableCell>{report.programmeManager}</TableCell>
                 <TableCell>
                   <DailyEntriesDisplay entries={report.dailyEntries} />
                 </TableCell>
