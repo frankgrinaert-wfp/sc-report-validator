@@ -1,5 +1,6 @@
-import { ArrowUpDown, Calendar, ChevronDown, Download } from "lucide-react";
+import { ArrowUpDown, ChevronDown, Download } from "lucide-react";
 import { useState } from "react";
+import { useOutletContext } from "react-router";
 import { FilterSelect } from "@/components/FilterSelect";
 import { Button } from "@/components/ui/button";
 import { Cascader } from "@/components/ui/cascader";
@@ -31,11 +32,9 @@ import {
   compareDashboardReports,
   DASHBOARD_REPORTS,
   filterDashboardReports,
-  getCurrentSchoolYearValue,
   ISSUE_TYPE_FILTER_OPTIONS,
   REPORT_MONTH_OPTIONS,
   SCHOOL_FILTER_OPTIONS,
-  SCHOOL_YEAR_OPTIONS,
 } from "@/data/reportDashboard";
 
 const SORT_BY_OPTIONS: { value: DashboardSortBy; label: string }[] = [
@@ -51,14 +50,6 @@ const SORT_ORDER_OPTIONS: { value: DashboardSortOrder; label: string }[] = [
   { value: "asc", label: "Ascending" },
   { value: "desc", label: "Descending" },
 ];
-
-const COUNTRIES = [
-  { value: "burkina-faso", label: "Burkina Faso", flag: "🇧🇫" },
-  { value: "gambia", label: "Gambia", flag: "🇬🇲" },
-  { value: "guinea", label: "Guinea", flag: "🇬🇳" },
-  { value: "mali", label: "Mali", flag: "🇲🇱" },
-  { value: "senegal", label: "Senegal", flag: "🇸🇳" },
-] as const;
 
 const MONTH_FILTER_OPTIONS = REPORT_MONTH_OPTIONS.map((month) => ({
   value: month,
@@ -78,15 +69,19 @@ const STATUS_FILTER_OPTIONS: { value: SchoolStatus; label: string }[] = [
   { value: "Approved", label: "Approved" },
 ];
 
+export type DashboardOutletContext = {
+  country: string;
+  schoolYear: string;
+};
+
 export function Dashboard() {
-  const [country, setCountry] = useState("gambia");
+  const { schoolYear } = useOutletContext<DashboardOutletContext>();
   const [schoolFilter, setSchoolFilter] = useState<string | undefined>();
   const [regionFilter, setRegionFilter] = useState<string[]>([]);
   const [qualityFilter, setQualityFilter] = useState<string | undefined>();
   const [statusFilter, setStatusFilter] = useState<SchoolStatus | undefined>();
   const [sortBy, setSortBy] = useState<DashboardSortBy>("month");
   const [sortOrder, setSortOrder] = useState<DashboardSortOrder>("desc");
-  const [schoolYear, setSchoolYear] = useState(getCurrentSchoolYearValue);
   const [reportMonth, setReportMonth] = useState<string | undefined>();
   const [issueTypeFilter, setIssueTypeFilter] = useState<
     ReportAuditIssueSeverity | undefined
@@ -123,74 +118,10 @@ export function Dashboard() {
     setIssueTypeFilter(undefined);
   };
 
-  const selectedCountry = COUNTRIES.find(({ value }) => value === country);
-  const selectedSchoolYear = SCHOOL_YEAR_OPTIONS.find(
-    ({ value }) => value === schoolYear,
-  );
-
-  const headerControls = (
-    <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            id="country-select"
-            aria-label="Country"
-          >
-            {selectedCountry
-              ? `${selectedCountry.flag} ${selectedCountry.label}`
-              : "Select country"}
-            <ChevronDown />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-40">
-          <DropdownMenuRadioGroup value={country} onValueChange={setCountry}>
-            {COUNTRIES.map(({ value, label, flag }) => (
-              <DropdownMenuRadioItem key={value} value={value}>
-                {flag} {label}
-              </DropdownMenuRadioItem>
-            ))}
-          </DropdownMenuRadioGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            id="school-year-select"
-            aria-label="School year"
-          >
-            <Calendar />
-            {selectedSchoolYear?.label ?? "School year"}
-            <ChevronDown />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-40">
-          <DropdownMenuRadioGroup value={schoolYear} onValueChange={setSchoolYear}>
-            {SCHOOL_YEAR_OPTIONS.map(({ value, label }) => (
-              <DropdownMenuRadioItem key={value} value={value}>
-                {label}
-              </DropdownMenuRadioItem>
-            ))}
-          </DropdownMenuRadioGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </>
-  );
-
   return (
     <div className="p-8 flex flex-col gap-7">
           <div className="flex flex-col gap-4">
-            <div className="flex flex-wrap items-center gap-3">
-              <h1 className="font-semibold text-2xl">Report reviews</h1>
-              <div className="flex flex-wrap items-center gap-0">
-              {headerControls}
-              </div>
-            </div>
+            <h1 className="font-semibold text-2xl">Report reviews</h1>
             <p className="text-muted-foreground text-sm">
               Review and validate monthly school meals reports.
             </p>
