@@ -74,7 +74,7 @@ function Navigation({
             <p className="min-w-0 truncate font-bold text-base text-wfp-blue">
               School Connect
             </p>
-            <p className="font-normal text-base text-muted-foreground">
+            <p className="font-normal text-base font-medium text-muted-foreground">
               Report reviews
             </p>
           </Button>

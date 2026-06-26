@@ -120,12 +120,6 @@ export function Dashboard() {
 
   return (
     <div className="p-8 flex flex-col gap-7">
-          <div className="flex flex-col gap-4">
-            <h1 className="font-semibold text-2xl">Report reviews</h1>
-            <p className="text-muted-foreground text-sm">
-              Review and validate monthly school meals reports.
-            </p>
-          </div>
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div className="flex flex-wrap items-end justify-start gap-2">
               <Cascader
