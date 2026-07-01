@@ -64,7 +64,7 @@ const QUALITY_FILTER_OPTIONS = [
 
 const STATUS_FILTER_OPTIONS: { value: SchoolStatus; label: string }[] = [
   { value: "Submitted", label: "Submitted" },
-  { value: "Awaiting corrections", label: "Awaiting corrections" },
+  { value: "Rejected", label: "Rejected" },
   { value: "Approved", label: "Approved" },
 ];
 

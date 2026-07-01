@@ -79,7 +79,7 @@ export function dataQualityScoreIndicatorClass(score: number): string {
   return progressMetricIndicatorClass(dataQualityScoreTone(score));
 }
 
-export type SchoolStatus = "Submitted" | "Awaiting corrections" | "Approved";
+export type SchoolStatus = "Submitted" | "Rejected" | "Approved";
 
 export type Occurrence = { date: string; value: unknown };
 
@@ -283,7 +283,7 @@ export function compareDashboardReports(
       const statusOrder = {
         Approved: 1,
         "Submitted": 2,
-        "Awaiting corrections": 3,
+        "Rejected": 3,
       };
       comparison = statusOrder[a.status] - statusOrder[b.status];
       break;
@@ -784,7 +784,7 @@ const SCHOOL_DETAIL_BY_ID: Record<string, SchoolDetailRecord> = {
     name: "Brikama Upper Basic School",
     code: "1002",
     score: 76,
-    status: "Awaiting corrections",
+    status: "Rejected",
     enrollment: { total: 315, boys: 163, girls: 152 },
     attendance: { total: 276, boys: 143, girls: 133 },
     totalMeals: 5520,
@@ -796,7 +796,7 @@ const SCHOOL_DETAIL_BY_ID: Record<string, SchoolDetailRecord> = {
     name: "Serrekunda Lower Basic School",
     code: "1003",
     score: 82,
-    status: "Awaiting corrections",
+    status: "Rejected",
     enrollment: { total: 325, boys: 168, girls: 157 },
     attendance: { total: 287, boys: 149, girls: 138 },
     totalMeals: 5740,
@@ -864,12 +864,12 @@ function statusForReportScore(score: number, rand: number): SchoolStatus {
   if (score >= 85) {
     if (rand < 0.35) return "Approved";
     if (rand < 0.7) return "Submitted";
-    return "Awaiting corrections";
+    return "Rejected";
   }
   if (score >= 75) {
-    return rand < 0.45 ? "Submitted" : "Awaiting corrections";
+    return rand < 0.45 ? "Submitted" : "Rejected";
   }
-  return rand < 0.25 ? "Awaiting corrections" : "Submitted";
+  return rand < 0.25 ? "Rejected" : "Submitted";
 }
 
 function generateReportIssueCounts(
