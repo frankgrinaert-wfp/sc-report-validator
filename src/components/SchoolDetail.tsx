@@ -4,20 +4,16 @@ import {
   Copy,
   Download,
   ExternalLink,
-  Flag,
-  FlagOff,
   Info,
   OctagonX,
   TriangleAlert,
 } from "lucide-react";
-import { useEffect, useState } from "react";
 import { ReportIssueCounts } from "@/components/ReportIssueCounts";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ToneProgress } from "@/components/MetricProgress";
-import { cn } from "@/lib/utils";
 import {
   Sheet,
   SheetContent,
@@ -59,11 +55,7 @@ function statusBadgeVariant(status: SchoolStatus) {
   }
 }
 
-function issueAlertVariant(
-  severity: ReportAuditIssueSeverity,
-  isUnflagged: boolean,
-) {
-  if (isUnflagged) return "default" as const;
+function issueAlertVariant(severity: ReportAuditIssueSeverity) {
   switch (severity) {
     case "critical":
       return "destructive" as const;
@@ -94,28 +86,8 @@ type SchoolDetailContentProps = {
 };
 
 export function SchoolDetailContent({ reportId }: SchoolDetailContentProps) {
-  const [unflaggedIssues, setUnflaggedIssues] = useState<Set<string>>(
-    () => new Set(),
-  );
-
-  useEffect(() => {
-    setUnflaggedIssues(new Set());
-  }, [reportId]);
-
   const report = getDashboardReport(reportId);
   const school = report ? getSchoolDetail(String(report.schoolId)) : undefined;
-
-  const toggleIssueFlag = (key: string) => {
-    setUnflaggedIssues((current) => {
-      const next = new Set(current);
-      if (next.has(key)) {
-        next.delete(key);
-      } else {
-        next.add(key);
-      }
-      return next;
-    });
-  };
 
   if (!report || !school) {
     return <p className="text-muted-foreground text-sm">Report not found.</p>;
@@ -129,10 +101,7 @@ export function SchoolDetailContent({ reportId }: SchoolDetailContentProps) {
   const qualityMetric = dataQualityMetricConfig(qualityScore);
 
   const handleCopyIssues = async () => {
-    const flaggedIssues = auditIssues.filter(
-      (issue) => !unflaggedIssues.has(auditIssueKey(issue)),
-    );
-    const text = formatAuditIssuesForClipboard(flaggedIssues);
+    const text = formatAuditIssuesForClipboard(auditIssues);
 
     await navigator.clipboard.writeText(text);
   };
@@ -198,26 +167,15 @@ export function SchoolDetailContent({ reportId }: SchoolDetailContentProps) {
       <div className="flex flex-col gap-3">
           {auditIssues.map((issue) => {
             const key = auditIssueKey(issue);
-            const isUnflagged = unflaggedIssues.has(key);
 
             return (
               <div key={key} className="relative">
                 <Alert
-                  variant={issueAlertVariant(issue.severity, isUnflagged)}
-                  className={cn(
-                    "pr-20",
-                    isUnflagged &&
-                      "[&>svg]:text-neutral-500 [&_[data-slot=alert-title]]:text-neutral-500 [&_[data-slot=alert-description]]:text-neutral-500",
-                  )}
-                  aria-disabled={isUnflagged}
+                  variant={issueAlertVariant(issue.severity)}
+                  className="pr-12"
                 >
                   <AuditIssueSeverityIcon severity={issue.severity} />
-                  <AlertTitle
-                    className={cn(
-                      "line-clamp-none whitespace-normal font-medium",
-                      isUnflagged && "line-through",
-                    )}
-                  >
+                  <AlertTitle className="line-clamp-none whitespace-normal font-medium">
                     {issue.title}
                   </AlertTitle>
                   <AlertDescription className="tabular-nums">
@@ -225,22 +183,6 @@ export function SchoolDetailContent({ reportId }: SchoolDetailContentProps) {
                   </AlertDescription>
                 </Alert>
                 <div className="absolute top-3 right-3 flex items-center gap-1">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon-sm"
-                        onClick={() => toggleIssueFlag(key)}
-                        aria-label={isUnflagged ? "Flag" : "Unflag"}
-                      >
-                        {isUnflagged ? <Flag /> : <FlagOff />}
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      {isUnflagged ? "Flag" : "Unflag"}
-                    </TooltipContent>
-                  </Tooltip>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
