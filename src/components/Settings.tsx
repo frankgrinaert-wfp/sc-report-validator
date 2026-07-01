@@ -7,6 +7,7 @@ export function Settings() {
     <div className="flex flex-col gap-7 p-8">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h1 className="font-semibold text-2xl">Settings</h1>
+
         <div className="flex flex-wrap items-center gap-2">
           <Button type="button" variant="outline">
             <RotateCcw />
@@ -15,6 +16,9 @@ export function Settings() {
           <Button type="button">Save</Button>
         </div>
       </div>
+      <p className="font-medium text-purple-600">
+        These are dummy settings, for this prototype. Real settings TBD
+      </p>
       <ControlPanel />
     </div>
   );
