@@ -46,8 +46,10 @@ function auditIssueKey(issue: ReportAuditIssue) {
 
 function statusBadgeVariant(status: SchoolStatus) {
   switch (status) {
-    case "Submitted":
+    case "Open":
       return "secondary" as const;
+    case "Submitted":
+      return "default" as const;
     case "Rejected":
       return "destructive" as const;
     case "Approved":

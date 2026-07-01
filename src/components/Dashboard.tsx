@@ -63,6 +63,7 @@ const QUALITY_FILTER_OPTIONS = [
 ];
 
 const STATUS_FILTER_OPTIONS: { value: SchoolStatus; label: string }[] = [
+  { value: "Open", label: "Open" },
   { value: "Submitted", label: "Submitted" },
   { value: "Rejected", label: "Rejected" },
   { value: "Approved", label: "Approved" },

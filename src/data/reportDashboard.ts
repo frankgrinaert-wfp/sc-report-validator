@@ -79,7 +79,7 @@ export function dataQualityScoreIndicatorClass(score: number): string {
   return progressMetricIndicatorClass(dataQualityScoreTone(score));
 }
 
-export type SchoolStatus = "Submitted" | "Rejected" | "Approved";
+export type SchoolStatus = "Open" | "Submitted" | "Rejected" | "Approved";
 
 export type Occurrence = { date: string; value: unknown };
 
@@ -281,9 +281,10 @@ export function compareDashboardReports(
       break;
     case "status": {
       const statusOrder = {
-        Approved: 1,
+        Open: 1,
         "Submitted": 2,
-        "Rejected": 3,
+        Approved: 3,
+        "Rejected": 4,
       };
       comparison = statusOrder[a.status] - statusOrder[b.status];
       break;
@@ -772,7 +773,7 @@ const SCHOOL_DETAIL_BY_ID: Record<string, SchoolDetailRecord> = {
     name: "Bundung Lower Basic School",
     code: "1001",
     score: 72,
-    status: "Submitted",
+    status: "Open",
     enrollment: { total: 220, boys: 112, girls: 108 },
     attendance: { total: 187, boys: 95, girls: 92 },
     totalMeals: 3740,
@@ -784,7 +785,7 @@ const SCHOOL_DETAIL_BY_ID: Record<string, SchoolDetailRecord> = {
     name: "Brikama Upper Basic School",
     code: "1002",
     score: 76,
-    status: "Rejected",
+    status: "Open",
     enrollment: { total: 315, boys: 163, girls: 152 },
     attendance: { total: 276, boys: 143, girls: 133 },
     totalMeals: 5520,
@@ -796,7 +797,7 @@ const SCHOOL_DETAIL_BY_ID: Record<string, SchoolDetailRecord> = {
     name: "Serrekunda Lower Basic School",
     code: "1003",
     score: 82,
-    status: "Rejected",
+    status: "Approved",
     enrollment: { total: 325, boys: 168, girls: 157 },
     attendance: { total: 287, boys: 149, girls: 138 },
     totalMeals: 5740,
@@ -808,7 +809,7 @@ const SCHOOL_DETAIL_BY_ID: Record<string, SchoolDetailRecord> = {
     name: "Armitage Senior Secondary School",
     code: "1004",
     score: 90,
-    status: "Submitted",
+    status: "Approved",
     enrollment: { total: 305, boys: 158, girls: 147 },
     attendance: { total: 267, boys: 139, girls: 128 },
     totalMeals: 5340,
@@ -859,17 +860,24 @@ function createSeededRandom(seed: number) {
 
 function statusForReportScore(score: number, rand: number): SchoolStatus {
   if (score >= 92) {
-    return rand < 0.65 ? "Approved" : "Submitted";
+    if (rand < 0.1) return "Open";
+    return rand < 0.72 ? "Approved" : "Submitted";
   }
   if (score >= 85) {
-    if (rand < 0.35) return "Approved";
-    if (rand < 0.7) return "Submitted";
+    if (rand < 0.22) return "Open";
+    if (rand < 0.58) return "Approved";
+    if (rand < 0.86) return "Submitted";
     return "Rejected";
   }
   if (score >= 75) {
-    return rand < 0.45 ? "Submitted" : "Rejected";
+    if (rand < 0.32) return "Open";
+    if (rand < 0.48) return "Approved";
+    if (rand < 0.78) return "Submitted";
+    return "Rejected";
   }
-  return rand < 0.25 ? "Rejected" : "Submitted";
+  if (rand < 0.55) return "Open";
+  if (rand < 0.85) return "Submitted";
+  return "Rejected";
 }
 
 function generateReportIssueCounts(
