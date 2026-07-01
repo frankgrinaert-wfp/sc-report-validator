@@ -1,8 +1,6 @@
 "use client";
 
 import {
-  Ban,
-  Check,
   Copy,
   Download,
   ExternalLink,
@@ -15,16 +13,6 @@ import {
 import { useEffect, useState } from "react";
 import { ReportIssueCounts } from "@/components/ReportIssueCounts";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -287,15 +275,8 @@ export function SchoolDetailSheet({
   open,
   onOpenChange,
 }: SchoolDetailSheetProps) {
-  const [requestCorrectionsOpen, setRequestCorrectionsOpen] = useState(false);
   const report = reportId ? getDashboardReport(reportId) : undefined;
   const school = report ? getSchoolDetail(String(report.schoolId)) : undefined;
-
-  useEffect(() => {
-    if (!open) {
-      setRequestCorrectionsOpen(false);
-    }
-  }, [open]);
 
   const periodLabel = report?.periodLabel ?? "May 2025";
   const title = school ? `${school.name} – ${periodLabel}` : "School details";
@@ -323,21 +304,7 @@ export function SchoolDetailSheet({
           ) : null}
         </div>
         {school ? (
-          <SheetFooter className="bg-background border-t shrink-0 flex-row flex-wrap p-5 items-center justify-between gap-2 shadow-sm">
-            <div className="flex flex-wrap gap-2">
-              <Button type="button" variant="success">
-                <Check />
-                Approve report
-              </Button>
-              <Button
-                type="button"
-                variant="destructive"
-                onClick={() => setRequestCorrectionsOpen(true)}
-              >
-                <Ban />
-                Request corrections
-              </Button>
-            </div>
+          <SheetFooter className="bg-background border-t shrink-0 flex-row flex-wrap p-5 items-center justify-start gap-2 shadow-sm">
             <Button type="button" variant="ghost">
               View report
               <ExternalLink />
@@ -345,27 +312,6 @@ export function SchoolDetailSheet({
           </SheetFooter>
         ) : null}
       </SheetContent>
-      {school ? (
-        <AlertDialog
-          open={requestCorrectionsOpen}
-          onOpenChange={setRequestCorrectionsOpen}
-        >
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>
-                Send request for corrections?
-              </AlertDialogTitle>
-              <AlertDialogDescription>
-              {school.name} will be notified with the list of flagged data quality issues.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction>Send</AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      ) : null}
     </Sheet>
   );
 }
