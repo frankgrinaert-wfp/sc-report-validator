@@ -1,6 +1,7 @@
 "use client";
 
 import { Calendar, ChevronDown, LogOut, Settings, UserCircle } from "lucide-react";
+import { Link, useLocation } from "react-router";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,7 +14,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
 import { SCHOOL_YEAR_OPTIONS } from "@/data/reportDashboard";
+
+const NAV_ITEMS = [
+  { label: "Report reviews", path: "/" },
+  { label: "Settings", path: "/settings" },
+] as const;
 
 const COUNTRIES = [
   { value: "burkina-faso", label: "Burkina Faso", flag: "🇧🇫" },
@@ -44,19 +57,27 @@ function Navigation({
   schoolYear,
   onSchoolYearChange,
 }: NavigationProps) {
+  const location = useLocation();
   const selectedCountry = COUNTRIES.find(({ value }) => value === country);
   const selectedSchoolYear = SCHOOL_YEAR_OPTIONS.find(
     ({ value }) => value === schoolYear,
   );
+
+  const isNavActive = (path: string) =>
+    path === "/"
+      ? location.pathname === "/"
+      : location.pathname.startsWith(path);
 
   return (
     <header className="sticky top-0 z-50 w-full bg-background shadow-md">
       <div className="flex h-14 items-center justify-between gap-4 px-4">
         <div className="flex min-w-0 items-center gap-4">
           <Button
+            asChild
             variant="ghost"
-            className="flex min-w-0 max-w-[200px] items-center gap-2 px-0! hover:bg-transparent active:bg-transparent md:max-w-[320px]"
+            className="flex min-w-0 max-w-[200px] shrink-0 items-center gap-2 px-0! hover:bg-transparent active:bg-transparent md:max-w-[320px]"
           >
+            <Link to="/">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="80"
@@ -75,68 +96,89 @@ function Navigation({
               School Connect
             </p>
             <p className="font-normal text-base font-medium text-muted-foreground">
-              Report reviews
+              Report Validator
             </p>
+            </Link>
           </Button>
-          <div className="flex min-w-0 items-center gap-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  id="country-select"
-                  aria-label="Country"
-                >
-                  {selectedCountry
-                    ? `${selectedCountry.flag} ${selectedCountry.label}`
-                    : "Select country"}
-                  <ChevronDown />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-40">
-                <DropdownMenuRadioGroup
-                  value={country}
-                  onValueChange={onCountryChange}
-                >
-                  {COUNTRIES.map(({ value, label, flag }) => (
-                    <DropdownMenuRadioItem key={value} value={value}>
-                      {flag} {label}
-                    </DropdownMenuRadioItem>
-                  ))}
-                </DropdownMenuRadioGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  id="school-year-select"
-                  aria-label="School year"
-                >
-                  <Calendar />
-                  {selectedSchoolYear?.label ?? "School year"}
-                  <ChevronDown />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-40">
-                <DropdownMenuRadioGroup
-                  value={schoolYear}
-                  onValueChange={onSchoolYearChange}
-                >
-                  {SCHOOL_YEAR_OPTIONS.map(({ value, label }) => (
-                    <DropdownMenuRadioItem key={value} value={value}>
-                      {label}
-                    </DropdownMenuRadioItem>
-                  ))}
-                </DropdownMenuRadioGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
+          <div className="flex shrink-0 items-center gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                // size="sm"
+                id="country-select"
+                aria-label="Country"
+              >
+                {selectedCountry
+                  ? `${selectedCountry.flag} ${selectedCountry.label}`
+                  : "Select country"}
+                <ChevronDown />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-40">
+              <DropdownMenuRadioGroup
+                value={country}
+                onValueChange={onCountryChange}
+              >
+                {COUNTRIES.map(({ value, label, flag }) => (
+                  <DropdownMenuRadioItem key={value} value={value}>
+                    {flag} {label}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                // size="sm"
+                id="school-year-select"
+                aria-label="School year"
+              >
+                <Calendar />
+                {selectedSchoolYear?.label ?? "School year"}
+                <ChevronDown />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-40">
+              <DropdownMenuRadioGroup
+                value={schoolYear}
+                onValueChange={onSchoolYearChange}
+              >
+                {SCHOOL_YEAR_OPTIONS.map(({ value, label }) => (
+                  <DropdownMenuRadioItem key={value} value={value}>
+                    {label}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
           </div>
+          <NavigationMenu viewport={false}>
+            <NavigationMenuList>
+              {NAV_ITEMS.map(({ label, path }) => (
+                <NavigationMenuItem key={path}>
+                  <NavigationMenuLink asChild>
+                    <Link
+                      to={path}
+                      className={navigationMenuTriggerStyle()}
+                      data-active={isNavActive(path) || undefined}
+                    >
+                      {label}
+                    </Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              ))}
+            </NavigationMenuList>
+          </NavigationMenu>
+          
         </div>
-        <UserMenu />
+        <div className="flex shrink-0 items-center gap-4">
+          <UserMenu />
+        </div>
       </div>
     </header>
   );

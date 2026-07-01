@@ -20,7 +20,6 @@ import type {
   ReportAuditIssueSeverity,
   SchoolStatus,
 } from "@/data/reportDashboard";
-import { SettingsSheet } from "@/components/SettingsSheet";
 import {
   Tooltip,
   TooltipContent,
@@ -232,8 +231,6 @@ export function Dashboard() {
                   </DropdownMenuGroup>
                 </DropdownMenuContent>
               </DropdownMenu>
-
-              <SettingsSheet />
 
               <Tooltip>
                 <TooltipTrigger asChild>

@@ -171,10 +171,10 @@ type SettingsGroupProps = {
 
 function SettingsGroup({ title, children }: SettingsGroupProps) {
   return (
-    <section className="space-y-5 p-5 border rounded-lg">
-      <h3 className="font-semibold text-xs text-muted-foreground uppercase">
+    <section className="space-y-5 p-5 border-none rounded-lg shadow-sm bg-background">
+      <h2 className="font-semibold text-lg">
         {title}
-      </h3>
+      </h2>
       {children}
     </section>
   );

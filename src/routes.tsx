@@ -2,6 +2,7 @@ import { useState } from "react";
 import { createBrowserRouter, Outlet } from "react-router";
 import { Dashboard } from "@/components/Dashboard";
 import { Navigation } from "@/components/navigation";
+import { Settings } from "@/components/Settings";
 import { getCurrentSchoolYearValue } from "@/data/reportDashboard";
 
 function RootLayout() {
@@ -31,6 +32,10 @@ export const router = createBrowserRouter(
         {
           path: "/",
           Component: Dashboard,
+        },
+        {
+          path: "/settings",
+          Component: Settings,
         },
       ],
     },
