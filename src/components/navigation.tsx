@@ -106,7 +106,7 @@ function Navigation({
               <Button
                 type="button"
                 variant="outline"
-                // size="sm"
+                size="sm"
                 id="country-select"
                 aria-label="Country"
               >
@@ -134,7 +134,7 @@ function Navigation({
               <Button
                 type="button"
                 variant="outline"
-                // size="sm"
+                size="sm"
                 id="school-year-select"
                 aria-label="School year"
               >
